@@ -9,9 +9,9 @@
 </head>
 
 <body class="bg-gray-100 h-screen flex items-center justify-center">
+    <x-header />
     <div class="bg-white p-8 rounded-lg shadow-md w-96">
-        
-        {{-- <img src="https://brijesh2534.github.io/ipodetails/ipodetails.jpeg" style="width:50px;height: 50px; border-style:solid;"> --}}
+
         <h2 class="text-2xl font-bold mb-6 text-center text-gray-700">Restaurant Management Login</h2>
         <form action="/login" method="POST">
             <div class="mb-4">
