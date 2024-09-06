@@ -45,7 +45,7 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <!-- Butter Milk -->
-                <div class="bg-white rounded-t-[80px] w-[250px] shadow-md p-4 flex flex-col items-center">
+                <div class="bg-white rounded-t-[80px] rounded-b-lg w-[250px] shadow-md p-4 flex flex-col items-center">
                     <img src="image/Butte-milk.png" alt="Butter Milk" class="w-40 h-40 object-cover rounded-full mb-4">
                     <h3 class="text-xl font-semibold mb-1">Butter Milk</h3>
                     <p class="text-sm text-gray-500 mb-2">SPICE GARDEN RE...</p>
@@ -56,7 +56,7 @@
                 </div>
 
                 <!-- Veggie Delight -->
-                <div class="bg-white rounded-t-[80px] w-[250px] shadow-md p-4 flex flex-col items-center">
+                <div class="bg-white rounded-t-[80px] rounded-b-lg w-[250px] shadow-md p-4 flex flex-col items-center">
                     <img src="image/Veggie-Delight.png" alt="Veggie Delight"
                         class="w-40 h-40 object-cover rounded-full mb-4">
                     <h3 class="text-xl font-semibold mb-1">Veggie Delight ...</h3>
@@ -68,7 +68,7 @@
                 </div>
 
                 <!-- Greek Salad -->
-                <div class="bg-white rounded-t-[80px] w-[250px] shadow-md p-4 flex flex-col items-center">
+                <div class="bg-white rounded-t-[80px] rounded-b-lg w-[250px] shadow-md p-4 flex flex-col items-center">
                     <img src="image/greeksalad.png" alt="Greek Salad" class="w-40 h-40 object-cover rounded-full mb-4">
                     <h3 class="text-xl font-semibold mb-1">Greek Salad</h3>
                     <p class="text-sm text-gray-500 mb-2">Been House</p>
@@ -79,7 +79,7 @@
                 </div>
 
                 <!-- Chicken Curry -->
-                <div class="bg-white rounded-t-[80px] w-[250px] shadow-md p-4 flex flex-col items-center">
+                <div class="bg-white rounded-t-[80px] rounded-b-lg w-[250px] shadow-md p-4 flex flex-col items-center">
                     <img src="image/CheeseBurger.png" alt="Chicken Curry" class="w-40 h-40 object-cover rounded-full mb-4">
                     <h3 class="text-xl font-semibold mb-1">Cheese Burger</h3>
                     <p class="text-sm text-gray-500 mb-2">Nibble Bites Ca...</p>

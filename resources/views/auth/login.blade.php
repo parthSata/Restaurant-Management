@@ -1,44 +1,110 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('layouts.app')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Restaurant Management Login</title>
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
-</head>
+@section('title', 'Restaurant Page')
 
-<body class="bg-gray-100 h-screen flex items-center justify-center">
-    <x-header />
-    <div class="bg-white p-8 rounded-lg shadow-md w-96">
-
-        <h2 class="text-2xl font-bold mb-6 text-center text-gray-700">Restaurant Management Login</h2>
-        <form action="/login" method="POST">
-            <div class="mb-4">
-                <label class="block text-gray-600 text-sm font-semibold mb-2" for="username">Username</label>
-                <input class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-500"
-                    type="text" id="username" name="username" placeholder="Enter your username">
+@section('content')
+{{-- 
+    <div class="flex justify-center">
+        <div class="bg-white p-8 rounded-lg shadow-md w-96">
+            <div class="flex justify-center mb-2">
+                <img src="image/Logo.png" alt="Logo" class="h-16 w-16 mr-2">
             </div>
-            <div class="mb-6">
-                <label class="block text-gray-600 text-sm font-semibold mb-2" for="password">Password</label>
-                <input class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-500"
-                    type="password" id="password" name="password" placeholder="Enter your password">
-            </div>
-            <div class="flex items-center justify-between">
-                <div>
-                    <input class="mr-1" type="checkbox" id="remember_me" name="remember_me">
-                    <label class="text-sm text-gray-600" for="remember_me">Remember Me</label>
+
+            <h2 class="text-2xl font-semibold mb-6 text-center">Sign In</h2>
+
+            <form class="flex flex-col gap-4">
+                <div class="mb-4">
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email*</label>
+                    <input type="email" id="email" name="email" placeholder="admin@restaurant.com"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md" required>
                 </div>
-                <a href="#" class="text-sm text-blue-500 hover:underline">Forgot Password?</a>
+
+                <div class="mb-4">
+                    <div class="flex justify-between items-center mb-1">
+                        <label for="password" class="block text-sm font-medium text-gray-700">Password*</label>
+                    </div>
+                    <input type="password" id="password" name="password" placeholder="••••••"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md" required>
+                </div>
+
+                <div class="flex justify-start  gap-4">
+                    <label class="inline-flex gap-2 items-center">
+                        <input type="radio" class="form-radio accent-[#DDD05D] h-4 w-4 " name="role" value="customer"
+                            checked>
+                        <span class="">Customer</span>
+                    </label>
+                    <label class="inline-flex gap-2 items-center ">
+                        <input type="radio" class="form-radio accent-[#DDD05D] h-4 w-4 " name="role" value="seller">
+                        <span class="">Seller</span>
+                    </label>
+                    <label class="inline-flex gap-2 items-center">
+                        <input type="radio" class="form-radio accent-[#DDD05D] h-4 w-4 " name="role" value="admin">
+                        <span class="">Admin</span>
+                    </label>
+                </div>
+
+
+                <button type="submit"
+                    class="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 mb-3">Login</button>
+
+
+            </form>
+
+            <p class="text-center text-sm text-gray-600">
+                New Here? <a href="/register" class="text-blue-500 hover:underline">Create an Account</a>
+            </p>
+        </div>
+    </div> --}}
+    <div class="flex justify-center min-h-screen items-center">
+        <div class="bg-white p-8 rounded-lg shadow-md w-96">
+            <div class="flex justify-center mb-2">
+                <img src="image/Logo.png" alt="Logo" class="h-16 w-16 mr-2">
             </div>
-            <button
-                class="w-full bg-blue-500 text-white py-2 mt-6 rounded-lg hover:bg-blue-600 transition duration-200">Login</button>
-        </form>
-        <div class="mt-4 text-center flex justify-center items-center gap-2">
-            <p class="text-sm text-gray-600">Don't have an account?</p>
-            <a href="/register" class="text-blue-500 hover:underline">Register</a>
+    
+            <h2 class="text-2xl font-semibold mb-6 text-center">Sign In</h2>
+    
+            <form class="flex flex-col gap-4" method="POST" action="{{ route('login') }}">
+                @csrf
+                <div class="mb-4">
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email*</label>
+                    <input type="email" id="email" name="email" placeholder="admin@restaurant.com"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md" required>
+                </div>
+    
+                <div class="mb-4">
+                    <div class="flex justify-between items-center mb-1">
+                        <label for="password" class="block text-sm font-medium text-gray-700">Password*</label>
+                    </div>
+                    <input type="password" id="password" name="password" placeholder="••••••"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md" required>
+                </div>
+    
+                {{-- <div class="flex justify-start gap-4">
+                    <label class="inline-flex gap-2 items-center">
+                        <input type="radio" class="form-radio accent-[#DDD05D] h-4 w-4" name="role" value="Customer"
+                            checked>
+                        <span>Customer</span>
+                    </label>
+                    <label class="inline-flex gap-2 items-center">
+                        <input type="radio" class="form-radio accent-[#DDD05D] h-4 w-4" name="role" value="Seller">
+                        <span>Seller</span>
+                    </label>
+                    <label class="inline-flex gap-2 items-center">
+                        <input type="radio" class="form-radio accent-[#DDD05D] h-4 w-4" name="role" value="Admin">
+                        <span>Admin</span>
+                    </label>
+                </div>
+     --}}
+                <button type="submit"
+                    class="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 mb-3">Login</button>
+            </form>
+    
+            <p class="text-center text-sm text-gray-600">
+                New Here? <a href="/register" class="text-blue-500 hover:underline">Create an Account</a>
+            </p>
         </div>
     </div>
-</body>
+    
 
-</html>
+
+@endsection

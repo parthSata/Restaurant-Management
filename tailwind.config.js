@@ -6,7 +6,15 @@ export default {
         "./resources/**/*.vue",
     ],
     theme: {
-        extend: {},
+        extend: {
+            fontFamily: {
+                montserrat: ["Montserrat Alternates", "sans-serif"],
+                baiJamjuree: ["Bai Jamjuree", "sans-serif"],
+                fallinLove: ["Fall in love", "sans-serif"],
+                popins: ["Poppins", "sans-serif"],
+                kozuka: ["Kozuka Gothic", "sans-serif"],
+            },
+        },
     },
     plugins: [],
 };
