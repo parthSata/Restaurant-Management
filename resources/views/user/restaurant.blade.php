@@ -33,7 +33,18 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <!-- SPICE GARDEN RESTAURANT -->
+
+            <a href="{{ route('Home.index', ['id' => 1]) }}"
+                class="block bg-white rounded-lg shadow-md overflow-hidden">
+                <img src="image/Har_Bhole_Restaurant.jpeg" alt="SPICE GARDEN RESTAURANT" class="w-full h-48 object-cover">
+                <div class="p-4">
+                    <h2 class="text-xl font-semibold mb-2">Har Bhole Restaurant</h2>
+                    <p class="text-gray-600 text-sm mb-4">
+                        "Authentic Indian food with a variety of tastes and a pleasurable environment..."
+                    </p>
+                </div>
+            </a>
+
             <div class="bg-white rounded-lg shadow-md overflow-hidden">
                 <img src="image/Har_Bhole_Restaurant.jpeg" alt="SPICE GARDEN RESTAURANT" class="w-full h-48 object-cover">
                 <div class="p-4">

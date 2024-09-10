@@ -20,13 +20,12 @@
 </head>
 
 <body>
-    @include('components.header')
+    @include('Restaurant.RestaurantHeader')
 
     <main class="p-10">
         @yield('content')
     </main>
 
-    @include('components.footer')
 
 </body>
 

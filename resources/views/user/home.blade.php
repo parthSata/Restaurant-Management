@@ -99,42 +99,36 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <img src="image/Har_Bhole_Restaurant.jpeg" alt="SPICE GARDEN RESTAURANT"
-                        class="w-full h-48 object-cover">
-                    <div class="p-4">
-                        <h3 class="text-xl font-semibold mb-2">Har Bhole Restaurant</h3>
-                        <p class="text-gray-600 text-sm">
-                            "Authentic Indian food with Variety of Taste and pleasure environment for peace of your mind
-                            and..."
-                        </p>
-                    </div>
-                </div>
 
-                <!-- Tulsi Hotel -->
+                <!-- Static Restaurant 1 -->
+                <a href="{{ route('restaurant.show', 1) }}" class="block">
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <img src="image/Har_Bhole_Restaurant.jpeg" alt="Har Bhole Restaurant" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="text-xl font-semibold mb-2">Har Bhole Restaurant</h3>
+                            <p class="text-gray-600 text-sm">Authentic Indian food with a variety of tastes and a pleasant environment.</p>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Static Restaurant 2 -->
                 <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <img src="image/Gajanan.jpeg" alt="Tulsi Hotel" class="w-full h-48 object-cover">
+                    <img src="image/Gajanan.jpeg" alt="Gajanan Resort" class="w-full h-48 object-cover">
                     <div class="p-4">
                         <h3 class="text-xl font-semibold mb-2">Gajanan Resort</h3>
-                        <p class="text-gray-600 text-sm">
-                            Located near a train station, Hotel Tulsi is a great choice for a stay in Surat. Free perks
-                            include WiFi, sel...
-                        </p>
+                        <p class="text-gray-600 text-sm">A peaceful retreat with luxurious amenities and natural surroundings.</p>
                     </div>
                 </div>
 
-                <!-- Mr.Chef Fast Food -->
+                <!-- Static Restaurant 3 -->
                 <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <img src="image/UrbanRestro.jpg" alt="Mr.Chef Fast Food" class="w-full h-48 object-cover">
+                    <img src="image/UrbanRestro.jpg" alt="Tulsi Hotel" class="w-full h-48 object-cover">
                     <div class="p-4">
                         <h3 class="text-xl font-semibold mb-2">Tulsi Hotel</h3>
-                        <p class="text-gray-600 text-sm">
-                            A focus on quality ingredients and fast, friendly service.
-                        </p>
+                        <p class="text-gray-600 text-sm">Offering quality ingredients and fast, friendly service.</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
 @endsection
