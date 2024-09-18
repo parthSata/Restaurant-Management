@@ -13,7 +13,7 @@ class RestaurantController extends Controller
         $restaurants = Restaurant::all();
 
         // Pass the data to the view
-        return view('user.home', compact('restaurants'));
+        return view('admin.Restaurants.adminrestaurants', compact('restaurants'));
     }
 
     public function restaurantHome()
