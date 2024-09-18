@@ -1,10 +1,10 @@
 <?php
-
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Registration; // Add the Registration model
 
 class LoginController extends Controller
 {
@@ -15,22 +15,27 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {
+        // Validate incoming request data
         $credentials = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],
-            'role' => ['required', 'in:Customer,Seller,Admin'],
         ]);
 
-        if (Auth::attempt($credentials)) {
+        // Attempt to log in using the validated credentials from the 'registrations' table
+        if (Auth::guard('web')->attempt(['email' => $credentials['email'], 'password' => $credentials['password']])) {
+            \Log::info('User authenticated:', ['email' => $credentials['email']]);
+
+            // Regenerate the session to prevent fixation attacks
             $request->session()->regenerate();
 
-            // Redirect user based on their role
-            return redirect()->intended('/dashboard'); // Change to the appropriate route
+            // Redirect to the restaurant home page
+            return redirect()->intended(route('restaurant.home'));
         }
 
+        // If authentication fails, return an error message
         return back()->withErrors([
             'email' => 'The provided credentials do not match our records.',
-        ]);
+        ])->withInput();
     }
 
     public function logout(Request $request)

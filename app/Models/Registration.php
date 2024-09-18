@@ -9,6 +9,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 class Registration extends Authenticatable
 {
     use HasFactory;
+    protected $table = 'registrations'; // This ensures Laravel uses the 'registrations' table
 
     /**
      * The attributes that are mass assignable.
@@ -20,8 +21,7 @@ class Registration extends Authenticatable
         'last_name',
         'email',
         'password',
-        'confirm_password',
-        'role', 
+        'role',  // Assuming 'role' is in the database
     ];
 
     /**
@@ -42,4 +42,15 @@ class Registration extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * Automatically hash the password when setting it.
+     *
+     * @param  string  $value
+     * @return void
+     */
+    public function setPasswordAttribute($value)
+    {
+        $this->attributes['password'] = bcrypt($value); // Ensures the password is hashed
+    }
 }

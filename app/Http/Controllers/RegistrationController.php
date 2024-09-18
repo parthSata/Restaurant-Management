@@ -9,11 +9,7 @@ use Illuminate\Support\Facades\Validator;
 
 class RegistrationController extends Controller
 {
-    /**
-     * Show the registration form.
-     *
-     * @return \Illuminate\View\View
-     */
+  
     public function showRegistrationForm()
     {
         return view('auth.register');
