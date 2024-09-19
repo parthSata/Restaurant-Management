@@ -11,7 +11,7 @@ class TransactionController extends Controller
     public function index()
     {
         $transactions = Transaction::all(); // Fetch all transactions from the database
-        return view('admin.transactions.index', compact('transactions'));
+        return view('admin.transaction.transactions', compact('transactions'));
     }
 
     // Display a specific transaction by ID

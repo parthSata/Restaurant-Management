@@ -7,15 +7,18 @@
     <div class="">
         <div class="container mx-auto p-4">
             <div class="flex justify-between mb-4">
-                <div class="relative flex-grow mr-4">
-                    <input type="text" placeholder="Search" class="w-full pl-10 pr-4 py-2 border rounded-lg">
-                    <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                <div class="relative flex  justify-center items-center gap-2">
+                    <div class="">
+                        <input type="text" placeholder="Search" class="w-full pl-10  py-2 border rounded-lg">
+                        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                    </div>
+                    <ul class="">
+                        <li>Enquiries</li>
+                    </ul>
                 </div>
-                <div class="relative flex-grow mr-4">
-                    <input type="text" placeholder="Enquiries" class="w-full pl-10 pr-4 py-2 border rounded-lg">
-                    <i class="fas fa-question-circle absolute left-3 top-3 text-gray-400"></i>
+                <div class="">
+                    <button class="bg-blue-500 text-white px-4 py-2 rounded-lg">Add</button>
                 </div>
-                <button class="bg-blue-500 text-white px-4 py-2 rounded-lg">Add</button>
             </div>
             <div class="bg-white shadow-md rounded-lg overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">

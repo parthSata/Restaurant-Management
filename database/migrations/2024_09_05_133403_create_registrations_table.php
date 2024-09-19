@@ -9,18 +9,17 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+    public function up()
     {
-        Schema::create('registrations', function (Blueprint $table) {
+        Schema::create('transactions', function (Blueprint $table) {
             $table->id();
-            $table->string('first_name');
-            $table->string('last_name');
-            $table->string('email')->unique();
-            $table->string('password');
-            $table->string('confirm_password');
-            $table->timestamps();
+            $table->string('transaction_id')->unique();
+            $table->timestamp('transaction_date');
+            $table->string('payment_gateway');
+            $table->decimal('amount', 10, 2);
+            $table->string('payment_status');
+            $table->timestamps(); // Adds created_at and updated_at columns
         });
-
     }
 
     /**
