@@ -11,7 +11,7 @@ class CouponController extends Controller
     public function index()
     {
         $coupons = Coupon::all(); // Fetch all coupons from the database
-        return view('admin.coupons.index', compact('coupons'));
+        return view('admin.couponCodes.couponcodes', compact('coupons'));
     }
 
     // Display a specific coupon by ID

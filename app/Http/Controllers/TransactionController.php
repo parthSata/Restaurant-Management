@@ -8,12 +8,23 @@ use App\Models\Transaction;
 
 class TransactionController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $transactions = Transaction::all(); // Fetch all transactions from the database
-        return view('admin.transaction.transactions', compact('transactions'));
+        // Get the search query from the request
+        $search = $request->input('search');
+    
+        // Fetch transactions based on the search query
+        $transactions = Transaction::when($search, function ($query) use ($search) {
+            return $query->where('transaction_id', 'like', "%{$search}%");
+        })->get();
+    
+        // Debugging: Log the retrieved transactions
+        \Log::info($transactions);
+    
+        return view('admin.transaction.transactions', compact('transactions', 'search'));
     }
-
+    
+    
     // Display a specific transaction by ID
     public function show($id)
     {

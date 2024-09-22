@@ -28,7 +28,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     // Restaurant Routes
     Route::get('/restaurants', [RestaurantController::class, 'index'])->name('restaurants.index');  // Update this line
     Route::get('/restaurants/create', [RestaurantController::class, 'create'])->name('restaurants.create');
-    Route::post('/restaurants', [RestaurantController::class, 'store'])->name('restaurants.store');
+    Route::post('/restaurants/store', [RestaurantController::class, 'store'])->name('restaurants.store');
     Route::get('/restaurants/{id}/edit', [RestaurantController::class, 'edit'])->name('restaurants.edit');
     Route::put('/restaurants/{id}', [RestaurantController::class, 'update'])->name('restaurants.update');
     Route::delete('/restaurants/{id}', [RestaurantController::class, 'destroy'])->name('restaurants.destroy');

@@ -17,7 +17,22 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
         rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+
+    <!-- Toastr JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 </head>
+<script>
+    @if (Session::has('success'))
+        toastr.success("{{ Session::get('success') }}");
+    @elseif (Session::has('error'))
+        toastr.error("{{ Session::get('error') }}");
+    @elseif (Session::has('info'))
+        toastr.info("{{ Session::get('info') }}");
+    @elseif (Session::has('warning'))
+        toastr.warning("{{ Session::get('warning') }}");
+    @endif
+</script>
 
 <body>
     @include('admin.AdminHeader')

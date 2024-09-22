@@ -11,7 +11,7 @@
                     <input type="text" placeholder="Search" class="pl-10 pr-4 py-2 border rounded-lg w-64">
                     <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
                 </div>
-                <button class="bg-blue-500 text-white px-4 py-2 rounded-lg">Add</button>
+                <a href="{{ route('restaurants.create') }}"  class="bg-blue-500 text-white px-4 py-2 rounded-lg">Add</a>
             </div>
             <div class="bg-white shadow-md rounded-lg overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
@@ -155,7 +155,8 @@
                                 <button class="bg-gray-200 text-gray-700 px-3 py-1 rounded-md text-sm">Impersonate</button>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <button class="text-blue-600 hover:text-blue-900 mr-2"><i class="fas fa-edit"></i></button>
+                                <button class="text-blue-600 hover:text-blue-900 mr-2"><i
+                                        class="fas fa-edit"></i></button>
                                 <button class="text-red-600 hover:text-red-900"><i class="fas fa-trash"></i></button>
                             </td>
                         </tr>
@@ -177,7 +178,8 @@
                                         class="fas fa-chevron-down ml-1"></i></button>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="text-sm text-gray-900">Ht <i class="fas fa-external-link-alt ml-1"></i></span>
+                                <span class="text-sm text-gray-900">Ht <i
+                                        class="fas fa-external-link-alt ml-1"></i></span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <label class="switch">
@@ -196,7 +198,8 @@
                                 <button class="bg-gray-200 text-gray-700 px-3 py-1 rounded-md text-sm">Impersonate</button>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <button class="text-blue-600 hover:text-blue-900 mr-2"><i class="fas fa-edit"></i></button>
+                                <button class="text-blue-600 hover:text-blue-900 mr-2"><i
+                                        class="fas fa-edit"></i></button>
                                 <button class="text-red-600 hover:text-red-900"><i class="fas fa-trash"></i></button>
                             </td>
                         </tr>
@@ -218,7 +221,8 @@
                                         class="fas fa-chevron-down ml-1"></i></button>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="text-sm text-gray-900">Ht <i class="fas fa-external-link-alt ml-1"></i></span>
+                                <span class="text-sm text-gray-900">Ht <i
+                                        class="fas fa-external-link-alt ml-1"></i></span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <label class="switch">
@@ -237,7 +241,8 @@
                                 <button class="bg-gray-200 text-gray-700 px-3 py-1 rounded-md text-sm">Impersonate</button>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <button class="text-blue-600 hover:text-blue-900 mr-2"><i class="fas fa-edit"></i></button>
+                                <button class="text-blue-600 hover:text-blue-900 mr-2"><i
+                                        class="fas fa-edit"></i></button>
                                 <button class="text-red-600 hover:text-red-900"><i class="fas fa-trash"></i></button>
                             </td>
                         </tr>
@@ -259,7 +264,8 @@
                                         class="fas fa-chevron-down ml-1"></i></button>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="text-sm text-gray-900">Ht <i class="fas fa-external-link-alt ml-1"></i></span>
+                                <span class="text-sm text-gray-900">Ht <i
+                                        class="fas fa-external-link-alt ml-1"></i></span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <label class="switch">
@@ -278,7 +284,8 @@
                                 <button class="bg-gray-200 text-gray-700 px-3 py-1 rounded-md text-sm">Impersonate</button>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <button class="text-blue-600 hover:text-blue-900 mr-2"><i class="fas fa-edit"></i></button>
+                                <button class="text-blue-600 hover:text-blue-900 mr-2"><i
+                                        class="fas fa-edit"></i></button>
                                 <button class="text-red-600 hover:text-red-900"><i class="fas fa-trash"></i></button>
                             </td>
                         </tr>
