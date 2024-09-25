@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Registration;
+
 
 class RegistrationController extends Controller
 {
@@ -20,8 +22,7 @@ class RegistrationController extends Controller
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:registrations',
-            'password' => 'required|string|min:8|confirmed',
-            'confirm_password' => 'required|string|min:8|same:password',
+            'password' => 'required|string|min:8|confirmed', // Only the 'confirmed' rule is required
             'role' => 'required|string|in:customer,seller,admin',
         ]);
 
@@ -32,9 +33,15 @@ class RegistrationController extends Controller
                 ->withInput();
         }
 
-        // Perform other logic (like logging, sending confirmation emails, etc.)
-        // but do NOT save the user to the registrations table
+        $user = Registration::create([
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'email' => $request->email,
+            'password' => $request->password, // Password will be hashed automatically in the model
+            'role' => $request->role,
+        ]);
 
-        return redirect()->route('login')->with('success', 'Registration successful, but user was not stored.');
+        // Redirect after successful registration
+        return redirect()->route('login')->with('success', 'Registration successful!');
     }
 }

@@ -44,7 +44,10 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
     // Coupon Routes
     Route::get('/coupons', [CouponController::class, 'index'])->name('coupons.index');
+    Route::get('/coupons/create', [CouponController::class, 'create'])->name('coupons.create');  // Corrected route name
     Route::get('/coupons/{id}', [CouponController::class, 'show'])->name('coupons.show');
+    Route::post('/coupons/store', [CouponController::class, 'store'])->name('coupons.store');
+
 });
 
 // Authentication Routes

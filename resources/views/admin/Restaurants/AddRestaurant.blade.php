@@ -23,64 +23,74 @@
                     <h1 class="text-2xl font-semibold">Add Restaurant</h1>
                     <a class="px-4 py-2 text-sm text-blue-600 border border-blue-600 rounded hover:bg-blue-50">Back</a>
                 </div>
+
+
                 <form action="{{ route('restaurants.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="flex flex-col gap-2">
-                            <label for="restaurant-name" class="block text-sm font-medium text-gray-700">Restaurant Name
+                            <label for="restaurant_name" class="block text-sm font-medium text-gray-700">Restaurant Name
                                 *</label>
-                            <input type="text" id="restaurant-name" name="restaurant-name"
+                            <input type="text" id="restaurant_name" name="restaurant_name"
                                 class="w-full h-12 focus:outline-none border-gray-400 border p-2 placeholder:font-semibold rounded-md"
-                                placeholder="Restaurant Name">
+                                placeholder="Restaurant Name" value="{{ old('restaurant_name') }}">
+
                         </div>
                         <div class="flex flex-col gap-2">
-                            <label for="restaurant-slug" class="block text-sm font-medium text-gray-700">Restaurant Slug
+                            <label for="restaurant_slug" class="block text-sm font-medium text-gray-700">Restaurant Slug
                                 *</label>
-                            <input type="text" id="restaurant-slug"
+                            <input type="text" id="restaurant_slug"
                                 class="w-full h-12 focus:outline-none border-gray-400 border p-2 placeholder:font-semibold rounded-md"
-                                placeholder="Restaurant Slug">
+                                placeholder="Restaurant Slug" value="{{ old('restaurant_slug') }}">
+
                         </div>
                         <div class="flex flex-col gap-2">
                             <label class="block text-sm font-medium text-gray-700">Contact First
                                 Name *</label>
                             <input type="text"
                                 class="w-full h-12 focus:outline-none border-gray-400 border p-2 placeholder:font-semibold rounded-md"
-                                placeholder="Contact First Name">
+                                placeholder="Contact First Name" value="{{ old('contact_first_name') }}">
+
                         </div>
                         <div class="flex flex-col gap-2">
                             <label for="contact-last-name" class="block text-sm font-medium text-gray-700">Contact Last Name
                                 *</label>
                             <input type="text" id="contact-last-name"
                                 class="w-full h-12 focus:outline-none border-gray-400 border p-2 placeholder:font-semibold rounded-md"
-                                placeholder="Contact Last Name">
+                                placeholder="Contact Last Name" value="{{ old('contact_last_name') }}">
+
                         </div>
                         <div class="flex flex-col gap-2">
-                            <label for="restaurant-name" class="block text-sm font-medium text-gray-700">Contact Phone
+                            <label for="contact_phone" class="block text-sm font-medium text-gray-700">Contact Phone
                                 *</label>
-                            <input type="text" id="restaurant-name" name="restaurant-name"
+                            <input type="number" maxlength="10" id="contact_phone" name="contact_phone"
                                 class="w-full h-12 focus:outline-none border-gray-400 border p-2 placeholder:font-semibold rounded-md"
-                                placeholder="Contact Phone">
+                                placeholder="Contact Phone" value="{{ old('contact_phone') }}">
+
                         </div>
                         <div class="flex flex-col gap-2">
-                            <label for="contact-email" class="block text-sm font-medium text-gray-700">Contact Email
+                            <label for="contact_email" class="block text-sm font-medium text-gray-700">Contact Email
                                 *</label>
-                            <input type="text" id="contact-email"
+                            <input type="email" id="contact_email"
                                 class="w-full h-12 focus:outline-none border-gray-400 border p-2 placeholder:font-semibold rounded-md"
-                                placeholder="Contact Email">
+                                placeholder="Contact Email" value="{{ old('contact_email') }}">
+
                         </div>
                         <div class="flex flex-col gap-2">
                             <label for="password" class="block text-sm font-medium text-gray-700">Password
                                 *</label>
-                            <input type="text" id="password"
+                            <input type="password" id="password" required
                                 class="w-full h-12 focus:outline-none border-gray-400 border p-2 placeholder:font-semibold rounded-md"
-                                placeholder="Password">
+                                placeholder="Password" value="{{ old('password') }}">
+
                         </div>
                         <div class="flex flex-col gap-2">
-                            <label for="confirm-password" class="block text-sm font-medium text-gray-700">Confirm Password
-                                *</label>
-                            <input type="text"
+                            <label for="confirm_password" class="block text-sm font-medium text-gray-700">Confirm
+                                Password</label>
+                            <input type="password" id="confirm_password"
                                 class="w-full h-12 focus:outline-none border-gray-400 border p-2 placeholder:font-semibold rounded-md"
-                                placeholder="Confirm Password">
+                                placeholder="Confirm Password" value="{{ old('confirm_password') }}">
+
                         </div>
                     </div>
                     <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -92,7 +102,8 @@
 
                                     <textarea id="about-us" name="about-us" rows="5"
                                         class="block w-full border-gray-300 resize-none rounded-b-md focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                                        placeholder="About Us"></textarea>
+                                        placeholder="About Us">{{ old('about_us') }}</textarea>
+
                                 </div>
                             </div>
                         </div>
@@ -104,7 +115,8 @@
 
                                     <textarea id="about-us" name="about-us" rows="5"
                                         class="block w-full border-gray-300 resize-none rounded-b-md focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                                        placeholder="Short About"></textarea>
+                                        placeholder="Short About">{{ old('short_about') }}</textarea>
+
                                 </div>
                             </div>
                         </div>
@@ -113,8 +125,9 @@
                     <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Service Type Dropdown -->
                         <div class="flex flex-col gap-2">
-                            <label for="service-type" class="block text-sm font-medium text-gray-700">Service Type *</label>
-                            <select id="service-type" name="service_type"
+                            <label for="service-type" class="block text-sm font-medium text-gray-700">Service Type
+                                *</label>
+                            <select id="service-type" name="service_type" required
                                 class="w-full h-12 focus:outline-none border-gray-400 border p-2 placeholder:font-semibold rounded-md hover:cursor-pointer">
                                 <option
                                     class="cursor-default bg-white hover:bg-blue-200 select-none relative py-2 pl-3 pr-9"
@@ -129,12 +142,15 @@
                                     class="cursor-default bg-white hover:bg-blue-200 select-none relative py-2 pl-3 pr-9"
                                     value="Pickup">Pickup</option>
                             </select>
+                            @error('service_type')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
                         </div>
 
                         <!-- Status Dropdown -->
                         <div class="flex flex-col gap-2">
                             <label for="status" class="block text-sm font-medium text-gray-700">Status *</label>
-                            <select id="status" name="status"
+                            <select id="status" name="status" required
                                 class="w-full h-12 focus:outline-none border-gray-400 border p-2 placeholder:font-semibold rounded-md">
                                 <option class="cursor-default hover:bg-blue-200 select-none relative py-2 pl-3 pr-9 "
                                     value="">Select Status</option>
@@ -143,12 +159,15 @@
                                 <option class="cursor-default hover:bg-blue-200 select-none relative py-2 pl-3 pr-9 "
                                     value="Inactive">Inactive</option>
                             </select>
+                            @error('status')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
                         </div>
 
                         <!-- Currency Dropdown -->
                         <div class="flex flex-col gap-2">
                             <label for="currency" class="block text-sm font-medium text-gray-700">Currency *</label>
-                            <select id="currency" name="currency"
+                            <select id="currency" name="currency" required
                                 class="w-full h-12 focus:outline-none border-gray-400 border p-2 placeholder:font-semibold rounded-md">
                                 <option class="cursor-default hover:bg-blue-200 select-none relative py-2 pl-3 pr-9 "
                                     value="">Select Currency</option>
@@ -159,13 +178,16 @@
                                 <option class="cursor-default hover:bg-blue-200 select-none relative py-2 pl-3 pr-9 "
                                     value="GBP">GBP</option>
                             </select>
+                            @error('currency')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
                         </div>
 
                         <!-- Restaurant Type Dropdown -->
                         <div class="flex flex-col gap-2">
                             <label for="restaurant-type" class="block text-sm font-medium text-gray-700">Restaurant Type
                                 *</label>
-                            <select id="restaurant-type" name="restaurant_type"
+                            <select id="restaurant-type" name="restaurant_type" required
                                 class="w-full h-12 focus:outline-none border-gray-400 border p-2 placeholder:font-semibold rounded-md">
                                 <option class="cursor-default hover:bg-blue-200 select-none relative py-2 pl-3 pr-9 "
                                     value="">Select Type</option>
@@ -190,7 +212,7 @@
                             </div>
 
                             <!-- File Input for Logo -->
-                            <input type="file" id="logo-input" name="logo"
+                            <input type="file" id="logo-input" name="logo" accept="image/*"
                                 onchange="previewImage(event, 'logo-preview')" class="hidden" />
                             <label for="logo-input"
                                 class="absolute bg-white p-2 -top-2 left-24 flex justify-center items-center  border border-gray-300 rounded-full cursor-pointer">
@@ -206,7 +228,7 @@
                             </div>
 
                             <!-- File Input for Favicon -->
-                            <input type="file" id="favicon-input" name="favicon"
+                            <input type="file" id="favicon-input" name="favicon" accept="image/*"
                                 onchange="previewImage(event, 'favicon-preview')" class="hidden" />
                             <label for="favicon-input"
                                 class="absolute bg-white p-2 -top-2 left-24 flex justify-center items-center  border border-gray-300 rounded-full cursor-pointer">
@@ -222,7 +244,7 @@
                             </div>
 
                             <!-- File Input for Feature Image -->
-                            <input type="file" id="feature-image-input" name="feature_image"
+                            <input type="file" id="feature-image-input" name="feature_image" accept="image/*"
                                 onchange="previewImage(event, 'feature-image-preview')" class="hidden" />
                             <label for="feature-image-input"
                                 class="absolute bg-white p-2 -top-2 left-32 flex justify-center items-center  border border-gray-300 rounded-full cursor-pointer">

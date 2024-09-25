@@ -7,5 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Coupon extends Model
 {
-    use HasFactory;
+    protected $table = 'coupons';
+
+    protected $fillable = [
+        'coupon_name',
+        'expiry_date',
+        'coupon_type',
+        'discount',
+        'status',
+    ];
 }

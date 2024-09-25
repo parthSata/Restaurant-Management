@@ -2,16 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class Restaurant extends Authenticatable
 {
-    use HasFactory;
+    protected $table = 'restaurants';
 
     protected $fillable = [
-        'restaurant-name',
-        'restaurant-slug',
+        'restaurant_name',
+        'restaurant_slug',
         'contact_first_name',
         'contact_last_name',
         'contact_phone',

@@ -18,9 +18,10 @@
                         </svg>
                     </div>
                 </div>
-                <button class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded">
+                <a href="{{ route('coupons.create') }}"
+                    class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded">
                     Add Coupon Code
-                </button>
+                </a>
             </div>
 
             <table class="w-full">

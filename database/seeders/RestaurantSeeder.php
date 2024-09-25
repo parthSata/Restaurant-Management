@@ -3,44 +3,38 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+use App\Models\Restaurant;
 use Illuminate\Support\Facades\Hash;
 
 class RestaurantSeeder extends Seeder
 {
     /**
      * Run the database seeds.
+     *
+     * @return void
      */
-    public function run(): void
+    public function run()
     {
-        DB::table('restaurants')->insert([
-            [
-                'restaurant_name' => 'Har Bhole Restaurant',
-                'contact_first_name' => 'Har',
-                'contact_last_name' => 'Bhole',
-                'password' => Hash::make('password123'), // Hashing the password
-                'service_type' => 'Dine-In',
-                'restaurant_type' => 'Indian',
-                'logo' => 'logo1.png',
-                'favicon' => 'favicon1.ico',
-                'feature_image' => 'feature_image1.jpg',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'restaurant_name' => 'Shiva’s Delight',
-                'contact_first_name' => 'Shiva',
-                'contact_last_name' => 'Rao',
-                'password' => Hash::make('password123'), // Hashing the password
-                'service_type' => 'Takeaway',
-                'restaurant_type' => 'Vegetarian',
-                'logo' => 'logo2.png',
-                'favicon' => 'favicon2.ico',
-                'feature_image' => 'feature_image2.jpg',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            // Add more entries as needed
+        // Use the factory to create multiple restaurant records
+        Restaurant::create([
+            'restaurant_name' => 'The Gourmet Place',
+            'restaurant_slug' => 'the-gourmet-place',
+            'contact_first_name' => 'John',
+            'contact_last_name' => 'Doe',
+            'contact_phone' => '1234567890',
+            'contact_email' => 'contact@gourmetplace.com',
+            'password' => Hash::make('password123'),
+            'about_us' => 'The best gourmet food in town!',
+            'short_about' => 'Premium quality gourmet dishes',
+            'service_type' => 'Dine-in',
+            'status' => 'active',
+            'currency' => 'USD',
+            'restaurant_type' => 'Fine Dining',
+            'logo' => '/Uploaded_Images/default_logo.png',
+            'favicon' => '/Uploaded_Images/default_favicon.png',
+            'feature_image' => '/Uploaded_Images/default_feature_image.png',
         ]);
+
+        // Generate 10 dummy restaurants using Faker
     }
 }

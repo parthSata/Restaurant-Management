@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Restaurant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
+
 
 
 class RestaurantController extends Controller
@@ -44,50 +46,58 @@ class RestaurantController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'restaurant-name' => 'required|string|max:255',
-            'restaurant-slug' => 'required|string|max:255|unique:restaurants,slug',
+            'restaurant_name' => 'required|string|max:255',
+            'restaurant_slug' => 'required|string|max:255',
             'contact_first_name' => 'required|string|max:255',
             'contact_last_name' => 'required|string|max:255',
             'contact_phone' => 'required|string|max:15',
-            'contact_email' => 'required|email|max:255|unique:restaurants,contact_email',
-            'password' => 'required|min:8|confirmed',
+            'contact_email' => 'required|email|max:255',
+            'password' => 'required|string|min:6',
             'about_us' => 'required|string',
-            'short_about' => 'required|string|max:255',
-            'service_type' => 'required|string',
-            'status' => 'required|string',
-            'currency' => 'required|string',
-            'restaurant_type' => 'required|string',
-            'logo' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
-            'favicon' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
-            'feature_image' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+            'short_about' => 'required|string',
+            'service_type' => 'required',
+            'status' => 'required',
+            'currency' => 'required',
+            'restaurant_type' => 'required',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'favicon' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'feature_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
-        $data = $request->all();
-
+    
+        $restaurant = new Restaurant();
+    
+        $restaurant->restaurant_name = $request->restaurant_name;
+        $restaurant->restaurant_slug = $request->restaurant_slug;
+        $restaurant->contact_first_name = $request->contact_first_name;
+        $restaurant->contact_last_name = $request->contact_last_name;
+        $restaurant->contact_phone = $request->contact_phone;
+        $restaurant->contact_email = $request->contact_email;
+        $restaurant->password = $request->password;
+        $restaurant->about_us = $request->about_us;
+        $restaurant->short_about = $request->short_about;
+        $restaurant->service_type = $request->service_type;
+        $restaurant->status = $request->status;
+        $restaurant->currency = $request->currency;
+        $restaurant->restaurant_type = $request->restaurant_type;
+    
         if ($request->hasFile('logo')) {
-            $logo = $request->file('logo');
-            $logoName = time() . '_logo.' . $logo->getClientOriginalExtension();
-            $logo->move(public_path('Uploaded_Images'), $logoName);
-            $data['logo'] = '/Uploaded_Images/' . $logoName;
+            $logoPath = $request->file('logo')->store('Upload_Images', 'public');
+            $restaurantData['logo'] = $logoPath;
         }
     
         if ($request->hasFile('favicon')) {
-            $favicon = $request->file('favicon');
-            $faviconName = time() . '_favicon.' . $favicon->getClientOriginalExtension();
-            $favicon->move(public_path('Uploaded_Images'), $faviconName);
-            $data['favicon'] = '/Uploaded_Images/' . $faviconName;
+            $faviconPath = $request->file('favicon')->store('Upload_Images', 'public');
+            $restaurantData['favicon'] = $faviconPath;
         }
     
         if ($request->hasFile('feature_image')) {
-            $featureImage = $request->file('feature_image');
-            $featureImageName = time() . '_feature_image.' . $featureImage->getClientOriginalExtension();
-            $featureImage->move(public_path('Uploaded_Images'), $featureImageName);
-            $data['feature_image'] = '/Uploaded_Images/' . $featureImageName;
+            $featureImagePath = $request->file('feature_image')->store('Upload_Images', 'public');
+            $restaurantData['feature_image'] = $featureImagePath;
         }
-
-        // Insert into the database
-        Restaurant::create($data);
-
-        // Redirect with success message
-        return redirect()->route('restaurants.index')->with('success', 'Restaurant added successfully!');
+    
+        $restaurant->save();
+    
+        return redirect()->route('restaurants.index')->with('success', 'Restaurant created successfully!');
     }
+    
 }
