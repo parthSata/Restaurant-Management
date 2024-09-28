@@ -38,13 +38,13 @@
                 <tbody>
                     @forelse($coupons as $coupon)
                         <tr class="border-b">
-                            <td class="py-3">{{ $coupon->name }}</td>
+                            <td class="py-3">{{ $coupon->coupon_name }}</td>
                             <td>
                                 <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm">
-                                    {{ ucfirst($coupon->type) }}
+                                    {{ ucfirst($coupon->coupon_type) }}
                                 </span>
                             </td>
-                            <td>{{ $coupon->type == 'percentage' ? $coupon->discount . '%' : '$' . number_format($coupon->discount, 2) }}
+                            <td>{{ $coupon->coupon_type == 'percentage' ? $coupon->discount . '%' : '$' . number_format($coupon->discount, 2) }}
                             </td>
                             <td>
                                 <span class="bg-red-100 text-red-800 px-2 py-1 rounded text-sm">

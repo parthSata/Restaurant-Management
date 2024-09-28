@@ -12,12 +12,14 @@
                         <input type="text" placeholder="Search" class="w-full pl-10  py-2 border rounded-lg">
                         <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
                     </div>
-                    <ul class="">
-                        <li>Enquiries</li>
+                    <ul class="hover:underline mb-2">
+                        <a href="" class="">
+                            <li class=" cursor-pointer text-lg font-serif">Customers</li>
+                        </a>
+                        <a href="" class="">
+                            <li class=" cursor-pointer text-lg font-serif">Enquiries</li>
+                        </a>
                     </ul>
-                </div>
-                <div class="">
-                    <button class="bg-blue-500 text-white px-4 py-2 rounded-lg">Add</button>
                 </div>
             </div>
             <div class="bg-white shadow-md rounded-lg overflow-x-auto">

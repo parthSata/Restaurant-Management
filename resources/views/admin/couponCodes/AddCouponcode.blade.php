@@ -8,7 +8,7 @@
         <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-6">
             <div class="flex justify-between items-center mb-6">
                 <h1 class="text-2xl font-bold text-gray-800">Add Coupon Code</h1>
-                <a href="{{ route('coupons.index') }}"
+                <a href="/admin/couponsa"
                     class="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-100 rounded-md hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
                     Back
                 </a>

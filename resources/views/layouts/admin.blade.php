@@ -23,15 +23,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 </head>
 <script>
-    @if (Session::has('success'))
-        toastr.success("{{ Session::get('success') }}");
-    @elseif (Session::has('error'))
-        toastr.error("{{ Session::get('error') }}");
-    @elseif (Session::has('info'))
-        toastr.info("{{ Session::get('info') }}");
-    @elseif (Session::has('warning'))
-        toastr.warning("{{ Session::get('warning') }}");
-    @endif
+    @if (session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+@endif
+
 </script>
 
 <body>

@@ -16,10 +16,10 @@ Route::get('/restaurant/{id}', [RestaurantController::class, 'show'])->name('res
 Route::view('/contact', 'user.contact')->name('contact');
 Route::view('/restaurant', 'user.restaurant')->name('user.restaurant');
 
+Route::get('/admin/restaurant-home', [RestaurantController::class, 'restaurantHome'])->name('restaurant.home');
 // Admin Routes
 Route::prefix('admin')->middleware('auth')->group(function () {
 
-    Route::get('/admin/restaurant-home', [RestaurantController::class, 'restaurantHome'])->name('restaurant.home');
 
     Route::get('/dashboard', function () {
         return view('admin.dashboard.dashboard');
@@ -29,7 +29,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/restaurants', [RestaurantController::class, 'index'])->name('restaurants.index');  // Update this line
     Route::get('/restaurants/create', [RestaurantController::class, 'create'])->name('restaurants.create');
     Route::post('/restaurants/store', [RestaurantController::class, 'store'])->name('restaurants.store');
-    Route::get('/restaurants/{id}/edit', [RestaurantController::class, 'edit'])->name('restaurants.edit');
+    Route::get('restaurants/{id}/edit', [RestaurantController::class, 'edit'])->name('restaurants.edit');
     Route::put('/restaurants/{id}', [RestaurantController::class, 'update'])->name('restaurants.update');
     Route::delete('/restaurants/{id}', [RestaurantController::class, 'destroy'])->name('restaurants.destroy');
 
