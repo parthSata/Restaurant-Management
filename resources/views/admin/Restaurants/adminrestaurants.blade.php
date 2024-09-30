@@ -48,9 +48,8 @@
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center">
                                         <div class="flex-shrink-0 h-10 w-10">
-                                            <img class="h-10 w-10 rounded-full" id="previewId"
-                                                src="{{ asset('storage/Uploaded_Images/' . ($restaurant->logo ?? 'default-logo.png')) }}"
-                                                alt="Restaurant logo">
+                                            <img src="{{ asset('/storage/' . $restaurant->logo) }}" alt="Restaurant Logo" />
+
                                         </div>
 
                                         <div class="ml-4">

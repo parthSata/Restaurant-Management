@@ -136,7 +136,7 @@
                                 *</label>
                             <select id="service_type" name="service_type" required class="...">
                                 <option value="">Select Service Type</option>
-                                @foreach ($serviceTypes as $type)
+                                @foreach ($service_type as $type)
                                     <option value="{{ $type }}"
                                         {{ isset($restaurant) && $restaurant->service_type == $type ? 'selected' : '' }}>
                                         {{ $type }}
@@ -206,7 +206,7 @@
                         <div class="mt-1 relative flex items-center">
                             <div class="bg-white border p-2">
                                 <img id="logo-preview"
-                                    src="{{ asset('storage/' . ($restaurant->logo ?? 'default-logo.png')) }}"
+                                    src="{{ isset($restaurant->logo) ? asset('/storage' . $restaurant->logo) : asset('/image/Logo.png') }}"
                                     alt="Logo placeholder" class="w-24 h-28 object-cover rounded-md">
                             </div>
                             <input type="file" id="logo-input" name="logo" accept="image/*"
@@ -221,7 +221,7 @@
                         <div class="mt-1 relative flex items-center">
                             <div class="bg-white border p-2">
                                 <img id="favicon-preview"
-                                    src="{{ asset('storage/' . ($restaurant->favicon ?? 'default-favicon.png')) }}"
+                                    src="{{ isset($restaurant->favicon) ? asset('/storage' . $restaurant->favicon) : asset('/image/Logo.png') }}"
                                     alt="Favicon placeholder" class="w-24 h-28 object-cover rounded-md">
                             </div>
                             <input type="file" id="favicon-input" name="favicon" accept="image/*"
@@ -236,7 +236,7 @@
                         <div class="relative flex items-center">
                             <div class="bg-white border">
                                 <img id="feature-image-preview"
-                                    src="{{ asset('storage/' . ($restaurant->feature_image ?? 'default-feature.png')) }}"
+                                    src="{{ isset($restaurant->feature_image) ? asset('/storage' . $restaurant->feature_image) : asset('/image/Gajanan.jpeg') }}"
                                     alt="Feature Image placeholder" class="w-32 h-28 object-cover rounded-md">
                             </div>
                             <input type="file" id="feature-image-input" name="feature_image" accept="image/*"
@@ -247,6 +247,7 @@
                             </label>
                         </div>
                     </div>
+
 
 
 

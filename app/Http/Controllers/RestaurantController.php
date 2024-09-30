@@ -33,15 +33,14 @@ class RestaurantController extends Controller
     public function edit($id)
     {
         $restaurant = Restaurant::findOrFail($id);
-        $serviceTypes = ['Delivery', 'Dine In', 'Pickup'];
+        $service_type = ['Delivery', 'Dine In', 'Pickup'];
         $statuses = ['active', 'inactive'];
         $currencies = ['USD', 'EUR', 'GBP'];
         $restaurantTypes = ['FastFood', 'CasualDining', 'FineDining'];
     
         // Debugging: Log the variables being passed
-        \Log::info('Edit Restaurant Variables: ' . print_r(compact( 'serviceTypes', 'statuses', 'currencies', 'restaurantTypes'), true));
     
-        return view('admin.Restaurants.AddRestaurant', compact('restaurant', 'serviceTypes', 'statuses', 'currencies', 'restaurantTypes'));
+        return view('admin.Restaurants.AddRestaurant', compact('restaurant', 'service_type', 'statuses', 'currencies', 'restaurantTypes'));
     }
     
 
@@ -120,77 +119,72 @@ class RestaurantController extends Controller
         return view('components.Restaurant.Home.index', compact('restaurant'));
     }
 
-    public function create()
-    {
-        return view('admin.Restaurants.AddRestaurant');
+   public function create()
+{
+    $service_type = ['Delivery', 'Dine In', 'Pickup'];
+    $statuses = ['active', 'inactive'];
+    $currencies = ['USD', 'EUR', 'GBP'];
+    $restaurantTypes = ['FastFood', 'CasualDining', 'FineDining'];
+
+    return view('admin.Restaurants.AddRestaurant', compact('service_type', 'statuses', 'currencies', 'restaurantTypes'));
+}
+
+public function store(Request $request)
+{
+    $request->validate([
+        'restaurant_name' => 'required|string|max:255',
+        'restaurant_slug' => 'required|string|max:255',
+        'contact_first_name' => 'required|string|max:255',
+        'contact_last_name' => 'required|string|max:255',
+        'contact_phone' => 'required|string|max:15',
+        'contact_email' => 'required|email|max:255',
+        'password' => 'required|string|min:6',
+        'about_us' => 'required|string',
+        'short_about' => 'required|string',
+        'service_type' => 'required',
+        'status' => 'required',
+        'currency' => 'required',
+        'restaurant_type' => 'required',
+        'logo' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        'favicon' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        'feature_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+    ]);
+
+    $restaurant = new Restaurant();
+
+    $restaurant->restaurant_name = $request->restaurant_name;
+    $restaurant->restaurant_slug = $request->restaurant_slug;
+    $restaurant->contact_first_name = $request->contact_first_name;
+    $restaurant->contact_last_name = $request->contact_last_name;
+    $restaurant->contact_phone = $request->contact_phone;
+    $restaurant->contact_email = $request->contact_email;
+    $restaurant->password = $request->password;
+    $restaurant->about_us = $request->about_us;
+    $restaurant->short_about = $request->short_about;
+    $restaurant->service_type = $request->service_type;
+    $restaurant->status = $request->status;
+    $restaurant->currency = $request->currency;
+    $restaurant->restaurant_type = $request->restaurant_type;
+
+    if ($request->hasFile('logo')) {
+        $logoPath = $request->file('logo')->store('Uploaded_Images', 'public');
+        $restaurant->logo = $logoPath; // Assign the path to the model
+    }
+    
+    if ($request->hasFile('favicon')) {
+        $faviconPath = $request->file('favicon')->store('Uploaded_Images', 'public');
+        $restaurant->favicon = $faviconPath; // Assign the path to the model
+    }
+    
+    if ($request->hasFile('feature_image')) {
+        $featureImagePath = $request->file('feature_image')->store('Uploaded_Images', 'public');
+        $restaurant->feature_image = $featureImagePath; // Assign the path to the model
     }
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'restaurant_name' => 'required|string|max:255',
-            'restaurant_slug' => 'required|string|max:255',
-            'contact_first_name' => 'required|string|max:255',
-            'contact_last_name' => 'required|string|max:255',
-            'contact_phone' => 'required|string|max:15',
-            'contact_email' => 'required|email|max:255',
-            'password' => 'required|string|min:6',
-            'about_us' => 'required|string',
-            'short_about' => 'required|string',
-            'service_type' => 'required',
-            'status' => 'required',
-            'currency' => 'required',
-            'restaurant_type' => 'required',
-            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'favicon' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'feature_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        ]);
-    
-        $restaurant = new Restaurant();
-    
-        $restaurant->restaurant_name = $request->restaurant_name;
-        $restaurant->restaurant_slug = $request->restaurant_slug;
-        $restaurant->contact_first_name = $request->contact_first_name;
-        $restaurant->contact_last_name = $request->contact_last_name;
-        $restaurant->contact_phone = $request->contact_phone;
-        $restaurant->contact_email = $request->contact_email;
-        $restaurant->password = $request->password;
+    $restaurant->save();
 
-        $request->validate([
-            'password' => 'required|min:8|confirmed', // Use 'confirmed' rule
-            // Other validation rules...
-        ]);
-    
-        $user = new User();
-        $user->password = Hash::make($request->password);
-        $user->save();
+    return redirect()->route('restaurants.index')->with('success', 'Restaurant created successfully!');
+}
 
-        $restaurant->about_us = $request->about_us;
-        $restaurant->short_about = $request->short_about;
-        $restaurant->service_type = $request->service_type;
-        $restaurant->status = $request->status;
-        $restaurant->currency = $request->currency;
-        $restaurant->restaurant_type = $request->restaurant_type;
-    
-        if ($request->hasFile('logo')) {
-            $logoPath = $request->file('logo')->store('Uploaded_Images', 'public');
-            $restaurant->logo = $logoPath; // Assign the path to the model
-        }
-    
-        if ($request->hasFile('favicon')) {
-            $faviconPath = $request->file('favicon')->store('Uploaded_Images', 'public');
-            $restaurant->favicon = $faviconPath; // Assign the path to the model
-        }
-    
-        if ($request->hasFile('feature_image')) {
-            $featureImagePath = $request->file('feature_image')->store('Uploaded_Images', 'public');
-            $restaurant->feature_image = $featureImagePath; // Assign the path to the model
-        }
-    
-    
-        $restaurant->save();
-    
-        return redirect()->route('restaurants.index')->with('success', 'Restaurant created successfully!');
-    }
     
 }
