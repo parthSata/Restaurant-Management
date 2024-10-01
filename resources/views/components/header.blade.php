@@ -20,7 +20,7 @@
                     <li><a href="/"
                             class="text-gray-600 focus:text-black  focus:font-semibold hover:text-black  font-semibold">Home</a>
                     </li>
-                    <li><a href="/restaurant"
+                    <li><a href="/restaurants"
                             class="text-gray-600 focus:text-black  focus:font-semibold hover:text-black  font-semibold">Restaurants</a>
                     </li>
                     <li><a href="/contact"
@@ -32,7 +32,8 @@
                         <img src='image/Cart.png' alt="Cart" className="absolute  h-8 w-8  cursor-pointer" />
                     </div>
                     <div className="relative flex w-[15%]  items-center justify-center  h-full">
-                        <img src='image/Profile.png' alt="" className=" h-12 w-12 cursor-pointer" onClick={openDialog} />
+                        <img src='image/Profile.png' alt="" className=" h-12 w-12 cursor-pointer"
+                            onClick={openDialog} />
                     </div>
                     <a href="/login">
                         <button

@@ -7,16 +7,28 @@ use App\Http\Controllers\RestaurantController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\CouponController;
+use App\Http\Controllers\HomeController;
 
 // Public Restaurant Routes
-Route::get('/', [RestaurantController::class, 'index'])->name('home'); // Home page with restaurant listings
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/home/{id}', [HomeController::class, 'index'])->name('Home.index');
+
+Route::get('/restaurants', [RestaurantController::class, 'userIndex'])->name('restaurants.user.index');
 Route::get('/restaurant/{id}', [RestaurantController::class, 'show'])->name('restaurant.show');
+Route::get('/restaurant-home', [RestaurantController::class, 'restaurantHome'])->name('restaurant.home');
 
 // Static View Routes
 Route::view('/contact', 'user.contact')->name('contact');
-Route::view('/restaurant', 'user.restaurant')->name('user.restaurant');
 
-Route::get('/admin/restaurant-home', [RestaurantController::class, 'restaurantHome'])->name('restaurant.home');
+// Authentication Routes
+Route::get('/register', [RegistrationController::class, 'showRegistrationForm'])->name('register');
+Route::post('/register', [RegistrationController::class, 'register']);
+
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [LoginController::class, 'login']);
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+
 // Admin Routes
 Route::prefix('admin')->middleware('auth')->group(function () {
 
@@ -50,10 +62,21 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
 });
 
-// Authentication Routes
-Route::get('/register', [RegistrationController::class, 'showRegistrationForm'])->name('register');
-Route::post('/register', [RegistrationController::class, 'register']);
+Route::prefix('seller')->middleware('auth')->group(function () {
 
-Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [LoginController::class, 'login']);
-Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+    Route::get('/dashboard', function () {
+        return view('seller.dashboard.dashboard');
+    })->name('seller.dashboard');
+
+    // Restaurant-specific Routes for Seller
+    Route::get('/restaurant/{id}', [RestaurantController::class, 'showSellerRestaurant'])->name('seller.restaurant.show');
+    Route::get('/restaurant/{id}/edit', [RestaurantController::class, 'editSellerRestaurant'])->name('seller.restaurant.edit');
+    Route::put('/restaurant/{id}', [RestaurantController::class, 'updateSellerRestaurant'])->name('seller.restaurant.update');
+
+    // Coupon Routes for Seller
+    Route::get('/restaurant/{id}/coupons', [CouponController::class, 'showRestaurantCoupons'])->name('seller.restaurant.coupons');
+    Route::post('/restaurant/{id}/coupons/store', [CouponController::class, 'storeRestaurantCoupon'])->name('seller.restaurant.coupons.store');
+
+    // Transaction Routes for Seller
+    Route::get('/restaurant/{id}/transactions', [TransactionController::class, 'showRestaurantTransactions'])->name('seller.restaurant.transactions');
+});

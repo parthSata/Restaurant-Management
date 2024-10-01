@@ -7,12 +7,22 @@ use App\Models\Restaurant;
 
 class HomeController extends Controller
 {
-    public function index()
+    public function index($id = null)
     {
-        // Retrieve restaurants from the database
-        $restaurants = Restaurant::all();
+        if ($id) {
+            // If an ID is provided, fetch the specific restaurant
+            $restaurant = Restaurant::find($id);
 
-        // Return the home view with the restaurants data
-        return view('home', compact('restaurants'));
+            if (!$restaurant) {
+                return redirect()->back()->with('error', 'Restaurant not found');
+            }
+
+            return view('user.restaurant', compact('restaurant'));
+        } else {
+            // If no ID, show a list of all restaurants (for the home page)
+            $restaurants = Restaurant::all();
+
+            return view('user.home', compact('restaurants'));
+        }
     }
 }

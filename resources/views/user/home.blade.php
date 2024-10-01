@@ -97,45 +97,15 @@
             <div class="relative flex">
                 <h2 class="text-3xl font-bold mb-6">Featured Restaurants</h2>
             </div>
-            {{-- 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
-                <!-- Static Restaurant 1 -->
-                <a href="{{ route('restaurant.show', 1) }}" class="block">
-                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                        <img src="image/Har_Bhole_Restaurant.jpeg" alt="Har Bhole Restaurant" class="w-full h-48 object-cover">
-                        <div class="p-4">
-                            <h3 class="text-xl font-semibold mb-2">Har Bhole Restaurant</h3>
-                            <p class="text-gray-600 text-sm">Authentic Indian food with a variety of tastes and a pleasant environment.</p>
-                        </div>
-                    </div>
-                </a>
-
-                <!-- Static Restaurant 2 -->
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <img src="image/Gajanan.jpeg" alt="Gajanan Resort" class="w-full h-48 object-cover">
-                    <div class="p-4">
-                        <h3 class="text-xl font-semibold mb-2">Gajanan Resort</h3>
-                        <p class="text-gray-600 text-sm">A peaceful retreat with luxurious amenities and natural surroundings.</p>
-                    </div>
-                </div>
-
-                <!-- Static Restaurant 3 -->
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <img src="image/UrbanRestro.jpg" alt="Tulsi Hotel" class="w-full h-48 object-cover">
-                    <div class="p-4">
-                        <h3 class="text-xl font-semibold mb-2">Tulsi Hotel</h3>
-                        <p class="text-gray-600 text-sm">Offering quality ingredients and fast, friendly service.</p>
-                    </div>
-                </div>
-            </div> --}}
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @foreach ($restaurants as $restaurant)
                     <a href="{{ route('restaurant.show', $restaurant->id) }}" class="block">
                         <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                            <img src="{{ $restaurant->feature_image }}" alt="{{ $restaurant->restaurant_name }}"
-                                class="w-full h-48 object-cover">
+                            <img src="{{ asset('/storage/Uploaded_Images/' . $restaurant->feature_image) }}"
+                                class="w-full h-48 object-cover" alt="Restaurant Logo" />
+
                             <div class="p-4">
                                 <h3 class="text-xl font-semibold mb-2">{{ $restaurant->restaurant_name }}</h3>
                                 <p class="text-gray-600 text-sm">{{ $restaurant->restaurant_type }}</p>

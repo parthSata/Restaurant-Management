@@ -117,14 +117,14 @@
                         <div>
                             <label for="about_us" class="block text-sm font-medium text-gray-700">About Us *</label>
                             <textarea id="about_us" name="about_us" rows="5"
-                                class="block w-full border-gray-300 resize-none rounded-md focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                                class="block w-full border-gray-300 p-2 resize-none rounded-md focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                                 placeholder="About Us">{{ isset($restaurant) ? $restaurant->about_us : old('about_us') }}</textarea>
                         </div>
                         <!-- Short About -->
                         <div>
                             <label for="short_about" class="block text-sm font-medium text-gray-700">Short About *</label>
                             <textarea id="short_about" name="short_about" rows="5"
-                                class="block w-full border-gray-300 resize-none rounded-md focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                                class="block w-full p-2 border-gray-300 resize-none rounded-md focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                                 placeholder="Short About">{{ isset($restaurant) ? $restaurant->short_about : old('short_about') }}{{ old('short_about') }}</textarea>
                         </div>
                     </div>

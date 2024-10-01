@@ -29,7 +29,7 @@ class LoginController extends Controller
             $request->session()->regenerate();
 
             // Redirect to the restaurant home page
-            return redirect()->intended(route('restaurant.home'));
+            return redirect()->intended(route('dashboard'));
         }
 
         // If authentication fails, return an error message
