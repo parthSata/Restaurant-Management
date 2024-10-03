@@ -27,9 +27,22 @@ class LoginController extends Controller
 
             // Regenerate the session to prevent fixation attacks
             $request->session()->regenerate();
+            $user = Auth::guard('web')->user();
 
-            // Redirect to the restaurant home page
-            return redirect()->intended(route('dashboard'));
+            // Fetch the user's role (assuming 'role' is a column in your 'registrations' table)
+            $role = $user->role;
+
+            // Redirect based on role
+            switch ($role) {
+                case 'admin':
+                    return redirect()->route('admin.dashboard');
+                    case 'seller':
+                    return redirect()->route('seller.sellerDashboard');
+                        case 'customer':
+                            return redirect()->route('customer.dashboard');
+                default:
+                    return redirect()->route('user.home'); // Default route if no role matches
+            }
         }
 
         // If authentication fails, return an error message

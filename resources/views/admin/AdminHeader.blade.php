@@ -17,7 +17,7 @@
                 <h1 class="text-3xl font-bold">Restaurant Management</h1>
             </div>
             <nav class="space-x-8">
-                <a href="{{ route('dashboard') }}" class="hover:text-gray-400">Dashboard</a>
+                <a href="{{ route('admin.dashboard') }}" class="hover:text-gray-400">Dashboard</a>
                 <a href="{{ route('restaurants.index') }}" class="hover:text-gray-400">Restaurants</a>
                 <a href="{{ route('customers.index') }}" class="hover:text-gray-400">Customers</a>
                 <a href="{{ route('transactions.index') }}" class="hover:text-gray-400">Transactions</a>

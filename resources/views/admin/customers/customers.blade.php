@@ -14,7 +14,7 @@
                     </div>
                     <ul class="hover:underline mb-2">
                         <a href="" class="">
-                            <li class=" cursor-pointer text-lg font-serif">Customers</li>
+                            <li class=" cursor-pointer text-lg font-serif">Customers Parth</li>
                         </a>
                         <a href="" class="">
                             <li class=" cursor-pointer text-lg font-serif">Enquiries</li>

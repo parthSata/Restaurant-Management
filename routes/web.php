@@ -1,10 +1,12 @@
 <?php
 
+use App\Http\Controllers\Seller\OrdersController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\RestaurantController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\Seller\CustomerController as SellerCustomerController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\HomeController;
@@ -35,7 +37,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
     Route::get('/dashboard', function () {
         return view('admin.dashboard.dashboard');
-    })->name('dashboard');
+    })->name('admin.dashboard');
 
     // Restaurant Routes
     Route::get('/restaurants', [RestaurantController::class, 'index'])->name('restaurants.index');  // Update this line
@@ -62,21 +64,20 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
 });
 
-Route::prefix('seller')->middleware('auth')->group(function () {
+    Route::prefix('seller')->middleware('auth')->group(function () {
 
-    Route::get('/dashboard', function () {
-        return view('seller.dashboard.dashboard');
-    })->name('seller.dashboard');
+        Route::get('/dashboard', function () {
+            return view('seller.dashboard.sellerDashboard');
+        })->name('seller.sellerDashboard');
 
-    // Restaurant-specific Routes for Seller
-    Route::get('/restaurant/{id}', [RestaurantController::class, 'showSellerRestaurant'])->name('seller.restaurant.show');
-    Route::get('/restaurant/{id}/edit', [RestaurantController::class, 'editSellerRestaurant'])->name('seller.restaurant.edit');
-    Route::put('/restaurant/{id}', [RestaurantController::class, 'updateSellerRestaurant'])->name('seller.restaurant.update');
+   
 
-    // Coupon Routes for Seller
-    Route::get('/restaurant/{id}/coupons', [CouponController::class, 'showRestaurantCoupons'])->name('seller.restaurant.coupons');
-    Route::post('/restaurant/{id}/coupons/store', [CouponController::class, 'storeRestaurantCoupon'])->name('seller.restaurant.coupons.store');
+        Route::get('/customer', [SellerCustomerController::class, 'index'])->name('customer.index');
+        Route::get('/customers/enquiries', [SellerCustomerController::class, 'showEnquiries'])->name('customer.showEnquiries');
 
-    // Transaction Routes for Seller
-    Route::get('/restaurant/{id}/transactions', [TransactionController::class, 'showRestaurantTransactions'])->name('seller.restaurant.transactions');
-});
+
+        Route::get('/orders', [OrdersController::class, 'index'])->name('orders.index');
+
+
+        
+    });

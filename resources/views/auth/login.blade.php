@@ -3,7 +3,7 @@
 @section('title', 'Restaurant Page')
 
 @section('content')
-   
+
     <div class="flex justify-center min-h-screen items-center">
         <div class="bg-white p-8 rounded-lg shadow-md w-96">
             <div class="flex justify-center mb-2">
