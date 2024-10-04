@@ -7,6 +7,11 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\RestaurantController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\Seller\CustomerController as SellerCustomerController;
+use App\Http\Controllers\Seller\TransactionController as SellerTransactionController;
+use App\Http\Controllers\Seller\ReservationController as SellerReservationController;
+use App\Http\Controllers\Seller\AddOnsController as SellerAddOnsController;
+use App\Http\Controllers\Seller\MenuController as SellerMenuController;
+use App\Http\Controllers\Seller\CouponCodeController as SellerCouponCodesController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\HomeController;
@@ -78,6 +83,17 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
         Route::get('/orders', [OrdersController::class, 'index'])->name('orders.index');
 
+        Route::get('/transactions', [SellerTransactionController::class, 'index'])->name('transactions.index');
 
+        Route::get('/menu', [SellerMenuController::class, 'index'])->name('menu.index');
+
+    
+        Route::get('/couponcodes', [SellerCouponCodesController::class, 'index'])->name('couponcodes.index');
+
+        Route::get('/reservation', [SellerReservationController::class, 'index'])->name('reservation.index');
+        Route::get('/reservation/tables', [SellerReservationController::class, 'showTables'])->name('reservation.showTables');
+
+        Route::get('/addOns', [SellerAddOnsController::class, 'index'])->name('addOns.index');
+        Route::get('/addOns/addItems', [SellerAddOnsController::class, 'showItems'])->name('addOns.showItems');
         
     });

@@ -24,10 +24,10 @@
                 <a href="{{ route('customer.index') }}" class="hover:text-gray-400">Customers</a>
                 <a href="{{ route('orders.index') }}" class="hover:text-gray-400">Orders</a>
                 <a href="{{ route('transactions.index') }}" class="hover:text-gray-400">Transactions</a>
-                <a href="{{ route('restaurants.index') }}" class="hover:text-gray-400">Reservation</a>
-                <a href="{{ route('restaurants.index') }}" class="hover:text-gray-400">Add Ons</a>
-                <a href="{{ route('restaurants.index') }}" class="hover:text-gray-400">Menu</a>
-                <a href="{{ route('coupons.index') }}" class="hover:text-gray-400">Coupon Codes</a>
+                <a href="{{ route('reservation.index') }}" class="hover:text-gray-400">Reservation</a>
+                <a href="{{ route('addOns.index') }}" class="hover:text-gray-400">Add Ons</a>
+                <a href="{{ route('menu.index') }}" class="hover:text-gray-400">Menu</a>
+                <a href="{{ route('couponcodes.index') }}" class="hover:text-gray-400">Coupon Codes</a>
             </nav>
         </div>
     </header>
