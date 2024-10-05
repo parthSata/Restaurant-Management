@@ -5,7 +5,7 @@
 @section('content')
 
     <div class="">
-        <div class="max-w-6xl mx-auto bg-white rounded-lg shadow-md p-6">
+        <div class=" mx-auto bg-white rounded-lg shadow-md p-6">
             <div class="flex justify-between items-center mb-6">
                 <form action="{{ route('transactions.index') }}" method="GET" class="relative flex-grow max-w-md">
                     <input type="text" name="search" value="{{ old('search', $search) }}"

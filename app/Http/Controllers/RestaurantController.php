@@ -58,28 +58,28 @@ class RestaurantController extends Controller
     {
         return view('admin.Home.RestaurantHome');
     }
-    public function edit($id)
-    {
-        $restaurant = Restaurant::findOrFail($id);
-        $service_type = ['Delivery', 'Dine In', 'Pickup'];
-        $statuses = ['active', 'inactive'];
-        $currencies = ['USD', 'EUR', 'GBP'];
-        $restaurantTypes = ['FastFood', 'CasualDining', 'FineDining'];
     
-        // Debugging: Log the variables being passed
-    
-        return view('admin.Restaurants.AddRestaurant', compact('restaurant', 'service_type', 'statuses', 'currencies', 'restaurantTypes'));
-    }
-    
- 
     public function destroy($id)
     {
         $restaurant = Restaurant::findOrFail($id);
         $restaurant->delete();
-
+        
         return redirect()->route('restaurants.index')->with('success', 'Restaurant deleted successfully.');
     }
-
+    
+        public function edit($id)
+        {
+            $restaurant = Restaurant::findOrFail($id);
+            $service_type = ['Delivery', 'Dine In', 'Pickup'];
+            $statuses = ['active', 'inactive'];
+            $currencies = ['USD', 'EUR', 'GBP'];
+            $restaurantTypes = ['FastFood', 'CasualDining', 'FineDining'];
+        
+            // Debugging: Log the variables being passed
+        
+            return view('admin.Restaurants.AddRestaurant', compact('restaurant', 'service_type', 'statuses', 'currencies', 'restaurantTypes'));
+        }
+        
 
     
     public function update(Request $request, $id)

@@ -14,9 +14,15 @@ class CustomerController extends Controller
     }
 
     // Display a specific customer by ID
-    public function show($id)
+    // public function show($id)
+    // {
+    //     $customer = Customer::findOrFail($id); // Find a customer by ID
+    //     return view('admin.customers.show', compact('customer'));
+    // }
+
+    public function showEnquiries()
     {
-        $customer = Customer::findOrFail($id); // Find a customer by ID
-        return view('admin.customers.show', compact('customer'));
+        // Return the Blade view for Seller Enquiries
+        return view('admin.customers.enquiries');
     }
 }
