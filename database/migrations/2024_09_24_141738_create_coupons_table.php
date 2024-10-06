@@ -10,9 +10,9 @@ return new class extends Migration
     {
         Schema::create('coupons', function (Blueprint $table) {
             $table->id();
-            $table->string('coupon_name'); // Coupon Name
+            $table->string('name'); // Coupon Name
             $table->date('expiry_date'); // Expiry Date
-            $table->enum('coupon_type', ['fixed', 'percentage']); // Coupon Type
+            $table->enum('type', ['fixed', 'percentage']); // Coupon Type
             $table->decimal('discount', 8, 2); // Discount
             $table->enum('status', ['draft', 'publish']); // Status
             $table->timestamps();

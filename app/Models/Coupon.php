@@ -10,9 +10,9 @@ class Coupon extends Model
     protected $table = 'coupons';
 
     protected $fillable = [
-        'coupon_name',
+        'name',
         'expiry_date',
-        'coupon_type',
+        'type',
         'discount',
         'status',
     ];
