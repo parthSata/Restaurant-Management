@@ -38,7 +38,7 @@
         @yield('content')
     </main>
 
-    @include('components.footer')
+      @include('components.footer')
 
 </body>
 

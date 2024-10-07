@@ -96,11 +96,12 @@ Route::prefix('seller')->middleware('auth')->group(function () {
     Route::get('/reservation/tables', [SellerReservationController::class, 'showTables'])->name('reservation.showTables');
 
     Route::get('/addOns', [SellerAddOnsController::class, 'index'])->name('addOns.index'); // View categories
-    Route::post('/addOns/categories', [SellerAddOnsController::class, 'storeCategories'])->name('categories.store'); 
-    Route::put('/addOns/categories/{id}', [SellerAddOnsController::class, 'updateCategories'])->name('categories.update'); 
+    Route::post('/addOns/categories', [SellerAddOnsController::class, 'storeCategories'])->name('categories.store');
+    Route::put('/addOns/categories/{id}', [SellerAddOnsController::class, 'updateCategories'])->name('categories.update');
     Route::delete('/addOns/categories/{id}', [SellerAddOnsController::class, 'destroyCategory'])->name('categories.destroy');
-    
+    Route::get('/categories/{id}/edit', [SellerAddOnsController::class, 'editCategories'])->name('categories.edit');
+
 
     Route::get('/addOns/addItems', [SellerAddOnsController::class, 'showItems'])->name('addOns.showItems');
-    
-});    
+
+});

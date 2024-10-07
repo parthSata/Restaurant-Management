@@ -54,13 +54,18 @@
             // Set the values in the modal
             nameInput.value = name;
             descriptionInput.value = description;
-            categoryIdInput.value = id; // Ensure you have an input field for the category ID
+            categoryIdInput.value = id; // Set the category ID
 
             // Set the image preview
             imagePreview.src = image || '{{ asset('image/Gajanan.jpeg') }}'; // Default image if none provided
 
             // Show the modal
             modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('modalDialog');
+            modal.classList.add('hidden');
         }
     </script>
     {{-- @endpush --}}
@@ -89,7 +94,7 @@
                 </button>
             </div>
 
-            <!-- Modal -->
+            {{-- Insert Model --}}
             <div id="modalDialog" class="fixed inset-0 z-50 bg-gray-600 bg-opacity-50 items-center justify-center hidden">
                 <div class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full relative">
                     <!-- Close Button -->
@@ -154,68 +159,41 @@
                 </div>
             </div>
 
+            {{-- Update Model --}}
+
             <div id="modalDialog" class="fixed inset-0 z-50 bg-gray-600 bg-opacity-50 items-center justify-center hidden">
-                <div class="bg-white flex p-6 rounded-lg shadow-lg max-w-md w-full relative">
-                    <!-- Close Button -->
-                    <button id="closeModalBtn" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-                        onclick="closeModal()">&times;</button>
-
-                    <!-- Modal Header -->
+                <div class="bg-white flex justify-center p-6 rounded-lg shadow-lg max-w-md w-full relative">
+                    <button id="closeModalBtn" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700" onclick="closeModal()">&times;</button>
                     <h2 class="text-xl font-bold mb-4">Update Category</h2>
-
-                    <!-- Modal Form -->
-                    <form method="POST"
-                        action="{{ isset($item) ? route('categories.update', $item->id) : route('categories.store') }}"
-                        enctype="multipart/form-data" id="updateForm">
+                    <form method="POST" action="{{ route('categories.update', 'id') }}" enctype="multipart/form-data" id="updateForm">
                         @csrf
-                        @if (isset($item))
-                            @method('PUT') <!-- Use this for update requests -->
-                            <input type="hidden" name="id" value="{{ $item->id }}">
-                        @endif
-
+                        @method('PUT')
+                        <input type="hidden" id="updateCategoryId" name="id">
                         <div class="mb-4">
-                            <label for="name" class="block text-sm font-medium text-gray-700">Name:</label>
-                            <input type="text" name="name" id="updateName"
-                                class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
-                                placeholder="Category Name" required value="{{ isset($item) ? $item->name : '' }}">
+                            <label for="updateName" class="block text-sm font-medium text-gray-700">Name:</label>
+                            <input type="text" name="name" id="updateName" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600" placeholder="Category Name" required>
                         </div>
-
                         <div class="mb-4">
-                            <label for="description" class="block text-sm font-medium text-gray-700">Description:</label>
-                            <textarea name="description" name="description" id="updateDescription"
-                                class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600" placeholder="Description"
-                                required>{{ isset($item) ? $item->description : '' }}</textarea>
+                            <label for="updateDescription" class="block text-sm font-medium text-gray-700">Description:</label>
+                            <textarea name="description" id="updateDescription" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600" placeholder="Description" required></textarea>
                         </div>
-
-                        <label for="feature-image-input" class="">Image:</label>
+                        <label for="feature-image-input">Image:</label>
                         <div class="relative flex items-center">
                             <div class="bg-white border">
-                                <img id="updateImagePreview"
-                                    src="{{ isset($item) && $item->image ? asset('storage/' . $item->image) : asset('image/Gajanan.jpeg') }}"
-                                    alt="Feature Image placeholder" class="w-32 h-28 object-cover rounded-md">
+                                <img id="updateImagePreview" src="{{ asset('image/Gajanan.jpeg') }}" alt="Feature Image placeholder" class="w-32 h-28 object-cover rounded-md">
                             </div>
-                            <input type="file" name="image" id="feature-image-input" name="image"
-                                accept="image/*" onchange="previewImage(event)" class="hidden" />
-                            <label for="feature-image-input"
-                                class="absolute bg-white p-2 -top-2 left-24 flex justify-center items-center border border-gray-300 rounded-full cursor-pointer">
+                            <input type="file" name="image" id="feature-image-input" accept="image/*" onchange="previewImage(event)" class="hidden" />
+                            <label for="feature-image-input" class="absolute bg-white p-2 -top-2 left-24 flex justify-center items-center border border-gray-300 rounded-full cursor-pointer">
                                 <i class="fa-solid fa-pen fa-md" style="color: #aaaeb5;"></i>
                             </label>
                         </div>
-
                         <div class="flex justify-end">
-                            <button type="submit"
-                                class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 mr-2">
-                                Update Categories
-                            </button>
-                            <button type="button" id="closeModalBtnBottom"
-                                class="bg-gray-400 text-white px-4 py-2 rounded-lg hover:bg-gray-500"
-                                onclick="closeModal()">Discard
-                            </button>
+                            <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 mr-2">Update Categories</button>
+                            <button type="button" class="bg-gray-400 text-white px-4 py-2 rounded-lg hover:bg-gray-500" onclick="closeModal()">Discard</button>
                         </div>
                     </form>
                 </div>
             </div>
-
 
             <!-- Add the JavaScript -->
             <script>
@@ -282,14 +260,18 @@
                             {{-- Action Buttons --}}
                             <td>
                                 <div class="flex space-x-2">
-                                    <button class="text-indigo-600 hover:text-indigo-900"
-                                        onclick="openUpdateModal({{ $categories->id }}, '{{ $categories->name }}', '{{ $categories->description }}', '{{ asset('storage/' . $categories->image) }}')">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
-                                            fill="currentColor">
-                                            <path
-                                                d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                                        </svg>
-                                    </button>
+                                    @foreach ($categories as $category)
+                                        <div class="flex space-x-2">
+                                            <button class="text-indigo-600 hover:text-indigo-900"
+                                                onclick="openUpdateModal({{ $category->id }}, '{{ $category->name }}', '{{ $category->description }}', '{{ asset('storage/' . $category->image) }}')">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5"
+                                                    viewBox="0 0 20 20" fill="currentColor">
+                                                    <path
+                                                        d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    @endforeach
                                     <form action="{{ route('categories.destroy', $item->id) }}" method="POST"
                                         onsubmit="return confirm('Are you sure you want to delete this category?');">
                                         @csrf
