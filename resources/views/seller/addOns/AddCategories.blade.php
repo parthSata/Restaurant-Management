@@ -10,6 +10,74 @@
         document.addEventListener('DOMContentLoaded', function() {
             const openModalBtn = document.getElementById('openModalBtn');
             const closeModalBtns = document.querySelectorAll('#closeModalBtn, #closeModalBtnBottom');
+            const addModalDialog = document.getElementById('addModalDialog');
+            const updateModalDialog = document.getElementById('updateModalDialog');
+
+            // Function to open the "Add" modal
+            openModalBtn?.addEventListener('click', function() {
+                addModalDialog.classList.remove('hidden');
+                addModalDialog.classList.add('flex');
+            });
+
+            // Function to close the modals (for both close buttons)
+            closeModalBtns.forEach((btn) => {
+                btn.addEventListener('click', function() {
+                    closeModal();
+                });
+            });
+
+            // Close the modal when clicking outside of the modal content
+            window.addEventListener('click', function(event) {
+                if (event.target === addModalDialog || event.target === updateModalDialog) {
+                    closeModal();
+                }
+            });
+
+            // Reusable function to close the modal
+            function closeModal() {
+                addModalDialog.classList.add('hidden');
+                addModalDialog.classList.remove('flex');
+                updateModalDialog.classList.add('hidden');
+                updateModalDialog.classList.remove('flex');
+            }
+
+            // Image preview function for both modals
+            function previewImage(event, previewId) {
+                const reader = new FileReader();
+                reader.onload = function() {
+                    const output = document.getElementById(previewId);
+                    output.src = reader.result;
+                };
+                reader.readAsDataURL(event.target.files[0]); // Read the selected file
+            }
+
+            // Function to open the update modal with pre-filled data
+            window.openUpdateModal = function(id, name, description, image) {
+                const modal = document.getElementById('updateModalDialog');
+                const nameInput = document.getElementById('updateName');
+                const descriptionInput = document.getElementById('updateDescription');
+                const imagePreview = document.getElementById('updateImagePreview');
+                const categoryIdInput = document.getElementById('updateCategoryId');
+
+                // Set the values in the modal
+                nameInput.value = name;
+                descriptionInput.value = description;
+                categoryIdInput.value = id;
+
+                // Set the image preview or fallback to default if image is not provided
+                imagePreview.src = image || '{{ asset('image/Gajanan.jpeg') }}';
+
+                // Show the modal
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            };
+            // Export previewImage to make it accessible globally
+            window.previewImage = previewImage;
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const openModalBtn = document.getElementById('openModalBtn');
+            const closeModalBtns = document.querySelectorAll('#closeModalBtn, #closeModalBtnBottom');
             const modalDialog = document.getElementById('modalDialog');
 
             // Function to open the modal
@@ -18,7 +86,7 @@
                 modalDialog.classList.add('flex');
             });
 
-            // Function to close the modal (for both close buttons)
+            // Function to close the modal
             closeModalBtns.forEach((btn) => {
                 btn.addEventListener('click', function() {
                     modalDialog.classList.add('hidden');
@@ -26,7 +94,7 @@
                 });
             });
 
-            // Close the modal when clicking outside of the modal content
+            // Close modal when clicking outside of the modal content
             window.addEventListener('click', function(event) {
                 if (event.target === modalDialog) {
                     modalDialog.classList.add('hidden');
@@ -34,39 +102,6 @@
                 }
             });
         });
-
-        function previewImage(event) {
-            const reader = new FileReader();
-            reader.onload = function() {
-                const output = document.getElementById('imagePreview');
-                output.src = reader.result; // Set the src attribute of the image preview
-            };
-            reader.readAsDataURL(event.target.files[0]); // Read the selected file
-        }
-
-        function openUpdateModal(id, name, description, image) {
-            const modal = document.getElementById('modalDialog');
-            const nameInput = document.getElementById('updateName');
-            const descriptionInput = document.getElementById('updateDescription');
-            const imagePreview = document.getElementById('updateImagePreview');
-            const categoryIdInput = document.getElementById('updateCategoryId');
-
-            // Set the values in the modal
-            nameInput.value = name;
-            descriptionInput.value = description;
-            categoryIdInput.value = id; // Set the category ID
-
-            // Set the image preview
-            imagePreview.src = image || '{{ asset('image/Gajanan.jpeg') }}'; // Default image if none provided
-
-            // Show the modal
-            modal.classList.remove('hidden');
-        }
-
-        function closeModal() {
-            const modal = document.getElementById('modalDialog');
-            modal.classList.add('hidden');
-        }
     </script>
     {{-- @endpush --}}
     <div class="container mx-auto p-6 bg-gray-50">
@@ -94,8 +129,9 @@
                 </button>
             </div>
 
-            {{-- Insert Model --}}
-            <div id="modalDialog" class="fixed inset-0 z-50 bg-gray-600 bg-opacity-50 items-center justify-center hidden">
+            {{-- Insert Modal --}}
+            <div id="addModalDialog"
+                class="fixed inset-0 z-50 bg-gray-600 bg-opacity-50 items-center justify-center hidden">
                 <div class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full relative">
                     <!-- Close Button -->
                     <button id="closeModalBtn"
@@ -105,38 +141,31 @@
                     <h2 class="text-xl font-bold mb-4">Add On Categories</h2>
 
                     <!-- Modal Form -->
-                    <form method="POST"
-                        action="{{ isset($item) ? route('categories.update', $item->id) : route('categories.store') }}"
-                        enctype="multipart/form-data">
+                    <form method="POST" action="{{ route('categories.store') }}" enctype="multipart/form-data">
                         @csrf
-                        @if (isset($item))
-                            @method('PUT') <!-- Use this for update requests -->
-                        @endif
 
                         <div class="mb-4">
                             <label for="name" class="block text-sm font-medium text-gray-700">Name:</label>
                             <input type="text" name="name" id="name"
                                 class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
-                                placeholder="Category Name" required
-                                value="{{ old('name', isset($item) ? $item->name : '') }}">
+                                placeholder="Category Name" required>
                         </div>
 
                         <div class="mb-4">
                             <label for="description" class="block text-sm font-medium text-gray-700">Description:</label>
                             <textarea name="description" id="description"
                                 class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600" placeholder="Description"
-                                required>{{ old('description', isset($item) ? $item->description : '') }}</textarea>
+                                required></textarea>
                         </div>
 
                         <label for="feature-image-input" class="">Image:</label>
                         <div class="relative flex items-center">
                             <div class="bg-white border">
-                                <img id="imagePreview"
-                                    src="{{ isset($item) && $item->image ? asset('storage/' . $item->image) : asset('image/Gajanan.jpeg') }}"
+                                <img id="imagePreview" src="{{ asset('image/Gajanan.jpeg') }}"
                                     alt="Feature Image placeholder" class="w-32 h-28 object-cover rounded-md">
                             </div>
                             <input type="file" id="feature-image-input" name="image" accept="image/*"
-                                onchange="previewImage(event)" class="hidden" />
+                                onchange="previewImage(event, 'imagePreview')" class="hidden" />
                             <label for="feature-image-input"
                                 class="absolute bg-white p-2 -top-2 left-24 flex justify-center items-center border border-gray-300 rounded-full cursor-pointer">
                                 <i class="fa-solid fa-pen fa-md" style="color: #aaaeb5;"></i>
@@ -146,85 +175,73 @@
                         <div class="flex justify-end">
                             <button type="submit"
                                 class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 mr-2">
-                                {{ isset($item) ? 'Update ' : 'Save' }} Categories
+                                Save Categories
                             </button>
                             <button type="button" id="closeModalBtnBottom"
                                 class="bg-gray-400 text-white px-4 py-2 rounded-lg hover:bg-gray-500">Discard
                             </button>
                         </div>
                     </form>
-
-
-
                 </div>
             </div>
 
             {{-- Update Model --}}
 
-            <div id="modalDialog" class="fixed inset-0 z-50 bg-gray-600 bg-opacity-50 items-center justify-center hidden">
-                <div class="bg-white flex justify-center p-6 rounded-lg shadow-lg max-w-md w-full relative">
-                    <button id="closeModalBtn" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700" onclick="closeModal()">&times;</button>
+            <div id="updateModalDialog"
+                class="fixed inset-0 z-50 bg-gray-600 bg-opacity-50 items-center justify-center hidden">
+                <div class="bg-white max-w-md p-6 rounded-lg shadow-lg w-full relative">
+                    <button id="closeModalBtn" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+                        onclick="closeModal()">&times;</button>
                     <h2 class="text-xl font-bold mb-4">Update Category</h2>
-                    <form method="POST" action="{{ route('categories.update', 'id') }}" enctype="multipart/form-data" id="updateForm">
+                    <form method="POST" action="{{ route('categories.update', $categoryForUpdate->id) }}"
+                        enctype="multipart/form-data" id="updateForm">
                         @csrf
                         @method('PUT')
-                        <input type="hidden" id="updateCategoryId" name="id">
+                        <input type="hidden" id="updateCategoryId" name="id" value="{{ $categoryForUpdate->id }}">
+
                         <div class="mb-4">
                             <label for="updateName" class="block text-sm font-medium text-gray-700">Name:</label>
-                            <input type="text" name="name" id="updateName" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600" placeholder="Category Name" required>
+                            <input type="text" name="name" id="updateName"
+                                class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                                placeholder="Category Name" required value="{{ $categoryForUpdate->name }}">
                         </div>
+
                         <div class="mb-4">
-                            <label for="updateDescription" class="block text-sm font-medium text-gray-700">Description:</label>
-                            <textarea name="description" id="updateDescription" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600" placeholder="Description" required></textarea>
+                            <label for="updateDescription"
+                                class="block text-sm font-medium text-gray-700">Description:</label>
+                            <textarea name="description" id="updateDescription"
+                                class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                                placeholder="Description">{{ $categoryForUpdate->description }}</textarea>
                         </div>
+
                         <label for="feature-image-input">Image:</label>
                         <div class="relative flex items-center">
                             <div class="bg-white border">
-                                <img id="updateImagePreview" src="{{ asset('image/Gajanan.jpeg') }}" alt="Feature Image placeholder" class="w-32 h-28 object-cover rounded-md">
+                                <img id="updateImagePreview"
+                                    src="{{ isset($categoryForUpdate->image) ? asset('storage/Categories/' . $categoryForUpdate->image) : asset('image/Gajanan.jpeg') }}"
+                                    alt="Feature Image placeholder" class="w-32 h-28 object-cover rounded-md">
                             </div>
-                            <input type="file" name="image" id="feature-image-input" accept="image/*" onchange="previewImage(event)" class="hidden" />
-                            <label for="feature-image-input" class="absolute bg-white p-2 -top-2 left-24 flex justify-center items-center border border-gray-300 rounded-full cursor-pointer">
+                            <input type="file" name="image" id="feature-image-input" accept="image/*"
+                                onchange="previewImage(event, 'updateImagePreview')" class="hidden" />
+                            <label for="feature-image-input"
+                                class="absolute bg-white p-2 -top-2 left-24 flex justify-center items-center border border-gray-300 rounded-full cursor-pointer">
                                 <i class="fa-solid fa-pen fa-md" style="color: #aaaeb5;"></i>
                             </label>
                         </div>
+
                         <div class="flex justify-end">
-                            <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 mr-2">Update Categories</button>
-                            <button type="button" class="bg-gray-400 text-white px-4 py-2 rounded-lg hover:bg-gray-500" onclick="closeModal()">Discard</button>
+                            <button type="submit"
+                                class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 mr-2">Update</button>
+                            <button type="button" id="closeModalBtnBottom"
+                                class="bg-gray-400 text-white px-4 py-2 rounded-lg hover:bg-gray-500"
+                                onclick="closeModal()">Discard</button>
                         </div>
                     </form>
                 </div>
             </div>
 
+
             <!-- Add the JavaScript -->
-            <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    const openModalBtn = document.getElementById('openModalBtn');
-                    const closeModalBtns = document.querySelectorAll('#closeModalBtn, #closeModalBtnBottom');
-                    const modalDialog = document.getElementById('modalDialog');
-
-                    // Function to open the modal
-                    openModalBtn.addEventListener('click', function() {
-                        modalDialog.classList.remove('hidden');
-                        modalDialog.classList.add('flex');
-                    });
-
-                    // Function to close the modal
-                    closeModalBtns.forEach((btn) => {
-                        btn.addEventListener('click', function() {
-                            modalDialog.classList.add('hidden');
-                            modalDialog.classList.remove('flex');
-                        });
-                    });
-
-                    // Close modal when clicking outside of the modal content
-                    window.addEventListener('click', function(event) {
-                        if (event.target === modalDialog) {
-                            modalDialog.classList.add('hidden');
-                            modalDialog.classList.remove('flex');
-                        }
-                    });
-                });
-            </script>
 
             <table class="min-w-full">
                 <thead>
@@ -263,12 +280,14 @@
                                     @foreach ($categories as $category)
                                         <div class="flex space-x-2">
                                             <button class="text-indigo-600 hover:text-indigo-900"
-                                                onclick="openUpdateModal({{ $category->id }}, '{{ $category->name }}', '{{ $category->description }}', '{{ asset('storage/' . $category->image) }}')">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5"
-                                                    viewBox="0 0 20 20" fill="currentColor">
-                                                    <path
-                                                        d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                                                </svg>
+                                                onclick="openUpdateModal('{{ $item->id }}', '{{ $item->name }}', '{{ $item->description }}', '{{ asset('storage/' . $item->image) }}')", '{{ asset('storage/' . $category->image) }}'">
+                                                                                                                                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5"
+                                                                                                                                                                                        viewBox="0 0 20 20" fill="currentColor">
+                                                                                                                                                                                        <path
+                                                                                                                                                                                            d="
+                                                M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379
+                                                5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                                            </svg>
                                             </button>
                                         </div>
                                     @endforeach

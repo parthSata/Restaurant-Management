@@ -25,39 +25,39 @@ class AddOnsController extends Controller
     }
 
     public function updateCategories(Request $request, $id)
-    {
-        $request->validate([
-            'category_name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
-    
-        $category = Category::findOrFail($id);
-        $category->name = $request->category_name;
-        $category->description = $request->description;
-    
-        // Handle image upload for update
-        if ($request->hasFile('image')) {
-            // Similar image upload logic as in store
-            $image = $request->file('image');
-            $imageName = Str::slug($request->category_name) . '_' . time() . '.' . $image->getClientOriginalExtension();
-            $imagePath = $image->storeAs('Categories', $imageName, 'public');
-            $category->image = $imagePath; // Save the new image path
-        }
-    
-        $category->save(); // Save the category
-    
-        return redirect()->route('categories.index')->with('success', 'Category updated successfully.');
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'description' => 'nullable|string',
+        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+    ]);
+
+    $category = Category::findOrFail($id);
+    $category->name = $request->name;
+    $category->description = $request->description; // Make sure to include this
+
+    // Handle image upload for update
+    if ($request->hasFile('image')) {
+        $image = $request->file('image');
+        $imageName = Str::slug($request->name) . '_' . time() . '.' . $image->getClientOriginalExtension();
+        $imagePath = $image->storeAs('Categories', $imageName, 'public');
+        $category->image = $imagePath; // Save the new image path
     }
-    
-    public function editCategories($id)
-    {
-        // Find the category by ID or fail
-        $category = Category::findOrFail($id);
-    
-        // Return the edit view with the category data
-        return view('categories.edit', compact('category'));
+
+    $category->save(); // Save the category
+
+    return redirect()->route('categories.index')->with('success', 'Category updated successfully.');
+}
+
+public function editCategories($id)
+{
+    $categoryForUpdate = Category::find($id); // Fetch the category by ID
+    if (!$categoryForUpdate) {
+        return redirect()->route('categories.index')->with('error', 'Category not found.');
     }
+    return view('categories.edit', compact('categoryForUpdate')); // Pass the single category
+}
+
 
     public function storeCategories(Request $request)
     {
