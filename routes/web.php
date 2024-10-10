@@ -102,6 +102,11 @@ Route::prefix('seller')->middleware('auth')->group(function () {
     Route::put('/addOns/categories/{id}', [SellerAddOnsController::class, 'updateCategories'])->name('categories.update');
 
 
-    Route::get('/addOns/addItems', [SellerAddOnsController::class, 'showItems'])->name('addOns.showItems');
+    Route::get('/addOns/addItems', [SellerAddOnsController::class, 'showItems'])->name('addOns.showItems'); // View the add items page
+    Route::post('/addOns/items', [SellerAddOnsController::class, 'storeItems'])->name('items.store'); // Store a new item
+    Route::get('/addOns/items/{id}/edit', [SellerAddOnsController::class, 'editItems'])->name('items.edit'); // Edit an item form
+    Route::put('/addOns/items/{id}', [SellerAddOnsController::class, 'updateItems'])->name('items.update'); // Update an item
+    Route::delete('/addOns/items/{id}', [SellerAddOnsController::class, 'destroyItems'])->name('items.destroy'); // Delete an item
+    Route::get('/addOns/items/create', [SellerAddOnsController::class, 'createItem'])->name('items.create'); // Open the create item page
 
 });

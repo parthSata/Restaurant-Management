@@ -58,7 +58,6 @@ class AddOnsController extends Controller
         return view('seller.addOns.AddCategories', compact('categoryForUpdate')); // Pass the single category
     }
 
-
     public function storeCategories(Request $request)
     {
         $request->validate([
@@ -93,4 +92,54 @@ class AddOnsController extends Controller
 
         return redirect()->back()->with('success', 'Item deleted successfully!');
     }
+
+    public function storeItems(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        // Create a new item
+        $item = new Item(); // Assuming you have an Item model
+        $item->name = $request->name;
+        $item->description = $request->description;
+        $item->price = $request->price;
+
+        // Handle image upload
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = Str::slug($request->name) . '_' . time() . '.' . $image->getClientOriginalExtension();
+            $imagePath = $image->storeAs('Items', $imageName, 'public');
+            $item->image = $imagePath;
+        }
+
+        $item->save(); // Save the item to the database
+
+        return redirect()->route('addOns.index')->with('success', 'Item created successfully.');
+    }
+
+    public function editItems($id)
+    {
+        // Handle editing items
+    }
+
+    public function updateItems(Request $request, $id)
+    {
+        // Handle updating items
+    }
+
+    public function destroyItems($id)
+    {
+        // Handle deleting items
+    }
+
+    public function createItem()
+    {
+        // Return the view that contains the form to create a new item
+        return view('seller.addOns.AddItems');
+    }
+
 }

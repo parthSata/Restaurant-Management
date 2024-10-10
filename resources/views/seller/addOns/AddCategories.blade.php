@@ -30,8 +30,8 @@
             </div>
 
             <!-- Modal for Add/Update -->
-            <div id="modalDialog" class="fixed inset-0 z-50 bg-gray-600 bg-opacity-50 items-center justify-center hidden">
-                <div class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full relative">
+            <div id="modalDialog" class="fixed flex  inset-0 z-50 bg-gray-600 bg-opacity-50 items-center justify-center hidden">
+                <div class="bg-white p-6 rounded-lg flex flex-col shadow-lg max-w-md w-full relative">
                     <button id="closeModalBtn"
                         class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">&times;</button>
 
@@ -150,9 +150,27 @@
 
         // Open Modal
         document.getElementById('openModalBtn').addEventListener('click', function() {
+            const form = document.querySelector('form');
+            form.action = '{{ route('categories.store') }}'; // Reset to store route
+
+            // Remove the _method input if it exists (because we need a POST request for add)
+            const methodInput = form.querySelector('input[name="_method"]');
+            if (methodInput) {
+                methodInput.remove();
+            }
+
+            // Reset the form fields
+            document.getElementById('name').value = '';
+            document.getElementById('description').value = '';
+            document.getElementById('imagePreview').src = '{{ asset('image/placeholder.jpeg') }}';
+
+            // Change modal title and button text to reflect "Add Category"
+            document.querySelector('h2').textContent = 'Add Category';
+            document.querySelector('button[type="submit"]').textContent = 'Save Category';
+
+            // Open the modal
             document.getElementById('modalDialog').classList.remove('hidden');
         });
-
         // Close Modal
         document.getElementById('closeModalBtn').addEventListener('click', function() {
             document.getElementById('modalDialog').classList.add('hidden');
@@ -184,6 +202,10 @@
             document.getElementById('name').value = name;
             document.getElementById('description').value = description;
             document.getElementById('imagePreview').src = imageUrl;
+
+            // Change modal title and button text to reflect "Update Category"
+            document.querySelector('h2').textContent = 'Update Category';
+            document.querySelector('button[type="submit"]').textContent = 'Update Category';
 
             // Open the modal
             document.getElementById('modalDialog').classList.remove('hidden');
