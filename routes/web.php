@@ -99,7 +99,7 @@ Route::prefix('seller')->middleware('auth')->group(function () {
     Route::post('/addOns/categories', [SellerAddOnsController::class, 'storeCategories'])->name('categories.store');
     Route::delete('/addOns/categories/{id}', [SellerAddOnsController::class, 'destroyCategory'])->name('categories.destroy');
     Route::get('/addOns/categories/{id}/edit', [SellerAddOnsController::class, 'editCategories'])->name('categories.edit');
-Route::put('/addOns/categories/{id}', [SellerAddOnsController::class, 'updateCategories'])->name('categories.update');
+    Route::put('/addOns/categories/{id}', [SellerAddOnsController::class, 'updateCategories'])->name('categories.update');
 
 
     Route::get('/addOns/addItems', [SellerAddOnsController::class, 'showItems'])->name('addOns.showItems');

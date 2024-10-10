@@ -25,38 +25,38 @@ class AddOnsController extends Controller
     }
 
     public function updateCategories(Request $request, $id)
-{
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'description' => 'nullable|string',
-        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-    ]);
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
 
-    $category = Category::findOrFail($id);
-    $category->name = $request->name;
-    $category->description = $request->description; // Make sure to include this
+        $category = Category::findOrFail($id);
+        $category->name = $request->name;
+        $category->description = $request->description; // Make sure to include this
 
-    // Handle image upload for update
-    if ($request->hasFile('image')) {
-        $image = $request->file('image');
-        $imageName = Str::slug($request->name) . '_' . time() . '.' . $image->getClientOriginalExtension();
-        $imagePath = $image->storeAs('Categories', $imageName, 'public');
-        $category->image = $imagePath; // Save the new image path
+        // Handle image upload for update
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = Str::slug($request->name) . '_' . time() . '.' . $image->getClientOriginalExtension();
+            $imagePath = $image->storeAs('Categories', $imageName, 'public');
+            $category->image = $imagePath; // Save the new image path
+        }
+
+        $category->save(); // Save the category
+
+        return redirect()->route('addOns.index')->with('success', 'Category updated successfully.');
     }
 
-    $category->save(); // Save the category
-
-    return redirect()->route('categories.index')->with('success', 'Category updated successfully.');
-}
-
-public function editCategories($id)
-{
-    $categoryForUpdate = Category::find($id); // Fetch the category by ID
-    if (!$categoryForUpdate) {
-        return redirect()->route('categories.index')->with('error', 'Category not found.');
+    public function editCategories($id)
+    {
+        $categoryForUpdate = Category::find($id); // Fetch the category by ID
+        if (!$categoryForUpdate) {
+            return redirect()->route('categories.index')->with('error', 'Category not found.');
+        }
+        return view('seller.addOns.AddCategories', compact('categoryForUpdate')); // Pass the single category
     }
-    return view('categories.edit', compact('categoryForUpdate')); // Pass the single category
-}
 
 
     public function storeCategories(Request $request)
@@ -66,31 +66,31 @@ public function editCategories($id)
             'description' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validate the image
         ]);
-    
+
         $category = new Category();
         $category->name = $request->name;
         $category->description = $request->description;
-    
+
         if ($request->hasFile('image')) {
             $image = $request->file('image');
-            
+
             $imageName = Str::slug($request->name) . '_' . time() . '.' . $image->getClientOriginalExtension();
-            
-            $imagePath = $image->storeAs('Categories', $imageName, 'public'); 
-            
-            $category->image = $imagePath; 
+
+            $imagePath = $image->storeAs('Categories', $imageName, 'public');
+
+            $category->image = $imagePath;
         }
-    
+
         $category->save(); // Save the category
-    
+
         return redirect()->route('addOns.index')->with('success', 'Category created successfully.');
-    }   
+    }
 
     public function destroyCategory($id)
     {
         $item = Category::findOrFail($id);
         $item->delete();
-    
+
         return redirect()->back()->with('success', 'Item deleted successfully!');
     }
 }
