@@ -30,8 +30,8 @@
             </div>
 
             <!-- Modal for Add/Update -->
-            <div id="modalDialog" class="fixed flex  inset-0 z-50 bg-gray-600 bg-opacity-50 items-center justify-center hidden">
-                <div class="bg-white p-6 rounded-lg flex flex-col shadow-lg max-w-md w-full relative">
+            <div id="modalDialog" class="fixed flex inset-0 z-50 bg-gray-600 bg-opacity-50 items-center justify-center hidden">
+                <div class="bg-white p-6   rounded-lg flex flex-col shadow-lg max-w-md w-full relative">
                     <button id="closeModalBtn"
                         class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">&times;</button>
 

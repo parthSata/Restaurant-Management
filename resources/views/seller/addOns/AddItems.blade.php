@@ -3,19 +3,18 @@
 @section('title', 'Add Items')
 
 @section('content')
-
-
-
-    <div class="container mx-auto max-w-3xl p-4">
+    <div class="container mx-auto w-full p-4">
         <div class="bg-white rounded-lg shadow-md p-6">
             <div class="flex justify-between items-center mb-6">
                 <h1 class="text-2xl font-semibold text-gray-800">Add On Item</h1>
-                <button class="px-4 py-2 bg-blue-50 text-blue-600 rounded-md hover:bg-blue-100 transition-colors">
+                <a href="{{ route('addOns.showItems') }}"
+                    class="px-4 py-2 bg-blue-50 text-blue-600 rounded-md hover:bg-blue-100 transition-colors">
                     Back
-                </button>
+                </a>
             </div>
 
-            <form>
+            <form action="{{ route('items.store') }}" method="POST" enctype="multipart/form-data">
+                @csrf
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label for="name" class="block text-sm font-medium text-gray-700 mb-1">
@@ -40,7 +39,7 @@
                             Description: <span class="text-red-500">*</span>
                         </label>
                         <textarea id="description" name="description" rows="4" required
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            class="w-full px-3 py-2 border resize-none border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             placeholder="Description"></textarea>
                     </div>
 
@@ -48,12 +47,14 @@
                         <label for="category" class="block text-sm font-medium text-gray-700 mb-1">
                             Add On Category Name: <span class="text-red-500">*</span>
                         </label>
+
                         <select id="category" name="category" required
                             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white">
                             <option value="">Select Add On Category</option>
-                            <option value="drinks">Drinks</option>
-                            <option value="sides">Sides</option>
-                            <option value="desserts">Desserts</option>
+
+                            @foreach ($categories as $category)
+                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                            @endforeach
                         </select>
                     </div>
 
@@ -74,30 +75,51 @@
                                     <label for="file-upload"
                                         class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
                                         <span>Upload a file</span>
-                                        <input id="file-upload" name="file-upload" type="file" class="sr-only">
+                                        <input id="file-upload" name="image" type="file" class="sr-only"
+                                            accept="image/*" onchange="previewImage(event)">
                                     </label>
                                     <p class="pl-1">or drag and drop</p>
                                 </div>
-                                <p class="text-xs text-gray-500">
-                                    PNG, JPG, GIF up to 10MB
-                                </p>
+                                <p class="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+
+                                <!-- Image Preview -->
+                                <div class="mt-2">
+                                    <img id="image-preview" class="mx-auto h-48 w-48 object-cover rounded-md hidden"
+                                        alt="Image Preview">
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="mt-8 flex justify-end space-x-3">
-                    <button type="button"
-                        class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors">
-                        Discard
-                    </button>
-                    <button type="submit"
-                        class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
-                        Save
-                    </button>
-                </div>
+                    <div class="flex justify-end gap-4">
+                        <button type="submit"
+                            class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+                            Save
+                        </button>
+                        <button type="button"
+                            class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors">
+                            Discard
+                        </button>
+                    </div>
             </form>
         </div>
     </div>
 
+    <script>
+        function previewImage(event) {
+            const file = event.target.files[0]; // Get the selected file
+            if (file) {
+                const reader = new FileReader(); // Create a FileReader to read the file
+                const imgPreview = document.getElementById('image-preview'); // Image element to show the preview
+
+                // Set the image preview once the file is loaded
+                reader.onload = function(e) {
+                    imgPreview.src = e.target.result; // Set the preview image's source
+                    imgPreview.classList.remove('hidden'); // Unhide the image preview
+                };
+
+                reader.readAsDataURL(file); // Read the file as a Data URL (base64)
+            }
+        }
+    </script>
 @endsection
