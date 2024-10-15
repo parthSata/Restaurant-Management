@@ -90,9 +90,9 @@ class AddOnsController extends Controller
         return redirect()->back()->with('success', 'Item deleted successfully!');
     }
 
-    // Items 
+    // Items
 
- 
+
 
     public function storeItem(Request $request)
     {
@@ -103,16 +103,16 @@ class AddOnsController extends Controller
             'category' => 'required|exists:categories,id', // Ensure the category exists
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240',
         ]);
-    
+
         $imagePath = null;
-    
+
         // Store the image if uploaded
         if ($request->hasFile('image')) {
             // Generate a unique filename with the original extension
             $imageName = Str::slug($validated['name']) . '_' . time() . '.' . $request->file('image')->getClientOriginalExtension();
             $imagePath = $request->file('image')->storeAs('addOnItems', $imageName, 'public');
         }
-    
+
         // Create the add-on item
         AddOnItem::create([
             'name' => $validated['name'],
@@ -121,10 +121,10 @@ class AddOnsController extends Controller
             'category_id' => $validated['category'], // Use category_id instead of category
             'image' => $imagePath,
         ]);
-    
+
         return redirect()->route('addOns.showItems')->with('success', 'Add On Item created successfully');
     }
-    
+
 
     // Show items (you can modify this as per your display logic)
     public function showItems()
@@ -133,68 +133,83 @@ class AddOnsController extends Controller
         return view('seller.addOns.Items', compact('items'));
     }
 
-    // Edit Item (use isset for fetching the existing image)
-    public function editItem($id)
-    {
-        $item = AddOnItem::find($id);
 
-        if (isset($item->image)) {
-            $itemImage = Storage::url($item->image);
-        } else {
-            $itemImage = null;
-        }
-
-        return view('addOns.editItem', compact('item', 'itemImage'));
-    }
 
     // Update the add on item
-    public function updateItem(Request $request, $id)
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'price' => 'required|numeric',
-            'description' => 'required|string',
-            'category' => 'required|exists:categories,id', // Ensure the category exists
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240', // Image validation
-        ]);
-    
-        $item = AddOnItem::findOrFail($id);
-        $imagePath = $item->image; // Default to existing image
-    
-        // Check if an image file is uploaded
-        if ($request->hasFile('image')) {
-            // Delete old image if it exists
-            if ($item->image) {
-                Storage::disk('public')->delete($item->image);
+        // Edit Item
+        public function editItems($id)
+        {
+            // Retrieve the item by its ID
+            $item = AddOnItem::find($id);
+
+            // Check if item exists
+            if (!$item) {
+                return redirect()->route('addOns.index')->with('error', 'Item not found');
             }
-    
-            // Generate a unique filename with the original extension
-            $imageName = Str::slug($validated['name']) . '_' . time() . '.' . $request->file('image')->getClientOriginalExtension();
-            $imagePath = $request->file('image')->storeAs('addOnItems', $imageName, 'public');
+
+            // Assuming you are storing item images in the path 'public/storage/addOnItems'
+            $itemImage = asset('storage/addOnItems/' . $item->image);
+
+            // Fetch all categories to display in the select dropdown
+            $categories = Category::all();
+
+            // Pass item, image, and categories to the view
+            return view('seller.addOns.AddItems', compact('item', 'itemImage', 'categories'));
         }
-    
-        // Update item details
-        $item->update([
-            'name' => $validated['name'],
-            'price' => $validated['price'],
-            'description' => $validated['description'],
-            'category_id' => $validated['category'], // Use category_id instead of category
-            'image' => $imagePath,
-        ]);
-    
-        return redirect()->route('addOns.showItems')->with('success', 'Add On Item updated successfully');
-    }
-    
-    
-    public function editItems($id)
+
+
+    public function updateItems(Request $request, $id)
     {
-        // Handle editing items
+        // Validate request data
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // If you're allowing image updates
+        ]);
+
+        // Retrieve the item by its ID
+        $item = AddOnItem::find($id); // Use AddOnItem instead of Item
+
+        // Check if item exists
+        if (!$item) {
+            return redirect()->route('addOns.index')->with('error', 'Item not found');
+        }
+
+        // Update item details
+        $item->name = $request->name;
+        $item->description = $request->description;
+        $item->price = $request->price;
+
+        // Handle the image upload if provided
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('public/storage/Categories');
+            $item->image = basename($imagePath); // Save just the image name, assuming you use `asset()` later
+        }
+
+        // Save the updated item to the database
+        $item->save();
+
+        // Redirect back to the item listing or another appropriate route with a success message
+        return redirect()->route('addOns.showItems')->with('success', 'Item updated successfully');
     }
+
 
     public function destroyItems($id)
     {
-        // Handle deleting items
+        $item = AddOnItem::findOrFail($id);
+
+        // Check if the item has an image and delete it from storage
+        if ($item->image) {
+            Storage::disk('public')->delete($item->image);
+        }
+
+        // Delete the item from the database
+        $item->delete();
+
+        return redirect()->route('addOns.showItems')->with('success', 'Add On Item deleted successfully');
     }
+
 
     public function createItems()
     {

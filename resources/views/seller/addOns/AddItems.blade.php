@@ -1,48 +1,61 @@
 @extends('layouts.seller')
 
-@section('title', 'Add Items')
+@section('title', isset($item) ? 'Edit Item' : 'Add Item')
 
 @section('content')
     <div class="container mx-auto w-full p-4">
         <div class="bg-white rounded-lg shadow-md p-6">
             <div class="flex justify-between items-center mb-6">
-                <h1 class="text-2xl font-semibold text-gray-800">Add On Item</h1>
+                <h1 class="text-2xl font-semibold text-gray-800">
+                    {{ isset($item) ? 'Edit Add On Item' : 'Add Add On Item' }}
+                </h1>
                 <a href="{{ route('addOns.showItems') }}"
                     class="px-4 py-2 bg-blue-50 text-blue-600 rounded-md hover:bg-blue-100 transition-colors">
                     Back
                 </a>
             </div>
 
-            <form action="{{ route('items.store') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ isset($item) ? route('items.update', $item->id) : route('items.store') }}" method="POST"
+                enctype="multipart/form-data">
                 @csrf
+                @if (isset($item))
+                    @method('PUT')
+                @endif
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Name Field -->
                     <div>
                         <label for="name" class="block text-sm font-medium text-gray-700 mb-1">
                             Name: <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" id="name" name="name" required
+                        <input type="text" id="name" name="name"
+                            value="{{ old('name', isset($item) ? $item->name : '') }}" required
                             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             placeholder="Name">
                     </div>
 
+                    <!-- Price Field -->
                     <div>
                         <label for="price" class="block text-sm font-medium text-gray-700 mb-1">
                             Price: <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" id="price" name="price" required
+                        <input type="text" id="price" name="price"
+                            value="{{ old('price', isset($item) ? $item->price : '') }}" required
                             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             placeholder="Price">
                     </div>
 
+                    <!-- Description Field -->
                     <div class="md:col-span-2">
                         <label for="description" class="block text-sm font-medium text-gray-700 mb-1">
                             Description: <span class="text-red-500">*</span>
                         </label>
                         <textarea id="description" name="description" rows="4" required
                             class="w-full px-3 py-2 border resize-none border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="Description"></textarea>
+                            placeholder="Description">{{ old('description', isset($item) ? $item->description : '') }}</textarea>
                     </div>
 
+                    <!-- Category Field -->
                     <div>
                         <label for="category" class="block text-sm font-medium text-gray-700 mb-1">
                             Add On Category Name: <span class="text-red-500">*</span>
@@ -53,11 +66,15 @@
                             <option value="">Select Add On Category</option>
 
                             @foreach ($categories as $category)
-                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                <option value="{{ $category->id }}"
+                                    {{ old('category', isset($item) && $item->category_id == $category->id ? 'selected' : '') }}>
+                                    {{ $category->name }}
+                                </option>
                             @endforeach
                         </select>
                     </div>
 
+                    <!-- Image Upload -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">
                             Image:
@@ -84,23 +101,29 @@
 
                                 <!-- Image Preview -->
                                 <div class="mt-2">
-                                    <img id="image-preview" class="mx-auto h-48 w-48 object-cover rounded-md hidden"
-                                        alt="Image Preview">
+                                    @if (isset($item) && $item->image)
+                                        <img id="image-preview" src="{{ Storage::url($item->image) }}"
+                                            class="mx-auto h-48 w-48 object-cover rounded-md" alt="Image Preview">
+                                    @else
+                                        <img id="image-preview" class="mx-auto h-48 w-48 object-cover rounded-md hidden"
+                                            alt="Image Preview">
+                                    @endif
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <div class="flex justify-end gap-4">
-                        <button type="submit"
-                            class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
-                            Save
-                        </button>
-                        <button type="button"
-                            class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors">
-                            Discard
-                        </button>
-                    </div>
+                <div class="flex justify-end gap-4 mt-6">
+                    <button type="submit"
+                        class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+                        {{ isset($item) ? 'Update' : 'Save' }}
+                    </button>
+                    <button type="button"
+                        class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors">
+                        Discard
+                    </button>
+                </div>
             </form>
         </div>
     </div>
