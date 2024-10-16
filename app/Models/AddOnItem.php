@@ -21,6 +21,6 @@ class AddOnItem extends Model
     // Define the relationship with the Category model
     public function category()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(Category::class, 'category_id');
     }
 }

@@ -127,23 +127,28 @@ class AddOnsController extends Controller
         return redirect()->route('addOns.showItems')->with('success', 'Add On Item created successfully');
     }
    // Add this in your SellerAddOnsController
-   public function showItems(Request $request)
-   {
-       // Get the search query from the request
-       $searchQuery = $request->input('search', ''); // Default to empty string if no input
-       
-       // Perform the search on your items
-       $items = AddOnItem::with('category') // Eager load category relationship
-           ->where('name', 'like', '%' . $searchQuery . '%')
-           ->orWhereHas('category', function ($query) use ($searchQuery) {
-               $query->where('name', 'like', '%' . $searchQuery . '%');
-           })
-           ->get();
+//    public function showItems()
+//    {
+//        $items = AddOnItem::all();
+//        return view('seller.addOns.Items', compact('items'));
+//    }
+public function showItems(Request $request)
+{
+    $query = $request->get('search');
 
-       // Return the items as JSON
-       return response()->json(['data' => $items], 200);
-   }
-       
+    if ($query) {
+        $items = AddOnItem::where('name', 'like', "%{$query}%")
+                          ->orWhere('description', 'like', "%{$query}%")
+                          ->with('category') // Ensure to include the relationship
+                          ->get();
+    } else {
+        $items = AddOnItem::with('category')->get();
+    }
+
+    return view('seller.addOns.Items', compact('items')); // Return only the items list
+}
+
+
     public function editItems($id)
     {
         // Retrieve the item by its ID
@@ -162,51 +167,51 @@ class AddOnsController extends Controller
 
         // Pass item, image, and categories to the view
         return view('seller.addOns.AddItems', compact('item', 'itemImage', 'categories'));
-    }   
+    }
     public function updateItems(Request $request, $id)
-    {
-        // Validate request data
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'price' => 'required|numeric',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Allow image updates
-        ]);
-    
-        // Retrieve the item by its ID
-        $item = AddOnItem::find($id);
-    
-        // Check if item exists
-        if (!$item) {
-            return redirect()->route('addOns.index')->with('error', 'Item not found');
-        }
-    
-        // Update item details
-        $item->name = $request->name;
-        $item->description = $request->description;
-        $item->price = $request->price;
-    
-        // Handle the image upload if provided
-        if ($request->hasFile('image')) {
-            // Get original extension
-            $extension = $request->file('image')->getClientOriginalExtension();
-    
-            // Create a unique file name using time() and the original extension
-            $imageName = time() . '.' . $extension;
-    
-            // Store the image in the 'public/storage/addOnItems' directory
-            $imagePath = $request->file('image')->storeAs('public/addOnItems', $imageName);
-    
-            // Save the image name to the database (the image path can be generated using Storage::url())
-            $item->image = 'addOnItems/' . $imageName;
-        }
-    
-        // Save the updated item to the database
-        $item->save();
-    
-        // Redirect back to the item listing or another appropriate route with a success message
-        return redirect()->route('addOns.showItems')->with('success', 'Item updated successfully');
-    }               
+{
+    // Validate request data
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'description' => 'nullable|string',
+        'price' => 'required|numeric',
+        'category' => 'required|exists:categories,id', // Validate category
+        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+    ]);
+
+    // Retrieve the item by its ID
+    $item = AddOnItem::find($id);
+
+    // Check if item exists
+    if (!$item) {
+        return redirect()->route('addOns.index')->with('error', 'Item not found');
+    }
+
+    // Update item details
+    $item->name = $request->name;
+    $item->description = $request->description;
+    $item->price = $request->price;
+    $item->category_id = $request->category; // Update the category_id field
+
+    // Handle the image upload if provided
+    if ($request->hasFile('image')) {
+        // Get original extension
+        $extension = $request->file('image')->getClientOriginalExtension();
+        // Create a unique file name using time() and the original extension
+        $imageName = time() . '.' . $extension;
+        // Store the image in the 'public/storage/addOnItems' directory
+        $imagePath = $request->file('image')->storeAs('public/addOnItems', $imageName);
+        // Save the image name to the database
+        $item->image = 'addOnItems/' . $imageName;
+    }
+
+    // Save the updated item to the database
+    $item->save();
+
+    // Redirect with a success message
+    return redirect()->route('addOns.showItems')->with('success', 'Item updated successfully');
+}
+
     public function destroyItems($id)
     {
         $item = AddOnItem::findOrFail($id);
