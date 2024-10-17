@@ -99,7 +99,8 @@ Route::prefix('seller')->middleware('auth')->group(function () {
     Route::put('/addOns/categories/{id}', [SellerAddOnsController::class, 'updateCategories'])->name('categories.update');
 
 
-    Route::get('/addOns/addItems', [SellerAddOnsController::class, 'showItems'])->name('addOns.showItems'); // View the add items page
+    // Route::get('/addOns/addItems', [SellerAddOnsController::class, 'showItems'])->name('addOns.showItems'); // View the add items page
+    Route::get('/add-ons/items', [SellerAddOnsController::class, 'showItems'])->name('addOns.showItems');
     Route::post('/addOns/addItems/items', [SellerAddOnsController::class, 'storeItem'])->name('items.store'); // Store a new item
     Route::get('/addOns/addItems/items/{id}/edit', [SellerAddOnsController::class, 'editItems'])->name('items.edit'); // Edit an item form
     Route::put('/addOns/addItems/items/{id}', [SellerAddOnsController::class, 'updateItems'])->name('items.update'); // Update an item
@@ -112,4 +113,7 @@ Route::prefix('seller')->middleware('auth')->group(function () {
     Route::get('/menu/{id}/edit', [SellerMenuController::class, 'edit'])->name('menu.edit');
     Route::put('/menu/{id}', [SellerMenuController::class, 'update'])->name('menu.update');
     Route::delete('/menu/{id}', [SellerMenuController::class, 'destroy'])->name('menu.destroy');
+
+    Route::get('/menu/additems', [MenuController::class, 'fetchAddOnItems'])->name('menu.addItems');
+
 });

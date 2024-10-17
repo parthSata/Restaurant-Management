@@ -35,31 +35,46 @@
                 <tbody>
                     @forelse ($menuTypes as $item)
                         <tr class="border-t border-gray-200">
-                            <td class="py-4">
-                                <img src="{{ $menuType->image ?? '/placeholder.svg?height=40&width=40' }}"
-                                    alt="{{ $menuType->name }}" class="w-10 h-10 rounded-full">
+                            <td class="flex gap-2 py-4">
+
+                                <img src="{{ Storage::url($item->image) }}" alt="{{ $item->name }}"
+                                    class="w-10 h-10 rounded-full">
+                                <span class="py-4">{{ $item->name }}</span>
                             </td>
-                            <td class="py-4">{{ $menuType->name }}</td>
-                            <td class="py-4">{{ $menuType->category ?? 'N/A' }}</td>
+                            <td class="py-4">{{ $item->parent ? $item->parent->name : 'N/A' }}</td>
                             <td class="py-4">
                                 <span
                                     class="bg-indigo-100 text-indigo-800 px-2 py-1 rounded-full text-sm">{{ $item->quantity ?? 0 }}</span>
                             </td>
                             <td class="py-4">
                                 <div class="flex space-x-2">
-                                    {{-- Edit Button --}}
-                                    <form action="{{ route('menu.edit', $menuType->id) }}" method="GET">
+                                    <!-- Add Item Button -->
+                                    <form action="{{ route('menu.create') }}" method="GET">
                                         <button class="text-indigo-600 hover:text-indigo-900">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                                                fill="currentColor">
+                                                <path fill-rule="evenodd"
+                                                    d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+                                                    clip-rule="evenodd" />
+                                            </svg>
+                                        </button>
+                                    </form>
+
+                                    {{-- Edit Button --}}
+                                    <form action="{{ route('menu.edit', $item->id) }}" method="GET">
+                                        <button type="button" onclick="openModal({{ json_encode($item) }})"
+                                            class="text-indigo-600 hover:text-indigo-900">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
                                                 fill="currentColor">
                                                 <path
                                                     d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                                             </svg>
                                         </button>
+
                                     </form>
 
                                     {{-- Delete Button --}}
-                                    <form action="{{ route('menu.destroy', $menuType->id) }}" method="POST"
+                                    <form action="{{ route('menu.destroy', $item->id) }}" method="POST"
                                         onsubmit="return confirm('Are you sure you want to delete this menu type?');">
                                         @csrf
                                         @method('DELETE')
@@ -90,12 +105,13 @@
     <div id="menuModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
         <div class="bg-white max-w-md w-full p-10 flex flex-col rounded-lg shadow-lg">
             <h2 class="text-lg font-semibold mb-4" id="modalTitle">Add Menu</h2>
-            <form id="menuForm" class="flex flex-col gap-4"
-                action="{{ isset($menu) ? route('menu.update', $menu->id) : route('menu.store') }}" method="POST"
+            <form id="menuForm" method="POST"
+                action="{{ isset($menu) ? route('menu.update', $menu->id) : route('menu.store') }}"
                 enctype="multipart/form-data">
+
                 @csrf
                 @if (isset($menu))
-                    @method('PUT')
+                    @method('PUT') <!-- Ensure PUT method is specified for updates -->
                 @endif
                 <div class="flex flex-col gap-4">
                     <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
@@ -104,19 +120,23 @@
                         value="{{ old('name', isset($menu) ? $menu->name : '') }}" required>
                 </div>
                 <div class="flex flex-col gap-2">
-                    <label for="parent_menu">Parent Menu:</label>
-                    <select name="parent_menu" class="w-full px-4 py-2 border border-gray-300 rounded-lg" id="parent_menu">
+                    <label for="parent_id">Parent Menu:</label>
+                    <select name="parent_id" class="w-full px-4 py-2 border border-gray-300 rounded-lg" id="parent_id">
                         <option value="">Select Parent Menu</option>
-                        @foreach ($menuType as $menu)
-                            <option value="{{ $menuType->parent_id }}">{{ $menuType->name }}</option>
+                        @foreach ($menuTypes as $menuType)
+                            <option value="{{ $menuType->id }}"
+                                {{ old('parent_id', isset($menu) ? $menu->parent_id : '') == $menuType->parent_id ? 'selected' : '' }}>
+                                {{ $menuType->name }}
+                            </option>
                         @endforeach
                     </select>
                 </div>
+
                 <label for="feature-image-input">Image:</label>
                 <div class="relative flex items-center">
                     <div class="bg-white border">
                         <img id="imagePreview"
-                            src="{{ isset($category) ? Storage::url($category->image) : asset('image/placeholder.jpeg') }}"
+                            src="{{ old('image', isset($menu) ? Storage::url($menu->image) : asset('image/placeholder.jpeg')) }}"
                             alt="Feature Image placeholder" class="w-32 h-28 object-cover rounded-md">
                     </div>
                     <input type="file" id="feature-image-input" name="image" accept="image/*"
@@ -146,27 +166,37 @@
             image.src = URL.createObjectURL(event.target.files[0]);
         }
 
-        // JavaScript to handle modal functionality
         function openModal(menu = null) {
             const modal = document.getElementById('menuModal');
             const modalTitle = document.getElementById('modalTitle');
+            const submitButton = document.querySelector('#menuForm button[type="submit"]');
 
-            // Reset form values
-            document.getElementById('name').value = menu ? menu.name : '';
-            document.getElementById('parent_menu').value = menu ? menu.parent_menu : '';
-
-            // Update form action if editing
             if (menu) {
+                // Set the input fields for editing an existing menu
+                document.getElementById('name').value = menu.name || '';
+                document.getElementById('parent_id').value = menu.parent_id || ''; // Set parent ID here
+                document.getElementById('imagePreview').src = menu.image ? `/storage/${menu.image}` :
+                    '/image/placeholder.jpeg';
+
                 modalTitle.textContent = 'Update Menu';
-                document.getElementById('menuForm').action = '{{ url('seller/menu') }}/' + menu.id;
+                submitButton.textContent = 'Update'; // Change button text to "Update"
+                document.getElementById('menuForm').action =
+                    `{{ url('seller/menu') }}/${menu.id}`; // Set form action for update
             } else {
+                // Clear fields for adding a new menu
+                document.getElementById('name').value = '';
+                document.getElementById('parent_id').value = menu.parent_id ||
+                    ''; // Ensure this references the correct field
+                document.getElementById('imagePreview').src = '/image/placeholder.jpeg'; // Reset to placeholder
+
                 modalTitle.textContent = 'Add Menu';
-                document.getElementById('menuForm').action = '{{ route('menu.store') }}';
+                submitButton.textContent = 'Add'; // Change button text to "Add"
+                document.getElementById('menuForm').action = '{{ route('menu.store') }}'; // Set form action for add
             }
 
-            // Show the modal
-            modal.classList.remove('hidden');
+            modal.classList.remove('hidden'); // Show the modal
         }
+
 
         function closeModal() {
             document.getElementById('menuModal').classList.add('hidden');
