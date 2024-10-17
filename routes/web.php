@@ -87,9 +87,6 @@ Route::prefix('seller')->middleware('auth')->group(function () {
 
     Route::get('/transaction', [SellerTransactionController::class, 'index'])->name('transaction.index');
 
-    Route::get('/menu', [SellerMenuController::class, 'index'])->name('menu.index');
-
-
     Route::get('/couponcodes', [SellerCouponCodesController::class, 'index'])->name('couponcodes.index');
 
     Route::get('/reservation', [SellerReservationController::class, 'index'])->name('reservation.index');
@@ -109,4 +106,10 @@ Route::prefix('seller')->middleware('auth')->group(function () {
     Route::delete('/addOns/addItems/items/{id}', [SellerAddOnsController::class, 'destroyItems'])->name('items.destroy'); // Delete an item
     Route::get('/addOns/addItems/create', [SellerAddOnsController::class, 'createItems'])->name('items.create');
 
+    Route::get('/menu', [SellerMenuController::class, 'index'])->name('menu.index');
+    Route::get('/menu/create', [SellerMenuController::class, 'create'])->name('menu.create');
+    Route::post('/menu', [SellerMenuController::class, 'store'])->name('menu.store');
+    Route::get('/menu/{id}/edit', [SellerMenuController::class, 'edit'])->name('menu.edit');
+    Route::put('/menu/{id}', [SellerMenuController::class, 'update'])->name('menu.update');
+    Route::delete('/menu/{id}', [SellerMenuController::class, 'destroy'])->name('menu.destroy');
 });
