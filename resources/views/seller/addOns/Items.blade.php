@@ -100,25 +100,35 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
-        $(document).ready(function() {
-            $('#search').on('keyup', function() {
-                var query = $(this).val();
+      $(document).ready(function() {
+    // CSRF token setup for AJAX
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
 
-                $.ajax({
-                    url: "{{ route('addOns.showItems') }}", // Your route for fetching items
-                    method: "GET",
-                    data: {
-                        search: query
-                    },
-                    success: function(data) {
-                        $('#items-list').html(data);
-                    },
-                    error: function() {
-                        console.log('Error fetching data');
-                    }
-                });
-            });
+    // Search event
+    $('#search').on('keyup', function() {
+        var query = $(this).val();
+
+        $.ajax({
+            url: "{{ route('addOns.showItems') }}", 
+            method: "GET",
+            data: { search: query },
+            success: function(response) {
+                // Update the table body with new rows
+                $('#items-list').html(response.html); 
+            },
+            error: function(xhr, status, error) {
+                console.error('Error fetching data:', error);
+                console.error('Status:', status);
+                console.error('Response:', xhr.responseText);
+            }
         });
+    });
+});
+
     </script>
 
 
