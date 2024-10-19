@@ -107,13 +107,18 @@ Route::prefix('seller')->middleware('auth')->group(function () {
     Route::delete('/addOns/addItems/items/{id}', [SellerAddOnsController::class, 'destroyItems'])->name('items.destroy'); // Delete an item
     Route::get('/addOns/addItems/create', [SellerAddOnsController::class, 'createItems'])->name('items.create');
 
-    Route::get('/menu', [SellerMenuController::class, 'index'])->name('menu.index');
-    Route::get('/menu/create', [SellerMenuController::class, 'create'])->name('menu.create');
-    Route::post('/menu', [SellerMenuController::class, 'store'])->name('menu.store');
-    Route::get('/menu/{id}/edit', [SellerMenuController::class, 'edit'])->name('menu.edit');
-    Route::put('/menu/{id}', [SellerMenuController::class, 'update'])->name('menu.update');
-    Route::delete('/menu/{id}', [SellerMenuController::class, 'destroy'])->name('menu.destroy');
+   // Menu Routes
+   Route::get('/menu', [SellerMenuController::class, 'index'])->name('menu.index'); // View all menus
+   Route::get('/menu/create', [SellerMenuController::class, 'create'])->name('menu.create'); // Create a menu form
+   Route::post('/menu', [SellerMenuController::class, 'store'])->name('menu.store'); // Store a new menu
+   Route::get('/menu/{id}/edit', [SellerMenuController::class, 'edit'])->name('menu.edit'); // Edit a menu form
+   Route::put('/menu/{id}', [SellerMenuController::class, 'update'])->name('menu.update'); // Update a menu
+   Route::delete('/menu/{id}', [SellerMenuController::class, 'destroy'])->name('menu.destroy'); // Delete a menu
 
-    Route::get('/menu/additems', [MenuController::class, 'fetchAddOnItems'])->name('menu.addItems');
-
+    // Add/Remove Items from Menu Routes
+    Route::get('/menu/add-items', [SellerMenuController::class, 'fetchAddOnItems'])->name('menu.addItems'); // View items to add to a menu
+    Route::post('/menu/add-item/{id}', [SellerMenuController::class, 'addItem'])->name('menu.addItem'); // Add an item to the menu
+    Route::post('/menu/remove-item/{id}', [SellerMenuController::class, 'removeItem'])->name('menu.removeItem'); // Remove an item from the menu
+   
+   
 });
