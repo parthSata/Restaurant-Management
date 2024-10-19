@@ -20,4 +20,10 @@ class MenuType extends Model
     {
         return $this->hasMany(MenuType::class, 'parent_id');
     }
+
+    public function addOnItems()
+    {
+        return $this->hasMany(AddOnItem::class, 'menu_id');
+    }
+    
 }

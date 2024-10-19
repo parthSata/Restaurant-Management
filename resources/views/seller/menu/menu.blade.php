@@ -49,7 +49,7 @@
                             <td class="py-4">
                                 <div class="flex space-x-2">
                                     <!-- Add Item Button -->
-                                    <form action="{{ route('menu.create') }}" method="GET">
+                                    <form action="{{ route('menu.create', ['menuId' => $item->id]) }}" method="GET">
                                         <button class="text-indigo-600 hover:text-indigo-900">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
                                                 fill="currentColor">
@@ -59,6 +59,8 @@
                                             </svg>
                                         </button>
                                     </form>
+
+
 
                                     {{-- Edit Button --}}
                                     <form action="{{ route('menu.edit', $item->id) }}" method="GET">

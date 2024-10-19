@@ -15,12 +15,17 @@
                 </a>
             </div>
 
-            <form action="{{ isset($item) ? route('items.update', $item->id) : route('items.store') }}" method="POST"
-                enctype="multipart/form-data">
+            <form
+                action="{{ isset($item) ? route('items.update', ['menu_id' => $menu_id, 'id' => $item->id]) : route('items.store', ['menu_id' => $menu_id]) }}"
+                method="POST" enctype="multipart/form-data">
+
                 @csrf
                 @if (isset($item))
                     @method('PUT')
                 @endif
+
+                <!-- Hidden Menu ID Field -->
+                <input type="hidden" name="menu_id" value="{{ $menu_id }}">
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Name Field -->
@@ -125,6 +130,7 @@
                     </button>
                 </div>
             </form>
+
         </div>
     </div>
 
