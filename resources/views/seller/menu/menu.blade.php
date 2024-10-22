@@ -183,12 +183,11 @@
                 modalTitle.textContent = 'Update Menu';
                 submitButton.textContent = 'Update'; // Change button text to "Update"
                 document.getElementById('menuForm').action =
-                    `{{ url('seller/menu') }}/${menu.id}`; // Set form action for update
+                `{{ url('seller/menu') }}/${menu.id}`; // Set form action for update
             } else {
                 // Clear fields for adding a new menu
                 document.getElementById('name').value = '';
-                document.getElementById('parent_id').value = menu.parent_id ||
-                    ''; // Ensure this references the correct field
+                document.getElementById('parent_id').value = ''; // Ensure this is cleared
                 document.getElementById('imagePreview').src = '/image/placeholder.jpeg'; // Reset to placeholder
 
                 modalTitle.textContent = 'Add Menu';
@@ -198,6 +197,7 @@
 
             modal.classList.remove('hidden'); // Show the modal
         }
+
 
 
         function closeModal() {
