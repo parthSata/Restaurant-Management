@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\MenuType;
 use App\Models\AddOnItem;
 use Illuminate\Support\Facades\Storage;
+use App\Models\AddedItem; // Make sure this line is present
+
 
 
 
@@ -95,55 +97,68 @@ class MenuController extends Controller
         return redirect()->route('menu.index')->with('success', 'Menu Type deleted successfully');
     }
     public function create(Request $request)
-{
-    $menuId = $request->input('menu_id'); // Get menu_id from the request
-
-    // Fetch add-on items
-    $addOnItems = AddOnItem::where('menu_id', $menuId)->where('is_added', 0)->get();
-    $addedItems = AddOnItem::where('menu_id', $menuId)->where('is_added', 1)->get();
-
-    return view('seller.menu.AddItemsinMenu', compact('addOnItems', 'addedItems', 'menuId'));
-}
-   
-
-public function fetchAddOnItems(Request $request)
-{
-    $menuId = $request->input('menu_id');
-    $query = AddOnItem::where('menu_id', $menuId)->where('is_added', 0);
-
-    if ($request->has('search')) {
-        $query->where('name', 'like', '%' . $request->input('search') . '%');
+    {
+        // Assuming you get the menu_id from the request or any other source
+        $menuId = $request->input('menu_id'); // Or any logic to set the menu ID
+    
+        // Fetch add-on items that are not added
+        $addOnItems = AddOnItem::where('is_added', 0)->get();
+        
+        // Fetch added items
+        $addedItems = AddOnItem::where('is_added', 1)->get();
+    
+        return view('seller.menu.AddItemsinMenu', compact('addOnItems', 'addedItems', 'menuId')); // Include $menuId here
     }
-
-    $addOnItems = $query->get();
-    $addedItems = AddOnItem::where('menu_id', $menuId)->where('is_added', 1)->get();
-
-    return view('seller.menu.AddItemsinMenu', compact('addOnItems', 'addedItems', 'menuId')); // Pass $menuId here
-}
+    
+    
+   
+    public function fetchAddOnItems(Request $request)
+    {
+        $menuId = $request->input('menu_id'); // Get menu_id from the request
+        $query = AddOnItem::where('is_added', 0);
+    
+        if ($request->has('search')) {
+            $query->where('name', 'like', '%' . $request->input('search') . '%');
+        }
+    
+        $addOnItems = $query->get();
+        $addedItems = AddedItem::where('menu_id', $menuId)->with('item')->get(); // Fetch added items based on menu_id
+    
+        return view('seller.menu.AddItemsinMenu', compact('addOnItems', 'addedItems', 'menuId')); // Include $menuId here
+    }
+    
+    
 
 
         
 public function addItem($id, Request $request)
 {
-    $menuId = $request->input('menu_id');
-    $item = AddOnItem::findOrFail($id);
-    $item->is_added = 1; // Mark as added
-    $item->menu_id = $menuId;
+    $menuId = $request->input('menu_id'); // Get the menu ID from the request
+    $item = AddOnItem::findOrFail($id); // Find the item
+
+    // Mark the item as added
+    $item->is_added = 1; 
     $item->save();
 
-    return redirect()->route('menu.addItems', ['menu_id' => $menuId])->with('success', 'Item added to the list.');
+    // Create a new entry in the added_items table
+    AddedItem::create([
+        'menu_id' => $menuId,
+        'item_id' => $item->id,
+    ]);
+
+    return redirect()->route('menu.addItems')->with('success', 'Item added to the list.');
 }
+
 
 
 public function removeItem($id, Request $request)
 {
-    $menuId = $request->input('menu_id');
     $item = AddOnItem::findOrFail($id);
     $item->is_added = 0; // Mark as not added
-    $item->menu_id = null;
+    
     $item->save();
 
-    return redirect()->route('menu.addItems', ['menu_id' => $menuId])->with('success', 'Item removed from the list.');
+    return redirect()->route('menu.addItems')->with('success', 'Item removed from the list.');
 }
 
 

@@ -10,7 +10,8 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Log;
-
+use App\Http\Controllers\Menu;
+use App\Models\MenuType;
 
 
 class AddOnsController extends Controller
@@ -95,7 +96,7 @@ class AddOnsController extends Controller
     // Items
     
 
-    public function storeItem(Request $request, $menu_id)
+    public function storeItem(Request $request)
     {
         // Validate the input data
         $validated = $request->validate([
@@ -103,7 +104,7 @@ class AddOnsController extends Controller
             'price' => 'required|numeric',
             'description' => 'nullable|string', // Description is now optional (nullable)
             'category_id' => 'required|exists:categories,id', // Ensure the category exists
-            'menu_id' => 'nullable|exists:menu_types,id', // Validate menu_id (it's nullable now)
+            
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240', // Image is optional
         ]);
     
@@ -121,14 +122,16 @@ class AddOnsController extends Controller
             'name' => $validated['name'],
             'price' => $validated['price'],
             'description' => $validated['description'],
-            'category_id' => $validated['category_id'], // Make sure the category_id field is used
-            'menu_id' => $menu_id, // Store the menu_id from the route (if available)
+            'category_id' => $validated['category_id'], // Corrected to use 'category_id'
+            
             'image' => $imagePath, // Store image path if available
         ]);
     
         // Redirect back with a success message
         return redirect()->route('addOns.showItems')->with('success', 'Add-On Item created successfully.');
     }
+    
+    
 
 
     public function showItems(Request $request)
@@ -274,8 +277,18 @@ class AddOnsController extends Controller
     }
     public function createItems()
     {
-        $categories = Category::all(); // Fetch categories from the database
-        return view('seller.addOns.AddItems', compact('categories')); // Pass categories to the view
+        $categories = Category::all();
+        $menus = Menutype::all();
+        $specificMenu = Menutype::where('name', 'Gujrati Food')->first();
+    
+        return view('seller.addOns.AddItems', [
+            'categories' => $categories,
+            'menus' => $menus,
+            
+        ]);
     }
+    
+    
+    
 
 }

@@ -101,7 +101,9 @@ Route::prefix('seller')->middleware('auth')->group(function () {
 
     // Route::get('/addOns/addItems', [SellerAddOnsController::class, 'showItems'])->name('addOns.showItems'); // View the add items page
     Route::get('/add-ons/items', [SellerAddOnsController::class, 'showItems'])->name('addOns.showItems');
-    Route::post('/addOns/addItems/items', [SellerAddOnsController::class, 'storeItem'])->name('items.store'); // Store a new item
+    Route::get('/addOns/addItems/create/{menu_id}', [SellerAddOnsController::class, 'createItems'])->name('items.create');
+
+    Route::post('/addOns/addItems/items', [SellerAddOnsController::class, 'storeItem'])->name('items.store');
     Route::get('/addOns/addItems/items/{id}/edit', [SellerAddOnsController::class, 'editItems'])->name('items.edit'); // Edit an item form
     Route::put('/addOns/addItems/items/{id}', [SellerAddOnsController::class, 'updateItems'])->name('items.update'); // Update an item
     Route::delete('/addOns/addItems/items/{id}', [SellerAddOnsController::class, 'destroyItems'])->name('items.destroy'); // Delete an item
@@ -117,7 +119,9 @@ Route::prefix('seller')->middleware('auth')->group(function () {
 
     // Add/Remove Items from Menu Routes
     Route::get('/menu/add-items', [SellerMenuController::class, 'fetchAddOnItems'])->name('menu.addItems'); // View items to add to a menu
-    Route::post('/menu/add-item/{id}', [SellerMenuController::class, 'addItem'])->name('menu.addItem'); // Add an item to the menu
+    // Route::post('/menu/add-item/{id}', [SellerMenuController::class, 'addItem'])->name('menu.addItem'); // Add an item to the menu
+    Route::post('/menu/add-item/{id}', [SellerMenuController::class, 'addItem'])->name('menu.addItem');
+
     Route::post('/menu/remove-item/{id}', [SellerMenuController::class, 'removeItem'])->name('menu.removeItem'); // Remove an item from the menu
    
    

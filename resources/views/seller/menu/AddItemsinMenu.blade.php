@@ -31,8 +31,8 @@
                             </div>
 
                             <form action="{{ route('menu.addItem', $item->id) }}" method="POST">
-                                @csrf
-                                <input type="hidden" name="menu_id" value="{{ $menuId }}">
+    @csrf
+    <input type="hidden" name="menu_id" value="{{ $menuId }}"> <!-- This must have a valid menu ID -->
                                 <!-- Pass menu_id in the form -->
                                 <button type="submit"
                                     class="bg-blue-500 text-white p-2 h-8 w-8 rounded flex justify-center">
@@ -63,7 +63,7 @@
                             </div>
                             <form action="{{ route('menu.removeItem', $item->id) }}" method="POST">
                                 @csrf
-                                <input type="hidden" name="menu_id" value="{{ $menuId }}">
+                              
                                 <button type="submit"
                                     class="bg-red-500 text-white p-2 h-8 w-8 rounded flex justify-center">
                                     <i class="fa-solid fa-trash"></i>
