@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('added_items', function (Blueprint $table) {
             $table->id();  // Primary key
             $table->foreignId('menu_id')->constrained('menus')->onDelete('cascade');  // Foreign key to the menus table
-            $table->foreignId('item_id')->constrained('items')->onDelete('cascade');  // Foreign key to the items table
+            $table->json('items');  // JSON column to store an array of items
             $table->timestamps();  // Automatically manages created_at and updated_at fields
         });
     }
