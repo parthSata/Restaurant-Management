@@ -50,7 +50,9 @@
                                 <div class="flex space-x-2">
                                     <!-- Add Item Button -->
                                     <form action="{{ route('menu.create', ['menuId' => $item->id]) }}" method="GET">
-                                        <button class="text-indigo-600 hover:text-indigo-900">
+                                        <input type="hidden" name="menu_id" value="{{ $item->id }}">
+                                        <!-- Pass the menu ID -->
+                                        <button type="submit" class="text-indigo-600 hover:text-indigo-900">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
                                                 fill="currentColor">
                                                 <path fill-rule="evenodd"
@@ -59,9 +61,6 @@
                                             </svg>
                                         </button>
                                     </form>
-
-
-
                                     {{-- Edit Button --}}
                                     <form action="{{ route('menu.edit', $item->id) }}" method="GET">
                                         <button type="button" onclick="openModal({{ json_encode($item) }})"
@@ -104,7 +103,8 @@
 
 
     <!-- Modal for Add/Update Menu -->
-    <div id="menuModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+
+    <div id="menuModal" class="fixed inset-0 bg-black bg-opacity-50 hidden">
         <div class="bg-white max-w-md w-full p-10 flex flex-col rounded-lg shadow-lg">
             <h2 class="text-lg font-semibold mb-4" id="modalTitle">Add Menu</h2>
             <form id="menuForm" method="POST"
@@ -159,6 +159,7 @@
         </div>
     </div>
 
+
     <!-- Table content here -->
 
 
@@ -182,8 +183,12 @@
 
                 modalTitle.textContent = 'Update Menu';
                 submitButton.textContent = 'Update'; // Change button text to "Update"
-                document.getElementById('menuForm').action =
-                `{{ url('seller/menu') }}/${menu.id}`; // Set form action for update
+                document.getElementById('menuForm').action = `/seller/menu/${menu.id}`; // Set form action for update
+                // Add the _method hidden input field dynamically for PUT
+                document.querySelector('#menuForm').insertAdjacentHTML(
+                    'beforeend',
+                    '<input type="hidden" name="_method" value="PUT">'
+                );
             } else {
                 // Clear fields for adding a new menu
                 document.getElementById('name').value = '';
@@ -193,12 +198,16 @@
                 modalTitle.textContent = 'Add Menu';
                 submitButton.textContent = 'Add'; // Change button text to "Add"
                 document.getElementById('menuForm').action = '{{ route('menu.store') }}'; // Set form action for add
+
+                // Remove the _method hidden input if it exists (because for adding we need POST)
+                const methodInput = document.querySelector('#menuForm input[name="_method"]');
+                if (methodInput) {
+                    methodInput.remove();
+                }
             }
 
             modal.classList.remove('hidden'); // Show the modal
         }
-
-
 
         function closeModal() {
             document.getElementById('menuModal').classList.add('hidden');

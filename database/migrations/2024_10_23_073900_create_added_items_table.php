@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('added_items', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('menu_id')->constrained(); // Foreign key to 'menus' table
+            $table->foreignId('item_id')->constrained('add_on_items'); // Foreign key to 'add_on_items' table
             $table->timestamps();
         });
     }
