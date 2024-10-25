@@ -23,7 +23,11 @@ class MenuType extends Model
 
     public function addOnItems()
     {
-        return $this->hasMany(AddOnItem::class, 'menu_id');
+        return $this->belongsToMany(AddOnItem::class, 'menu_add_on_items', 'menu_id', 'add_on_item_id');
     }
-    
+
+public function addedItems()
+{
+    return $this->hasMany(AddedItem::class, 'menu_id');
+}
 }

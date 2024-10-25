@@ -11,7 +11,7 @@ use App\Http\Controllers\Seller\TransactionController as SellerTransactionContro
 use App\Http\Controllers\Seller\ReservationController as SellerReservationController;
 use App\Http\Controllers\Seller\AddOnsController as SellerAddOnsController;
 use App\Http\Controllers\Seller\MenuController as SellerMenuController;
-use App\Http\Controllers\Seller\CouponCodeController as SellerCouponCodesController;
+use App\Http\Controllers\Seller\RestaurantCouponcodeController as SellerCouponCodesController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\HomeController;
@@ -87,8 +87,6 @@ Route::prefix('seller')->middleware('auth')->group(function () {
 
     Route::get('/transaction', [SellerTransactionController::class, 'index'])->name('transaction.index');
 
-    Route::get('/couponcodes', [SellerCouponCodesController::class, 'index'])->name('couponcodes.index');
-
     Route::get('/reservation', [SellerReservationController::class, 'index'])->name('reservation.index');
     Route::get('/reservation/tables', [SellerReservationController::class, 'showTables'])->name('reservation.showTables');
 
@@ -99,7 +97,6 @@ Route::prefix('seller')->middleware('auth')->group(function () {
     Route::put('/addOns/categories/{id}', [SellerAddOnsController::class, 'updateCategories'])->name('categories.update');
 
 
-    // Route::get('/addOns/addItems', [SellerAddOnsController::class, 'showItems'])->name('addOns.showItems'); // View the add items page
     Route::get('/add-ons/items', [SellerAddOnsController::class, 'showItems'])->name('addOns.showItems');
     Route::get('/addOns/addItems/create/{menu_id}', [SellerAddOnsController::class, 'createItems'])->name('items.create');
 
@@ -109,18 +106,24 @@ Route::prefix('seller')->middleware('auth')->group(function () {
     Route::delete('/addOns/addItems/items/{id}', [SellerAddOnsController::class, 'destroyItems'])->name('items.destroy'); // Delete an item
     Route::get('/addOns/addItems/create', [SellerAddOnsController::class, 'createItems'])->name('items.create');
 
-   // Menu Routes
-   Route::get('/menu', [SellerMenuController::class, 'index'])->name('menu.index'); // View all menus
-   Route::get('/menu/create', [SellerMenuController::class, 'create'])->name('menu.create');
-   Route::post('/menu', [SellerMenuController::class, 'store'])->name('menu.store'); // Store a new menu
-   Route::get('/menu/{id}/edit', [SellerMenuController::class, 'edit'])->name('menu.edit'); // Edit a menu form
-   Route::put('/menu/{id}', [SellerMenuController::class, 'update'])->name('menu.update'); // Update a menu
-   Route::delete('/menu/{id}', [SellerMenuController::class, 'destroy'])->name('menu.destroy'); // Delete a menu
+    // Menu Routes
+    Route::get('/menu', [SellerMenuController::class, 'index'])->name('menu.index'); // View all menus
+    Route::get('/menu/create', [SellerMenuController::class, 'create'])->name('menu.create');
+    Route::post('/menu', [SellerMenuController::class, 'store'])->name('menu.store'); // Store a new menu
+    Route::get('/menu/{id}/edit', [SellerMenuController::class, 'edit'])->name('menu.edit'); // Edit a menu form
+    Route::put('/menu/{id}', [SellerMenuController::class, 'update'])->name('menu.update'); // Update a menu
+    Route::delete('/menu/{id}', [SellerMenuController::class, 'destroy'])->name('menu.destroy'); // Delete a menu
 
-    // Add/Remove Items from Menu Routes
+      // Add/Remove Items from Menu Routes
     Route::get('/menu/add-items', [SellerMenuController::class, 'fetchAddOnItems'])->name('menu.addItems'); // View items to add to a menu
     Route::post('/menu/{id}/addItem', [SellerMenuController::class, 'addItem'])->name('menu.addItem');
     Route::post('/menu/remove-item/{id}', [SellerMenuController::class, 'removeItem'])->name('menu.removeItem'); // Remove an item from the menu
    
-   
+    // Coupon Codes Seller Side
+    Route::get('/couponcodes', [SellerCouponCodesController::class, 'index'])->name('couponcodes.index'); // List all coupon codes
+    Route::get('/couponcodes/create', [SellerCouponCodesController::class, 'create'])->name('couponcodes.create'); // Show create form
+    Route::post('/couponcodes', [SellerCouponCodesController::class, 'store'])->name('couponcodes.store'); // Store a new coupon code
+    Route::get('/couponcodes/{id}/edit', [SellerCouponCodesController::class, 'edit'])->name('couponcodes.edit'); // Show edit form
+    Route::put('/couponcodes/{id}', [SellerCouponCodesController::class, 'update'])->name('couponcodes.update'); // Update a coupon code
+    Route::delete('/couponcodes/{id}', [SellerCouponCodesController::class, 'destroy'])->name('couponcodes.destroy'); 
 });

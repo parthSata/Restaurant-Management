@@ -14,8 +14,7 @@ class AddOnItem extends Model
         'description',
         'price',
         'category_id',
-        'image',
-        'menu_id' 
+        'image'
     ];
 
     public function category()
@@ -23,8 +22,8 @@ class AddOnItem extends Model
         return $this->belongsTo(Category::class, 'category_id');
     }
     
-    public function menu()
+    public function menus()
     {
-        return $this->belongsTo(MenuType::class, 'menu_id');
+        return $this->belongsToMany(MenuType::class, 'added_items', 'item_id', 'menu_id');
     }
 }

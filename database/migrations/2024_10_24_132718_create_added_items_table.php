@@ -9,20 +9,26 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+    public function up()
     {
         Schema::create('added_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('menu_id')->constrained(); // Foreign key to 'menus' table
-            $table->foreignId('item_id')->constrained('add_on_items'); // Foreign key to 'add_on_items' table
+            $table->unsignedBigInteger('menu_id'); // Ensure this is unsigned
+            $table->unsignedBigInteger('item_id'); // Ensure this is unsigned
             $table->timestamps();
+
+            // Foreign keys
+            $table->foreign('menu_id')->references('id')->on('menu_types')->onDelete('cascade');
+            $table->foreign('item_id')->references('id')->on('add_on_items')->onDelete('cascade');
         });
     }
 
     /**
      * Reverse the migrations.
+     *
+     * @return void
      */
-    public function down(): void
+    public function down()
     {
         Schema::dropIfExists('added_items');
     }
