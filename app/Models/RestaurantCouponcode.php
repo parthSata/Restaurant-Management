@@ -11,12 +11,16 @@ class RestaurantCouponcode extends Model
 
     protected $fillable = [
         'coupon_name',
-        'coupon_type',
-        'discount',
-        'coupon_option',
-        'min_order_amount',
-        'expiry_date',
-        'days_available',
-        'status',
+    'expiry_date',
+    'coupon_type',
+    'days_available',
+    'discount',
+    'min_order_amount',
+    'coupon_option',
+    'status',
+    ];
+
+    protected $casts = [
+        'days_available' => 'array', // Casts 'days_available' as an array
     ];
 }
