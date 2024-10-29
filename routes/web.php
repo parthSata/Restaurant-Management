@@ -1,10 +1,11 @@
 <?php
 
+use App\Http\Controllers\MenuController;
 use App\Http\Controllers\Seller\OrdersController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\RestaurantController;
+use App\Http\Controllers\RestaurantController as adminRestaurantController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\Seller\CustomerController as SellerCustomerController;
 use App\Http\Controllers\Seller\TransactionController as SellerTransactionController;
@@ -20,12 +21,14 @@ use App\Http\Controllers\HomeController;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/home/{id}', [HomeController::class, 'index'])->name('Home.index');
 
-Route::get('/restaurants', [RestaurantController::class, 'userIndex'])->name('restaurants.user.index');
-Route::get('/restaurant/{id}', [RestaurantController::class, 'show'])->name('restaurant.show');
-Route::get('/restaurant-home', [RestaurantController::class, 'restaurantHome'])->name('restaurant.home');
+Route::get('/restaurants', [adminRestaurantController::class, 'userIndex'])->name('restaurants.user.index');
+Route::get('/restaurant/{id}', [adminRestaurantController::class, 'show'])->name('restaurant.show');
+Route::get('/restaurant-home', [adminRestaurantController::class, 'restaurantHome'])->name('restaurant.home');
 
-// Static View Routes
+// Static View Routes (For User)
 Route::view('/contact', 'user.contact')->name('contact');
+
+
 
 // Authentication Routes
 Route::get('/register', [RegistrationController::class, 'showRegistrationForm'])->name('register');
@@ -35,6 +38,12 @@ Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
+//  (For Restaurant)
+Route::get('/contactUs/{id}', [adminRestaurantController::class, 'contactUs'])->name('contact');
+Route::get('/aboutUs/{id}', [adminRestaurantController::class, 'aboutUs'])->name('about');
+Route::get('/menu/{id}', [adminRestaurantController::class, 'menu'])->name('menu');
+Route::get('/reservation/{id}', [adminRestaurantController::class, 'reservation'])->name('reservation');
+Route::get('/restaurant/{id}/menu', [MenuController::class, 'showMenu'])->name('restaurant.menu');
 
 // Admin Routes
 Route::prefix('admin')->middleware('auth')->group(function () {
@@ -44,13 +53,14 @@ Route::prefix('admin')->middleware('auth')->group(function () {
         return view('admin.dashboard.dashboard');
     })->name('admin.dashboard');
 
+
     // Restaurant Routes
-    Route::get('/restaurants', [RestaurantController::class, 'index'])->name('restaurants.index');  // Update this line
-    Route::get('/restaurants/create', [RestaurantController::class, 'create'])->name('restaurants.create');
-    Route::post('/restaurants/store', [RestaurantController::class, 'store'])->name('restaurants.store');
-    Route::get('restaurants/{id}/edit', [RestaurantController::class, 'edit'])->name('restaurants.edit');
-    Route::put('/restaurants/{id}', [RestaurantController::class, 'update'])->name('restaurants.update');
-    Route::delete('/restaurants/{id}', [RestaurantController::class, 'destroy'])->name('restaurants.destroy');
+    Route::get('/restaurants', [adminRestaurantController::class, 'index'])->name('restaurants.index');  // Update this line
+    Route::get('/restaurants/create', [adminRestaurantController::class, 'create'])->name('restaurants.create');
+    Route::post('/restaurants/store', [adminRestaurantController::class, 'store'])->name('restaurants.store');
+    Route::get('restaurants/{id}/edit', [adminRestaurantController::class, 'edit'])->name('restaurants.edit');
+    Route::put('/restaurants/{id}', [adminRestaurantController::class, 'update'])->name('restaurants.update');
+    Route::delete('/restaurants/{id}', [adminRestaurantController::class, 'destroy'])->name('restaurants.destroy');
 
     // Customer Routes
     Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');  // Make sure this is present

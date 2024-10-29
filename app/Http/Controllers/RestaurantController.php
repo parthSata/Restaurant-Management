@@ -14,19 +14,39 @@ use Illuminate\Support\Facades\Storage;
 class RestaurantController extends Controller
 {
     public function userIndex(Request $request)
-{
-    // Get the search query from the request (if any)
-    $search = $request->input('search');
+    {
+        // Get the search query from the request (if any)
+        $search = $request->input('search');
 
-    // Fetch all restaurants or filter based on search query
-    $restaurants = Restaurant::when($search, function ($query) use ($search) {
-        return $query->where('restaurant_name', 'like', "%{$search}%");
-    })->get();
+        // Fetch all restaurants or filter based on search query
+        $restaurants = Restaurant::when($search, function ($query) use ($search) {
+            return $query->where('restaurant_name', 'like', "%{$search}%");
+        })->get();
 
-    // Return the user view with all restaurants
-    return view('user.restaurant', compact('restaurants', 'search'));
-}
-
+        // Return the user view with all restaurants
+        return view('user.restaurant', compact('restaurants', 'search'));
+    }
+    public function contactUs($id)
+    {
+        $restaurants = Restaurant::findOrFail($id);    
+        return view('components.Restaurant.ContactUs.contact', compact('restaurants'));
+    }
+    public function menu($id)
+    {
+        $restaurants = Restaurant::findOrFail($id);    
+        return view('components.Restaurant.Menu.Restaurant_Menu', compact('restaurants'));
+    }
+    public function aboutUs($id)
+    {
+        $restaurants = Restaurant::findOrFail($id);    
+        return view('components.Restaurant.About.about', compact('restaurants'));
+    }
+    public function reservation($id)
+    {
+        $restaurants = Restaurant::findOrFail($id);
+    
+        return view('components.Restaurant.reservation.reservation', compact('restaurants'));
+    }
     public function index(Request $request)
     {
         // Get the search query from the request
@@ -54,11 +74,12 @@ class RestaurantController extends Controller
         }
     }
 
+
+    
     public function restaurantHome()
     {
         return view('admin.Home.RestaurantHome');
     }
-    
     public function destroy($id)
     {
         $restaurant = Restaurant::findOrFail($id);
@@ -67,21 +88,18 @@ class RestaurantController extends Controller
         return redirect()->route('restaurants.index')->with('success', 'Restaurant deleted successfully.');
     }
     
-        public function edit($id)
-        {
-            $restaurant = Restaurant::findOrFail($id);
-            $service_type = ['Delivery', 'Dine In', 'Pickup'];
-            $statuses = ['active', 'inactive'];
-            $currencies = ['USD', 'EUR', 'GBP'];
-            $restaurantTypes = ['FastFood', 'CasualDining', 'FineDining'];
-        
-            // Debugging: Log the variables being passed
-        
-            return view('admin.Restaurants.AddRestaurant', compact('restaurant', 'service_type', 'statuses', 'currencies', 'restaurantTypes'));
-        }
-        
-
+    public function edit($id)
+    {
+        $restaurant = Restaurant::findOrFail($id);
+        $service_type = ['Delivery', 'Dine In', 'Pickup'];
+        $statuses = ['active', 'inactive'];
+        $currencies = ['USD', 'EUR', 'GBP'];
+        $restaurantTypes = ['FastFood', 'CasualDining', 'FineDining'];
     
+        // Debugging: Log the variables being passed
+    
+        return view('admin.Restaurants.AddRestaurant', compact('restaurant', 'service_type', 'statuses', 'currencies', 'restaurantTypes'));
+    }       
     public function update(Request $request, $id)
     {
         // Find the restaurant by ID
