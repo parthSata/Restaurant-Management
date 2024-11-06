@@ -26,7 +26,7 @@
                     <a href="{{ route('restaurant.show', ['id' => $restaurants->id ?? 1]) }}" class="text-gray-600 hover:text-gray-900">Home</a>
                     <a href="{{ route('reservation', ['id' => $restaurants->id ?? 1]) }}"
                         class="text-gray-600 hover:text-gray-900">Reservation</a>
-                    <a href="{{ route('menu', ['id' => $restaurants->id ?? 1]) }}"
+                    <a href="{{ route('restaurant', ['id' => $restaurants->id ?? 1]) }}"
                         class="text-gray-600 hover:text-gray-900">Menu</a>
                     <a href="{{ route('about', ['id' => $restaurants->id ?? 1]) }}"
                         class="text-gray-600 hover:text-gray-900">About Us</a>

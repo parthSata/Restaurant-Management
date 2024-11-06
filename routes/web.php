@@ -43,7 +43,7 @@ Route::get('/contactUs/{id}', [adminRestaurantController::class, 'contactUs'])->
 Route::get('/aboutUs/{id}', [adminRestaurantController::class, 'aboutUs'])->name('about');
 Route::get('/menu/{id}', [adminRestaurantController::class, 'menu'])->name('menu');
 Route::get('/reservation/{id}', [adminRestaurantController::class, 'reservation'])->name('reservation');
-Route::get('/restaurant/{id}/menu', [MenuController::class, 'showMenu'])->name('restaurant.menu');
+Route::get('/restaurant/{id}/menu', [MenuController::class, 'showMenu'])->name('restaurant');
 
 // Admin Routes
 Route::prefix('admin')->middleware('auth')->group(function () {

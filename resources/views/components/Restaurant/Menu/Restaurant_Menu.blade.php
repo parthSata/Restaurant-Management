@@ -14,7 +14,7 @@
                         <h2 class="text-lg font-semibold mb-2">Categories</h2>
                         <ul class="space-y-2">
                             <li>
-                                <a href="{{ route('restaurant.menu', ['id' => $restaurants->id]) }}"
+                                <a href="{{ route('restaurant', ['id' => $restaurants->id]) }}"
                                     class="text-orange-500 font-semibold">All</a>
                             </li>
                             <p class="">Restaurant ID {{ $restaurants->id }}</p>
