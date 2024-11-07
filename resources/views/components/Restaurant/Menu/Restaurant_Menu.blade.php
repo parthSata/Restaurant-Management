@@ -1,11 +1,11 @@
 @extends('layouts.restaurant')
 
-@section('title', $restaurants->name)
+@section('title', $restaurant->name)
 
 @section('content')
     <div class="">
         <main class="container mx-auto px-4 py-8">
-            <h1 class="text-5xl font-bold text-center mb-12">Menu for {{ $restaurants->name }}</h1>
+            <h1 class="text-5xl font-bold text-center mb-12">Menu for {{ $restaurant->name }}</h1>
 
             <div class="flex flex-col md:flex-row gap-8">
                 <!-- Sidebar -->
@@ -14,10 +14,10 @@
                         <h2 class="text-lg font-semibold mb-2">Categories</h2>
                         <ul class="space-y-2">
                             <li>
-                                <a href="{{ route('restaurant', ['id' => $restaurants->id]) }}"
+                                <a href="{{ route('restaurant', ['id' => $restaurant->id]) }}"
                                     class="text-orange-500 font-semibold">All</a>
                             </li>
-                            <p class="">Restaurant ID {{ $restaurants->id }}</p>
+                            <p>Restaurant ID {{ $restaurant->id }}</p>
                             @foreach ($categories as $category)
                                 <li>
                                     <a href="#{{ $category->name }}"
