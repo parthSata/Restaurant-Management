@@ -14,7 +14,7 @@ class MenuController extends Controller
     $categories = Category::with('addOnItems')->get();
     
     return view('components.Restaurant.Menu.Restaurant_Menu', [
-        'restaurant' => $restaurants, // Make sure this matches the variable name in the view
+        'restaurants' => $restaurants, // Make sure this matches the variable name in the view
         'restaurantId' => $id,
         'categories' => $categories,
     ]);

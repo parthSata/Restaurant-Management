@@ -43,9 +43,9 @@ class RestaurantController extends Controller
     }
     public function reservation($id)
     {
-        $restaurants = Restaurant::findOrFail($id);
+        $restaurant  = Restaurant::findOrFail($id);
     
-        return view('components.Restaurant.reservation.reservation', compact('restaurants'));
+        return view('components.Restaurant.reservation.reservation', compact('restaurant'));
     }
     public function index(Request $request)
     {
