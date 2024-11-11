@@ -80,7 +80,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::put('/coupons/{id}', [CouponController::class, 'update'])->name('coupons.update');
     Route::delete('coupons/{id}', [CouponController::class, 'destroy'])->name('coupons.destroy');
 });
-
+// Seller
 Route::prefix('seller')->middleware('auth')->group(function () {
 
     Route::get('/dashboard', function () {
@@ -136,4 +136,11 @@ Route::prefix('seller')->middleware('auth')->group(function () {
     Route::get('/couponcodes/{id}/edit', [SellerCouponCodesController::class, 'edit'])->name('couponcodes.edit'); // Show edit form
     Route::put('/couponcodes/{id}', [SellerCouponCodesController::class, 'update'])->name('couponcodes.update'); // Update a coupon code
     Route::delete('/couponcodes/{id}', [SellerCouponCodesController::class, 'destroy'])->name('couponcodes.destroy'); 
+});
+
+// Customer
+Route::prefix('customer')->middleware(['auth'])->group(function () {
+    Route::get('/dashboard', [CustomerController::class, 'dashboard'])->name('customer.dashboard');
+    Route::get('/orders/{id}', [CustomerController::class, 'orders'])->name('customer.orders');
+    Route::post('/logout', [CustomerController::class, 'logout'])->name('customer.logout'); // Logout route
 });

@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
 use Illuminate\Http\Request;
 use App\Models\Customer; 
+use Illuminate\Support\Facades\Auth;
+
 
 class CustomerController extends Controller
 {
@@ -25,4 +28,30 @@ class CustomerController extends Controller
         // Return the Blade view for Seller Enquiries
         return view('admin.customers.enquiries');
     }
+
+// Customer's Routes
+public function dashboard()
+{
+    $customer = auth()->user(); // Fetch the authenticated customer
+    return view('user.dashboard.customerDashboard', ['customer' => $customer]);
+}
+
+    public function orders($id)
+    {
+        // Fetch orders for the specific customer ID
+        $orders = Order::where('customer_id', $id)->get();
+
+        // Pass the orders to the view
+        return view('user.orders.orders', compact('orders'));
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::logout(); // Logs the user out
+        $request->session()->invalidate(); // Invalidates the session
+        $request->session()->regenerateToken(); // Regenerates CSRF token
+
+        return redirect('/login'); // Redirect to login
+    }
+
 }
