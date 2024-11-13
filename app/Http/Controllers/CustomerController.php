@@ -33,7 +33,9 @@ class CustomerController extends Controller
 public function dashboard()
 {
     $customer = auth()->user(); // Fetch the authenticated customer
-    return view('user.dashboard.customerDashboard', ['customer' => $customer]);
+    $user = Auth::user();  // Retrieve the authenticated user
+    $fullName = $user->first_name . ' ' . $user->last_name;// Fetch the authenticated customer
+    return view('user.dashboard.customerDashboard', ['customer' => $customer], compact('user','fullName'));
 }
 
     public function orders($id)

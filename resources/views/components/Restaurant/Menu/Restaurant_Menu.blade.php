@@ -3,6 +3,7 @@
 @section('title', $restaurants->name)
 
 @section('content')
+
     <div class="">
         <main class="container mx-auto px-4 py-8">
             <h1 class="text-5xl font-bold text-center mb-12">Menu for {{ $restaurants->restaurant_name }}</h1>
@@ -13,19 +14,11 @@
                     <div class="bg-white p-4 rounded-lg shadow-md mb-4">
                         <h2 class="text-lg font-semibold mb-2">Categories</h2>
                         <ul class="space-y-2">
-                            {{-- <li>
-                                <a href="{{ route('restaurant', ['id' => $restaurants->id]) }}"
-                                    class="text-orange-500 font-semibold">All</a>
-                            </li> --}}
                             <li>
                                 <a href="javascript:void(0);" onclick="filterCategory('all')"
                                     class="text-orange-500 font-semibold">All</a>
                             </li>
                             @foreach ($categories as $category)
-                                {{-- <li>
-                                    <a href="#{{ $category->name }}"
-                                        class="text-gray-600 hover:text-orange-500">{{ $category->name }}</a>
-                                </li> --}}
                                 <li>
                                     <a href="javascript:void(0);" onclick="filterCategory('{{ $category->name }}')"
                                         class="text-gray-600 hover:text-orange-500">{{ $category->name }}</a>
@@ -34,32 +27,7 @@
                         </ul>
                     </div>
                 </div>
-
                 <!-- Main Content -->
-                {{-- <div class="md:w-2/4">
-                    @foreach ($categories as $category)
-                        <div class="bg-white p-4 rounded-lg shadow-md mb-4">
-                            <h2 id="{{ $category->name }}" class="text-xl font-semibold mb-4">{{ $category->name }}</h2>
-                            <div class="space-y-6">
-                                @foreach ($category->addOnItems as $item)
-                                    <div class="flex items-center">
-                                        <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->name }}"
-                                            class="w-24 h-24 object-cover rounded-lg mr-4">
-                                        <div class="flex-grow">
-                                            <h3 class="text-lg font-semibold">{{ $item->name }}</h3>
-                                            <p class="text-gray-600">${{ $item->price }}</p>
-                                        </div>
-                                        <button
-                                            onclick="addToCart({{ $item->id }}, '{{ $item->name }}', {{ $item->price }}, '{{ asset('storage/' . $item->image) }}')"
-                                            class="bg-white text-orange-500 border border-orange-500 px-4 py-2 rounded hover:bg-orange-500 hover:text-white transition">
-                                            +ADD
-                                        </button>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-                    @endforeach
-                </div> --}}
 
                 <div class="md:w-2/4">
                     @foreach ($categories as $category)
@@ -105,6 +73,7 @@
                         </div>
 
                         <button
+                            onclick="window.location.href='{{ route('checkout', ['slug' => $restaurants->restaurant_slug]) }}'"
                             class="w-full bg-orange-500 text-white py-3 rounded-lg font-semibold hover:bg-orange-600 transition duration-300">
                             Checkout
                         </button>

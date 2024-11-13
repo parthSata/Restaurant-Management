@@ -60,12 +60,12 @@ class RestaurantController extends Controller
         return view('admin.Restaurants.adminrestaurants', compact('restaurants', 'search'));
     }
 
-    public function show($id = null)
+    public function show($slug = null)
     {
-        // Check if an ID is provided
-        if ($id) {
-            // Fetch restaurant details using the ID
-            $restaurants = Restaurant::findOrFail($id);
+        // Check if a slug is provided
+        if ($slug) {
+            // Fetch restaurant details using the slug
+            $restaurants = Restaurant::where('restaurant_slug', $slug)->firstOrFail();
             return view('components.Restaurant.Home.index', compact('restaurants'));
         } else {
             // Fetch all restaurants to display
@@ -73,6 +73,7 @@ class RestaurantController extends Controller
             return view('user.restaurant', compact('restaurants'));
         }
     }
+    
 
 
     
@@ -178,7 +179,7 @@ class RestaurantController extends Controller
     
         return view('admin.Restaurants.AddRestaurant', compact('service_type', 'statuses', 'currencies', 'restaurantTypes'));
     }
-    
+        
     public function store(Request $request)
     {
         $request->validate([
@@ -199,11 +200,14 @@ class RestaurantController extends Controller
             'favicon' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'feature_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
-
+    
         $restaurant = new Restaurant();
-
+    
         $restaurant->restaurant_name = $request->restaurant_name;
-        $restaurant->restaurant_slug = $request->restaurant_slug;
+        
+        // Convert the slug to lowercase and replace spaces with hyphens
+        $restaurant->restaurant_slug = strtolower(str_replace(' ', '-', $request->restaurant_slug));
+        
         $restaurant->contact_first_name = $request->contact_first_name;
         $restaurant->contact_last_name = $request->contact_last_name;
         $restaurant->contact_phone = $request->contact_phone;
@@ -215,31 +219,31 @@ class RestaurantController extends Controller
         $restaurant->status = $request->status;
         $restaurant->currency = $request->currency;
         $restaurant->restaurant_type = $request->restaurant_type;
-
+    
         // Store logo with the original filename
         if ($request->hasFile('logo')) {
             $logoName = time() . '-' . $request->file('logo')->getClientOriginalName();
             $request->file('logo')->storeAs('Uploaded_Images', $logoName, 'public');
-            $restaurant->logo = $logoName; // Save the image name to the database
+            $restaurant->logo = $logoName;
         }
-
+    
         // Store favicon with the original filename
         if ($request->hasFile('favicon')) {
             $faviconName = time() . '-' . $request->file('favicon')->getClientOriginalName();
             $request->file('favicon')->storeAs('Uploaded_Images', $faviconName, 'public');
-            $restaurant->favicon = $faviconName; // Save the image name to the database
+            $restaurant->favicon = $faviconName;
         }
-
+    
         // Store feature image with the original filename
         if ($request->hasFile('feature_image')) {
             $featureImageName = time() . '-' . $request->file('feature_image')->getClientOriginalName();
             $request->file('feature_image')->storeAs('Uploaded_Images', $featureImageName, 'public');
-            $restaurant->feature_image = $featureImageName; // Save the image name to the database
+            $restaurant->feature_image = $featureImageName;
         }
-
+    
         $restaurant->save();
-
+    
         return redirect()->route('restaurants.index')->with('success', 'Restaurant created successfully!');
-    }
+    }  
 
 }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DeliveryController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\Seller\OrdersController;
 use Illuminate\Support\Facades\Route;
@@ -22,7 +23,7 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/home/{id}', [HomeController::class, 'index'])->name('Home.index');
 
 Route::get('/restaurants', [adminRestaurantController::class, 'userIndex'])->name('restaurants.user.index');
-Route::get('/restaurant/{id}', [adminRestaurantController::class, 'show'])->name('restaurant.show');
+Route::get('/restaurant/{slug}', [adminRestaurantController::class, 'show'])->name('restaurant.show');
 Route::get('/restaurant-home', [adminRestaurantController::class, 'restaurantHome'])->name('restaurant.home');
 
 // Static View Routes (For User)
@@ -43,7 +44,11 @@ Route::get('/contactUs/{id}', [adminRestaurantController::class, 'contactUs'])->
 Route::get('/aboutUs/{id}', [adminRestaurantController::class, 'aboutUs'])->name('about');
 Route::get('/menu/{id}', [adminRestaurantController::class, 'menu'])->name('menu');
 Route::get('/reservation/{id}', [adminRestaurantController::class, 'reservation'])->name('reservation');
-Route::get('/restaurant/{id}/menu', [MenuController::class, 'showMenu'])->name('restaurant');
+
+Route::get('/restaurant/{slug}/menu', [MenuController::class, 'showMenu'])->name('restaurant');
+Route::get('/checkout/{slug}', [MenuController::class, 'checkout'])->name('checkout');
+Route::post('/delivery/{slug}', [DeliveryController::class, 'store'])->name('delivery.store');
+
 
 // Admin Routes
 Route::prefix('admin')->middleware('auth')->group(function () {
@@ -139,7 +144,7 @@ Route::prefix('seller')->middleware('auth')->group(function () {
 });
 
 // Customer
-Route::prefix('customer')->middleware(['auth'])->group(function () {
+Route::prefix('customer')->middleware('auth')->group(function () {
     Route::get('/dashboard', [CustomerController::class, 'dashboard'])->name('customer.dashboard');
     Route::get('/orders/{id}', [CustomerController::class, 'orders'])->name('customer.orders');
     Route::post('/logout', [CustomerController::class, 'logout'])->name('customer.logout'); // Logout route

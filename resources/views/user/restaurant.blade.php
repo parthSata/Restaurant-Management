@@ -33,7 +33,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             @forelse ($restaurants as $restaurant)
                 <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <a href="{{ route('restaurant.show', ['id' => $restaurant->id]) }}" class="block">
+                    <a href="{{ route('restaurant.show', ['slug' => $restaurant->restaurant_slug]) }}" class="block">
                         <img src="{{ asset('storage/Uploaded_Images/' . $restaurant->feature_image) }}"
                             alt="{{ $restaurant->restaurant_name }}" class="w-full h-48 object-cover">
                         <div class="p-4">
@@ -47,7 +47,7 @@
                     <p class="text-gray-600">No restaurants found.</p>
                 </div>
             @endforelse
-        </div>  
+        </div>
     </main>
 
 @endsection
