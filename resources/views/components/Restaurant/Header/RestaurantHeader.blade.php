@@ -34,12 +34,19 @@
                         class="text-gray-600 hover:text-gray-900">Contact Us</a>
                 </nav>
                 <div class="flex items-center space-x-4">
-                    <a href="/register" class="bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600">
-                        Register
-                    </a>
-                    <a href="/login" class="bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600">
-                        Login
-                    </a>
+                    @auth
+                        <a href="{{ route('customer.dashboard') }}"
+                            class="bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600">
+                            Dashboard
+                        </a>
+                    @else
+                        <a href="/register" class="bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600">
+                            Register
+                        </a>
+                        <a href="/login" class="bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600">
+                            Login
+                        </a>
+                    @endauth
                 </div>
             </div>
         </header>

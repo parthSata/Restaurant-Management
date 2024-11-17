@@ -64,7 +64,7 @@
                                     <div class="ml-3">
                                         <h3 class="font-semibold">Address</h3>
                                         <p class="text-gray-600 text-sm">{{ $address->address }}, {{ $address->city }},
-                                            {{ $address->zip_code }}</p> <!-- Update to postal_code if required -->
+                                            {{ $address->zip_code }}</p>
                                     </div>
                                 </div>
                                 <button class="bg-[#ff5722] text-white px-4 py-2 rounded-lg hover:bg-[#f4511e]">
@@ -80,11 +80,11 @@
                         <form method="POST" action="{{ route('delivery.store', ['slug' => $restaurants->restaurant_slug]) }}">
                             @csrf
                             <div class="space-y-4">
-                                <input type="text" name="address" placeholder="Enter your delivery address"
+                                <input type="text" name="address" required placeholder="Enter your delivery address"
                                     class="w-full border border-gray-300 rounded-lg p-2">
-                                <input type="text" name="city" placeholder="City"
+                                <input type="text" name="city" required placeholder="City"
                                     class="w-full border border-gray-300 rounded-lg p-2">
-                                <input type="text" name="zip_code" placeholder="ZIP Code"
+                                <input type="text" name="zip_code" required placeholder="ZIP Code"
                                     class="w-full border border-gray-300 rounded-lg p-2">
                                 <button type="submit"
                                     class="bg-[#ff5722] text-white px-6 py-2 rounded-md hover:bg-[#f4511e]">Save

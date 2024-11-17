@@ -59,14 +59,20 @@ class RestaurantController extends Controller
 
         return view('admin.Restaurants.adminrestaurants', compact('restaurants', 'search'));
     }
-
     public function show($slug = null)
     {
         // Check if a slug is provided
         if ($slug) {
             // Fetch restaurant details using the slug
             $restaurants = Restaurant::where('restaurant_slug', $slug)->firstOrFail();
-            return view('components.Restaurant.Home.index', compact('restaurants'));
+    
+            // Fetch 4 random products associated with this restaurant (if a relationship exists)
+            $randomProducts = Restaurant::where('restaurant_id', $restaurants->id) // Adjust this if the relationship is different
+                                     ->inRandomOrder()
+                                     ->take(4)
+                                     ->get();
+    
+            return view('components.Restaurant.Home.index', compact('restaurants', 'randomProducts'));
         } else {
             // Fetch all restaurants to display
             $restaurants = Restaurant::all();

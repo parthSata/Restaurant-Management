@@ -16,7 +16,7 @@
                 <div class="text-right">
                     <div class="text-4xl font-bold">34</div>
                     <div class="text-sm opacity-90">Total Orders</div>
-                </div>  
+                </div>
             </div>
 
             <div class="bg-[#FFA500] text-white p-6 rounded-lg flex items-center justify-between">

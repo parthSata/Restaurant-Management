@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Restaurant extends Model
 {
     use HasFactory;
+    protected $guard = 'seller'; 
+    protected $hidden = ['password'];
 
     protected $fillable = [
         'restaurant_name', 
@@ -27,4 +29,8 @@ class Restaurant extends Model
         'favicon', 
         'feature_image'
     ];
+    public function setPasswordAttribute($password)
+    {
+        $this->attributes['password'] = bcrypt($password);
+    }
 }

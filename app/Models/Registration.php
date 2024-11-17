@@ -11,6 +11,8 @@ class Registration extends Authenticatable
     use HasFactory;
 
     protected $table = 'registrations'; // This ensures Laravel uses the 'registrations' table
+    protected $guard = 'web'; // Match the 'web' guard in auth.php
+    protected $hidden = ['password'];
 
     protected $fillable = [
         'first_name',

@@ -29,6 +29,7 @@ class CustomerController extends Controller
         return view('admin.customers.enquiries');
     }
 
+        
 // Customer's Routes
 public function dashboard()
 {
