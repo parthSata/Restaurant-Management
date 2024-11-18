@@ -1,16 +1,14 @@
 <?php
-
 namespace App\Models;
 
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
-class Restaurant extends Model
+class Restaurant extends Authenticatable
 {
     use HasFactory;
-    protected $guard = 'seller'; 
-    protected $hidden = ['password'];
 
+    // Define fillable fields for mass assignment
     protected $fillable = [
         'restaurant_name', 
         'restaurant_slug',
@@ -27,8 +25,11 @@ class Restaurant extends Model
         'restaurant_type', 
         'logo', 
         'favicon', 
-        'feature_image'
+        'feature_image',
     ];
+
+    // Define hidden fields to exclude from serialization
+    protected $hidden = ['password', 'remember_token'];
     public function setPasswordAttribute($password)
     {
         $this->attributes['password'] = bcrypt($password);

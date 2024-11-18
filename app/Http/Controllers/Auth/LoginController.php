@@ -5,7 +5,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Registration; // Add the Registration model
-
 class LoginController extends Controller
 {
     public function showLoginForm()
@@ -20,44 +19,56 @@ class LoginController extends Controller
             'email' => ['required', 'email'],
             'password' => ['required'],
         ]);
-
-        // Attempt to log in using the validated credentials from the 'registrations' table
-        if (Auth::guard('web')->attempt(['email' => $credentials['email'], 'password' => $credentials['password']])) {
-            \Log::info('User authenticated:', ['email' => $credentials['email']]);
-
-            // Regenerate the session to prevent fixation attacks
+    
+        // Attempt to log in as admin/customer
+        if (Auth::guard('web')->attempt($credentials)) {
             $request->session()->regenerate();
             $user = Auth::guard('web')->user();
-
-            // Fetch the user's role (assuming 'role' is a column in your 'registrations' table)
-            $role = $user->role;
-
-            // Redirect based on role
-            switch ($role) {
+    
+            // Redirect based on role in the `registrations` table
+            switch ($user->role) {
                 case 'admin':
+                    session()->flash('success', 'Admin login successful.');
                     return redirect()->route('admin.dashboard');
-                    case 'seller':
-                    return redirect()->route('seller.sellerDashboard');
-                        case 'customer':
-                            return redirect()->route('customer.dashboard');
+                case 'customer':
+                    session()->flash('success', 'Customer login successful.');
+                    return redirect()->route('customer.dashboard');
                 default:
-                    return redirect()->route('user.home'); // Default route if no role matches
+                    session()->flash('success', 'Login successful.');
+                    return redirect()->route('user.home');
             }
         }
-
-        // If authentication fails, return an error message
-        return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
-        ])->withInput();
+    
+        // Attempt to log in as seller
+        if (Auth::guard('restaurant')->attempt([
+            'contact_email' => $credentials['email'],
+            'password' => $credentials['password']
+        ])) {
+            logger()->info('Seller authenticated successfully.', ['email' => $credentials['email']]);
+            $request->session()->regenerate();
+            session()->flash('success', 'Seller login successful.');
+            return redirect()->route('seller.sellerDashboard');
+        } else {
+            logger()->warning('Seller authentication failed.', ['email' => $credentials['email']]);
+        }
+        
+        // If authentication fails, return error
+        session()->flash('error', 'The provided credentials do not match our records.');
+        return back()->withInput();
     }
+    
 
     public function logout(Request $request)
-    {
-        Auth::logout();
-
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return redirect('/login');
+{
+    if (Auth::guard('restaurant')->check()) {
+        Auth::guard('restaurant')->logout(); // Logout for seller guard
+    } else {
+        Auth::guard('web')->logout(); // Logout for web guard
     }
+
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+
+    return redirect('/login');
+}
 }

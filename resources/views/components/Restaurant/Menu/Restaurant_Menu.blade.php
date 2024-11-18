@@ -27,8 +27,8 @@
                         </ul>
                     </div>
                 </div>
-                <!-- Main Content -->
 
+                <!-- Main Content -->
                 <div class="md:w-2/4">
                     @foreach ($categories as $category)
                         <div class="category-section" data-category="{{ $category->name }}" style="display: none;">
@@ -72,8 +72,7 @@
                             <p class="text-gray-500 text-xs mb-4">Extra charges may apply</p>
                         </div>
 
-                        <button
-                            onclick="window.location.href='{{ route('checkout', ['slug' => $restaurants->restaurant_slug]) }}'"
+                        <button onclick="proceedToCheckout()"
                             class="w-full bg-orange-500 text-white py-3 rounded-lg font-semibold hover:bg-orange-600 transition duration-300">
                             Checkout
                         </button>
@@ -81,24 +80,18 @@
                 </div>
             </div>
         </main>
+
         <script>
             document.addEventListener('DOMContentLoaded', () => {
+                // Load cart from localStorage on page load
+                const storedCart = localStorage.getItem('cartItems');
+                if (storedCart) {
+                    cartItems = JSON.parse(storedCart);
+                    updateCart();
+                }
+
                 filterCategory('all');
             });
-
-            // Function to filter items by category
-            function filterCategory(category) {
-                const sections = document.querySelectorAll('.category-section');
-
-                sections.forEach(section => {
-                    if (category === 'all' || section.getAttribute('data-category') === category) {
-                        section.style.display = 'block';
-                    } else {
-                        section.style.display = 'none';
-                    }
-                });
-            }
-
 
             let cartItems = [];
             let cartSubtotal = 0;
@@ -118,6 +111,7 @@
                 }
 
                 updateCart();
+                saveCartToLocalStorage();
             }
 
             function updateCart() {
@@ -133,23 +127,29 @@
                     cartItem.classList.add('flex', 'items-center', 'mb-4');
 
                     cartItem.innerHTML = `
-                        <img src="${item.image}" alt="${item.name}" class="w-12 h-12 rounded-full mr-4">
-                        <div class="flex-grow">
-                            <h2 class="font-semibold">${item.name}</h2>
-                            <div class="flex items-center mt-1">
-                                <button onclick="changeQuantity(${item.id}, -1)" class="bg-gray-200 text-gray-600 w-8 h-8 rounded-full flex items-center justify-center">-</button>
-                                <span class="mx-2">${item.quantity}</span>
-                                <button onclick="changeQuantity(${item.id}, 1)" class="bg-gray-200 text-gray-600 w-8 h-8 rounded-full flex items-center justify-center">+</button>
-                            </div>
+                    <img src="${item.image}" alt="${item.name}" class="w-12 h-12 rounded-full mr-4">
+                    <div class="flex-grow">
+                        <h2 class="font-semibold">${item.name}</h2>
+                        <div class="flex items-center mt-1">
+                            <button onclick="changeQuantity(${item.id}, -1)" class="bg-gray-200 text-gray-600 w-8 h-8 rounded-full flex items-center justify-center">-</button>
+                            <span class="mx-2">${item.quantity}</span>
+                            <button onclick="changeQuantity(${item.id}, 1)" class="bg-gray-200 text-gray-600 w-8 h-8 rounded-full flex items-center justify-center">+</button>
                         </div>
-                        <span class="font-semibold">$ ${itemTotal.toFixed(2)}</span>
-                    `;
+                    </div>
+                    <span class="font-semibold">$ ${itemTotal.toFixed(2)}</span>
+                `;
                     cartItemsContainer.appendChild(cartItem);
                 });
 
                 // Update subtotal and item count
                 document.getElementById('cartSubtotal').innerText = `$ ${cartSubtotal.toFixed(2)}`;
                 document.getElementById('itemCount').innerText = `${cartItems.length} ITEM${cartItems.length !== 1 ? 'S' : ''}`;
+
+                saveCartToLocalStorage();
+            }
+
+            function saveCartToLocalStorage() {
+                localStorage.setItem('cartItems', JSON.stringify(cartItems));
             }
 
             function changeQuantity(id, change) {
@@ -161,6 +161,42 @@
                     }
                     updateCart();
                 }
+            }
+
+            function proceedToCheckout() {
+                const cart = localStorage.getItem('cartItems');
+                if (cart) {
+                    fetch('{{ route('syncCart') }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            },
+                            body: JSON.stringify({
+                                cart: JSON.parse(cart)
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.message === 'Cart synced successfully') {
+                                window.location.href =
+                                '{{ route('checkout', ['slug' => $restaurants->restaurant_slug]) }}';
+                            }
+                        })
+                        .catch(error => console.error('Error syncing cart:', error));
+                }
+            }
+
+            function filterCategory(category) {
+                const sections = document.querySelectorAll('.category-section');
+
+                sections.forEach(section => {
+                    if (category === 'all' || section.getAttribute('data-category') === category) {
+                        section.style.display = 'block';
+                    } else {
+                        section.style.display = 'none';
+                    }
+                });
             }
         </script>
     </div>

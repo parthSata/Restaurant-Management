@@ -3,6 +3,7 @@
 use App\Http\Controllers\DeliveryController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\Seller\OrdersController;
+use App\Http\Controllers\SellerDashboardController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\Auth\LoginController;
@@ -40,6 +41,25 @@ Route::post('/login', [LoginController::class, 'login']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 
+// Admin Routes
+Route::middleware(['auth:web'])->group(function () {
+    Route::get('/admin/dashboard', function () {
+        return view('admin.dashboard');
+    })->name('admin.dashboard');
+});
+
+// Seller Routes
+Route::middleware(['auth:seller'])->group(function () {
+    Route::get('/seller/dashboard', [SellerDashboardController::class, 'index'])->name('seller.sellerDashboard');
+});
+
+// Customer Routes
+Route::middleware(['auth:web'])->group(function () {
+    Route::get('/customer/dashboard', function () {
+        return view('customer.dashboard');
+    })->name('customer.dashboard');
+});
+
 //  (For Restaurant)
 Route::get('/contactUs/{id}', [adminRestaurantController::class, 'contactUs'])->name('contact');
 Route::get('/aboutUs/{id}', [adminRestaurantController::class, 'aboutUs'])->name('about');
@@ -47,8 +67,7 @@ Route::get('/menu/{id}', [adminRestaurantController::class, 'menu'])->name('menu
 Route::get('/reservation/{id}', [adminRestaurantController::class, 'reservation'])->name('reservation');
 
 Route::get('/restaurant/{slug}/menu', [MenuController::class, 'showMenu'])->name('restaurant');
-Route::get('/checkout/{slug}', [MenuController::class, 'checkout'])->name('checkout');
-Route::post('/delivery/{slug}', [DeliveryController::class, 'store'])->name('delivery.store');
+
 
 
 // Admin Routes
@@ -149,4 +168,11 @@ Route::prefix('customer')->middleware('auth')->group(function () {
     Route::get('/dashboard', [CustomerController::class, 'dashboard'])->name('customer.dashboard');
     Route::get('/orders/{id}', [CustomerController::class, 'orders'])->name('customer.orders');
     Route::post('/logout', [CustomerController::class, 'logout'])->name('customer.logout'); // Logout route
+
+Route::get('/checkout/{slug}', [MenuController::class, 'checkout'])->name('checkout');
+Route::post('/delivery/store/{slug}', [DeliveryController::class, 'store'])->name('delivery.store');
+
+    Route::post('/cart/sync', [MenuController::class, 'syncCart'])->name('syncCart');
+    Route::post('/payment/handle', [DeliveryController::class, 'handlePayment'])->name('payment.handle');
+
 });

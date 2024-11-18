@@ -67,12 +67,8 @@ class RestaurantController extends Controller
             $restaurants = Restaurant::where('restaurant_slug', $slug)->firstOrFail();
     
             // Fetch 4 random products associated with this restaurant (if a relationship exists)
-            $randomProducts = Restaurant::where('restaurant_id', $restaurants->id) // Adjust this if the relationship is different
-                                     ->inRandomOrder()
-                                     ->take(4)
-                                     ->get();
-    
-            return view('components.Restaurant.Home.index', compact('restaurants', 'randomProducts'));
+           
+            return view('components.Restaurant.Home.index', compact('restaurants'));
         } else {
             // Fetch all restaurants to display
             $restaurants = Restaurant::all();
@@ -218,7 +214,7 @@ class RestaurantController extends Controller
         $restaurant->contact_last_name = $request->contact_last_name;
         $restaurant->contact_phone = $request->contact_phone;
         $restaurant->contact_email = $request->contact_email;
-        $restaurant->password = $request->password;
+        $restaurant->password = Hash::make($request->password);
         $restaurant->about_us = $request->about_us;
         $restaurant->short_about = $request->short_about;
         $restaurant->service_type = $request->service_type;

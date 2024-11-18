@@ -75,7 +75,6 @@
                             <p class="text-gray-600">You have no saved addresses. Add one below.</p>
                         @endforelse
 
-
                         <!-- Address Form -->
                         <form method="POST" action="{{ route('delivery.store', ['slug' => $restaurants->restaurant_slug]) }}">
                             @csrf
@@ -106,33 +105,49 @@
                         </div>
                         <h2 class="text-xl font-semibold">Payment</h2>
                     </div>
+                    <!-- Razorpay Payment Button -->
+                    <form action="{{ route('payment.handle') }}" method="POST">
+                        @csrf
+                        <script src="https://checkout.razorpay.com/v1/checkout.js" data-key="{{ $razorpayOrder['key'] }}"
+                            data-amount="{{ $razorpayOrder['amount'] }}" data-currency="{{ $razorpayOrder['currency'] }}"
+                            data-order_id="{{ $razorpayOrder['id'] }}" data-buttontext="Pay Now"
+                            data-name="{{ $restaurants->restaurant_name }}" data-description="Complete your payment"
+                            data-theme.color="#ff5722"></script>
+                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                    </form>
                 </div>
             </div>
 
             <!-- Right Column - Order Summary -->
             <div class="lg:col-span-1">
                 <div class="bg-white p-6 rounded-lg shadow-sm">
-
                     <div class="border-t pt-4">
                         <h3 class="font-semibold mb-4">Bill Details</h3>
                         <div class="space-y-2">
                             <div class="flex justify-between">
                                 <span class="text-gray-600">Item Total</span>
-                                <span>$ 20.00</span>
+                                <span>${{ number_format($itemTotal, 2) }}</span>
                             </div>
                             <div class="flex justify-between">
-                                <span class="text-gray-600">Delivery Fee | 45 Min.</span>
-                                <span>$ 150.00</span>
+                                <span class="text-gray-600">Discount</span>
+                                <span>-${{ number_format($discount, 2) }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Tax</span>
+                                <span>${{ number_format($tax, 2) }}</span>
                             </div>
                             <div class="flex justify-between border-t pt-2 font-semibold">
                                 <span>To Pay</span>
-                                <span>$ 170.00</span>
+                                <span>${{ number_format($toPay, 2) }}</span>
                             </div>
                         </div>
                         <!-- Payment Button -->
-                        <button class="w-full mt-4 bg-[#ff5722] text-white px-6 py-2 rounded-md hover:bg-[#f4511e]">Proceed
-                            to Pay</button>
+                        <button class="w-full mt-4 bg-[#ff5722] text-white px-6 py-2 rounded-md hover:bg-[#f4511e]"
+                            {{ count($cart) == 0 ? 'disabled' : '' }}>
+                            Proceed to Pay
+                        </button>
                     </div>
+
                 </div>
             </div>
         </div>

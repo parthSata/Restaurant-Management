@@ -7,6 +7,8 @@ use App\Models\DeliveryAddress;
 use App\Models\Restaurant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Razorpay\Api\Api;
+
 
 class MenuController extends Controller
 {
@@ -26,15 +28,56 @@ class MenuController extends Controller
     public function checkout($slug)
     {
         $restaurants = Restaurant::where('restaurant_slug', $slug)->firstOrFail();
-        $user = Auth::user(); // Retrieve the authenticated user
+        $cart = session('cart', []);
+        $user = Auth::user();
         $fullName = $user->first_name . ' ' . $user->last_name;
-
-        // Retrieve delivery addresses for the user
-        $customerId = Auth::id(); // Get the authenticated user's ID
+    
+        $customerId = Auth::id();
         $addresses = DeliveryAddress::where('customer_id', $customerId)
             ->where('restaurant_id', $restaurants->id)
             ->get();
+    
+        // Calculate totals
+        $itemTotal = collect($cart)->sum(fn($item) => $item['quantity'] * $item['price']);
+        $discount = 10;
+        $tax = ($itemTotal - $discount) * 0.1;
+        $toPay = $itemTotal - $discount + $tax;
+    
+        // Razorpay integration
+        $api = new Api(env('RAZORPAY_KEY'), env('RAZORPAY_SECRET'));
+        $orderData = [
+            'receipt'         => 'rcptid_' . uniqid(),
+            'amount'          => $toPay * 100, // Amount in paisa
+            'currency'        => 'INR',
+            'payment_capture' => 1,
+        ];
+    
+        $razorpayOrder = $api->order->create($orderData);
+    
+        // Pass the Razorpay Key ID explicitly
+        $razorpayOrder['key'] = env('RAZORPAY_KEY');
+    
+        return view('components.Restaurant.Checkout.Checkout', compact(
+            'restaurants', 'user', 'cart', 'fullName', 'addresses', 'itemTotal', 'discount', 'tax', 'toPay', 'razorpayOrder'
+        ));
+    }
+    
 
-        return view('components.Restaurant.Checkout.Checkout', compact('restaurants', 'user', 'fullName', 'addresses'));
+
+    public function syncCart(Request $request)
+    {
+        // Validate cart items
+        $validated = $request->validate([
+            'cart' => 'required|array',
+            'cart.*.id' => 'required|integer',
+            'cart.*.name' => 'required|string',
+            'cart.*.price' => 'required|numeric',
+            'cart.*.quantity' => 'required|integer',
+        ]);
+    
+        // Store cart items in the session
+        session(['cart' => $validated['cart']]);
+    
+        return response()->json(['message' => 'Cart synced successfully'], 200);
     }
 }
