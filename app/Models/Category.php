@@ -17,5 +17,10 @@ class Category extends Model
     {
         return $this->hasMany(AddOnItem::class, 'category_id');
     }
+
+    public function restaurants()
+    {
+        return $this->belongsTo(Restaurant::class);
+    }
 }
     

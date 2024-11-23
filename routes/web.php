@@ -48,11 +48,6 @@ Route::middleware(['auth:web'])->group(function () {
     })->name('admin.dashboard');
 });
 
-// Seller Routes
-Route::middleware(['auth:seller'])->group(function () {
-    Route::get('/seller/dashboard', [SellerDashboardController::class, 'index'])->name('seller.sellerDashboard');
-});
-
 // Customer Routes
 Route::middleware(['auth:web'])->group(function () {
     Route::get('/customer/dashboard', function () {
@@ -106,12 +101,9 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::delete('coupons/{id}', [CouponController::class, 'destroy'])->name('coupons.destroy');
 });
 // Seller
-Route::prefix('seller')->middleware('auth')->group(function () {
+Route::prefix('seller')->middleware('auth:restaurant')->group(function () {
 
-    Route::get('/dashboard', function () {
-        return view('seller.dashboard.sellerDashboard');
-    })->name('seller.sellerDashboard');
-
+    Route::get('/dashboard', [SellerDashboardController::class, 'index'])->name('seller.sellerDashboard');
 
 
     Route::get('/customer', [SellerCustomerController::class, 'index'])->name('customer.index');
@@ -171,8 +163,10 @@ Route::prefix('customer')->middleware('auth')->group(function () {
 
 Route::get('/checkout/{slug}', [MenuController::class, 'checkout'])->name('checkout');
 Route::post('/delivery/store/{slug}', [DeliveryController::class, 'store'])->name('delivery.store');
+Route::post('/checkout/process/{slug}', [DeliveryController::class, 'processCheckout'])->name('checkout.process');
 
-    Route::post('/cart/sync', [MenuController::class, 'syncCart'])->name('syncCart');
-    Route::post('/payment/handle', [DeliveryController::class, 'handlePayment'])->name('payment.handle');
-
+Route::post('/cart/sync', [MenuController::class, 'syncCart'])->name('syncCart');
+Route::post('/payment/handle/{slug}', [DeliveryController::class, 'handlePayment'])->name('payment.handle');
+Route::get('/order/confirmation/{slug}', [DeliveryController::class, 'confirmation'])->name('order.confirmation');
+Route::get('/restaurant/{slug}/menu', [MenuController::class, 'showMenu'])->name('restaurant');
 });

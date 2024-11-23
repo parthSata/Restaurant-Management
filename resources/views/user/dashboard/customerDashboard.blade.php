@@ -6,7 +6,7 @@
 
     <div class="p-6 max-w-[1400px] mx-auto">
         <!-- Stats Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
             <div class="bg-[#6366F1] text-white p-6 rounded-lg flex items-center justify-between">
                 <div class="bg-white/20 p-3 rounded-lg">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -14,12 +14,12 @@
                     </svg>
                 </div>
                 <div class="text-right">
-                    <div class="text-4xl font-bold">34</div>
+                    <div class="text-4xl font-bold">{{ $totalOrders }}</div>
                     <div class="text-sm opacity-90">Total Orders</div>
                 </div>
             </div>
 
-            <div class="bg-[#FFA500] text-white p-6 rounded-lg flex items-center justify-between">
+            {{-- <div class="bg-[#FFA500] text-white p-6 rounded-lg flex items-center justify-between">
                 <div class="bg-white/20 p-3 rounded-lg">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -28,10 +28,10 @@
                     </svg>
                 </div>
                 <div class="text-right">
-                    <div class="text-4xl font-bold">0</div>
+                    <div class="text-4xl font-bold">{{ $totalCartItems }}</div>
                     <div class="text-sm opacity-90">Total Cart Items</div>
                 </div>
-            </div>
+            </div> --}}
 
             <div class="bg-[#0EA5E9] text-white p-6 rounded-lg flex items-center justify-between">
                 <div class="bg-white/20 p-3 rounded-lg">
@@ -41,7 +41,7 @@
                     </svg>
                 </div>
                 <div class="text-right">
-                    <div class="text-4xl font-bold">30</div>
+                    <div class="text-4xl font-bold">{{ $processingOrders }}</div>
                     <div class="text-sm opacity-90">Processing</div>
                 </div>
             </div>
@@ -54,7 +54,7 @@
                     </svg>
                 </div>
                 <div class="text-right">
-                    <div class="text-4xl font-bold">0</div>
+                    <div class="text-4xl font-bold">{{ $receivedOrders }}</div>
                     <div class="text-sm opacity-90">Received</div>
                 </div>
             </div>
@@ -76,47 +76,43 @@
                             TYPES</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ORDER
                             STATUS</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">TRACK
-                            ORDER</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200">
-                    <tr>
-                        <td class="px-6 py-4">
-                            <span class="text-[#6366F1]">#234016</span>
-                            <div class="text-sm text-gray-500">1 month ago</div>
-                        </td>
-                        <td class="px-6 py-4">
-                            <div class="flex items-center">
-                                <img src="/placeholder.svg" alt="Restaurant logo" class="w-10 h-10 rounded-full mr-3">
-                                <span>SPICE GARDEN RESTAURANT</span>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="font-medium">$20.00</span>
-                            <span
-                                class="inline-flex ml-2 px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Paid</span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="inline-flex px-3 py-1 text-xs rounded-full bg-blue-100 text-blue-800">Pickup</span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span
-                                class="inline-flex px-3 py-1 text-xs rounded-full bg-blue-100 text-blue-800">Processing</span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <button class="text-blue-600 hover:text-blue-900">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7">
-                                    </path>
-                                </svg>
-                            </button>
-                        </td>
-                    </tr>
+                    @foreach ($orders as $order)
+                        <tr>
+                            <td class="px-6 py-4">
+                                <span class="text-[#6366F1]">#{{ $order->order_id }}</span>
+                                <div class="text-sm text-gray-500">{{ $order->created_at->diffForHumans() }}</div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="flex items-center">
+                                    <img src="{{ asset('storage/Uploaded_Images/' . $order->restaurant->logo) }}"
+                                        alt="{{ $order->restaurant->restaurant_name }}"
+                                        class="w-10 h-10 rounded-full mr-3" />
+                                    <span>{{ $order->restaurant->restaurant_name }}</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="font-medium">${{ number_format($order->subtotal, 2) }}</span>
+                                <span
+                                    class="inline-flex ml-2 px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">{{ $order->payment_status }}</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span
+                                    class="inline-flex px-3 py-1 text-xs rounded-full bg-blue-100 text-blue-800">{{ $order->order_type }}</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span
+                                    class="inline-flex px-3 py-1 text-xs rounded-full bg-blue-100 text-blue-800">{{ ucfirst($order->order_status) }}</span>
+                            </td>
+
+                        </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>
+
     </div>
 
 @endsection

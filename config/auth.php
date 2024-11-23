@@ -14,8 +14,9 @@ return [
     ],
     'restaurant' => [
         'driver' => 'session',
-        'provider' => 'restaurants', // For sellers
+        'provider' => 'restaurants', 
     ],
+
 ],
 
 'providers' => [
@@ -28,7 +29,6 @@ return [
         'model' => App\Models\Restaurant::class, // Restaurant model for sellers
     ],
 ],
-
     'passwords' => [
         'users' => [
             'provider' => 'users',

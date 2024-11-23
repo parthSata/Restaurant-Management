@@ -83,47 +83,21 @@
         <section class="py-20">
             <h2 class="text-3xl font-bold text-gray-800 mb-12 text-center">Special Menu</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <img src="/placeholder.svg?height=200&width=200" alt="Pizza" class="w-full h-48 object-cover">
-                    <div class="p-4">
-                        <h3 class="text-xl font-semibold text-gray-800 mb-2">Pizza</h3>
-                        <p class="text-gray-600 mb-4">Delicious pizza with a variety of toppings</p>
-                        <button
-                            class="bg-orange-500 text-white px-4 py-2 rounded-full hover:bg-orange-600 transition duration-300">Order
-                            Now</button>
+                @foreach ($specialMenuItems as $item)
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->name }}"
+                            class="w-full  object-cover">
+                        <div class="p-4">
+                            <h3 class="text-xl font-semibold text-gray-800 mb-2">{{ $item->name }}</h3>
+                            <p class="text-gray-600 mb-4">{{ $item->description }}</p>
+                            <p class="text-gray-800 font-bold">Price: ${{ $item->price }}</p>
+                            <button
+                                class="bg-orange-500 text-white px-4 py-2 rounded-full hover:bg-orange-600 transition duration-300">
+                                Order Now
+                            </button>
+                        </div>
                     </div>
-                </div>
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <img src="/placeholder.svg?height=200&width=200" alt="Noodles" class="w-full h-48 object-cover">
-                    <div class="p-4">
-                        <h3 class="text-xl font-semibold text-gray-800 mb-2">Noodles</h3>
-                        <p class="text-gray-600 mb-4">Savory noodles with your choice of sauce</p>
-                        <button
-                            class="bg-orange-500 text-white px-4 py-2 rounded-full hover:bg-orange-600 transition duration-300">Order
-                            Now</button>
-                    </div>
-                </div>
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <img src="/placeholder.svg?height=200&width=200" alt="Sandwich" class="w-full h-48 object-cover">
-                    <div class="p-4">
-                        <h3 class="text-xl font-semibold text-gray-800 mb-2">Sandwich</h3>
-                        <p class="text-gray-600 mb-4">Fresh sandwiches with premium ingredients</p>
-                        <button
-                            class="bg-orange-500 text-white px-4 py-2 rounded-full hover:bg-orange-600 transition duration-300">Order
-                            Now</button>
-                    </div>
-                </div>
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <img src="/placeholder.svg?height=200&width=200" alt="Pasta" class="w-full h-48 object-cover">
-                    <div class="p-4">
-                        <h3 class="text-xl font-semibold text-gray-800 mb-2">Pasta</h3>
-                        <p class="text-gray-600 mb-4">Authentic Italian pasta dishes</p>
-                        <button
-                            class="bg-orange-500 text-white px-4 py-2 rounded-full hover:bg-orange-600 transition duration-300">Order
-                            Now</button>
-                    </div>
-                </div>
-
+                @endforeach
             </div>
             <div class="container mx-auto px-4 py-16">
                 <section class="flex flex-col md:flex-row items-center justify-between">

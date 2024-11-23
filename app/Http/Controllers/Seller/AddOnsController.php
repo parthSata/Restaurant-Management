@@ -18,10 +18,12 @@ class AddOnsController extends Controller
 {
     public function index()
     {
+        $restaurants =  auth()->user()->restaurants->first();;
+
         $categories = Category::all();
 
     // Return the Blade view for Seller Customer with categories data
-    return view('seller.addOns.AddCategories', compact('categories'));
+    return view('seller.addOns.AddCategories', compact('categories','restaurants'));
     }
 
     public function updateCategories(Request $request, $id)
@@ -58,33 +60,82 @@ class AddOnsController extends Controller
         return view('seller.addOns.AddCategories', compact('categoryForUpdate')); // Pass the single category
     }
 
+    // public function storeCategories(Request $request)
+    // {
+    //     $request->validate([
+    //         'name' => 'required|string|max:255',
+    //         'description' => 'nullable|string',
+    //         'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validate the image
+    //         'restaurant_id' => 'required|exists:restaurants,id', // Validate the restaurant_id
+    //     ]);
+
+    //     $category = new Category();
+    //     $category->name = $request->name;
+    //     $category->description = $request->description;
+    //     $category->restaurant_id = $request->restaurant_id; // Store the restaurant_id
+
+    //     if ($request->hasFile('image')) {
+    //         $image = $request->file('image');
+
+    //         $imageName = Str::slug($request->name) . '_' . time() . '.' . $image->getClientOriginalExtension();
+
+    //         $imagePath = $image->storeAs('Categories', $imageName, 'public');
+
+    //         $category->image = $imagePath;
+    //     }
+
+    //     $category->save(); // Save the category
+
+    //     return redirect()->route('addOns.index')->with('success', 'Category created successfully.');
+    // }
+
     public function storeCategories(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validate the image
-        ]);
+{
+    // Validate the incoming request data
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'description' => 'nullable|string',
+        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validate the image
+    ]);
 
-        $category = new Category();
-        $category->name = $request->name;
-        $category->description = $request->description;
+    // Get the logged-in seller (restaurant owner)
+    $user = auth()->user();
 
-        if ($request->hasFile('image')) {
-            $image = $request->file('image');
-
-            $imageName = Str::slug($request->name) . '_' . time() . '.' . $image->getClientOriginalExtension();
-
-            $imagePath = $image->storeAs('Categories', $imageName, 'public');
-
-            $category->image = $imagePath;
-        }
-
-        $category->save(); // Save the category
-
-        return redirect()->route('addOns.index')->with('success', 'Category created successfully.');
+    // Check if the seller has a restaurant
+    if (!$user->restaurant) {
+        return redirect()->back()->with('error', 'You must have a restaurant to add categories.');
     }
 
+    // Retrieve the restaurant_id from the logged-in user
+    $restaurantId = $user->restaurant->id;
+
+    // Create and store the new category
+    $category = new Category();
+    $category->name = $request->name;
+    $category->description = $request->description;
+    $category->restaurant_id = $restaurantId; 
+
+    // Handle the image upload if present
+    if ($request->hasFile('image')) {
+        $image = $request->file('image');
+
+        // Generate a unique name for the image
+        $imageName = Str::slug($request->name) . '_' . time() . '.' . $image->getClientOriginalExtension();
+
+        // Store the image in the 'public' storage folder
+        $imagePath = $image->storeAs('Categories', $imageName, 'public');
+
+        $category->image = $imagePath;
+    }
+
+    // Save the category to the database
+    $category->save();
+
+    return redirect()->route('addOns.index')->with('success', 'Category created successfully.');
+}
+
+
+    
     public function destroyCategory($id)
     {
         $item = Category::findOrFail($id);
@@ -96,48 +147,79 @@ class AddOnsController extends Controller
     // Items
     
 
+    // public function storeItem(Request $request)
+    // {
+    //     // Validate the input data
+    //     $validated = $request->validate([
+    //         'name' => 'required|string|max:255',
+    //         'price' => 'required|numeric',
+    //         'description' => 'nullable|string', // Description is now optional (nullable)
+    //         'category_id' => 'required|exists:categories,id', // Ensure the category exists
+            
+    //         'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240', // Image is optional
+    //     ]);
+
+    //     $imagePath = null;
+    
+    //     // Handle the image upload if an image is provided
+    //     if ($request->hasFile('image')) {
+    //         // Generate a unique filename with the original extension
+    //         $imageName = Str::slug($validated['name']) . '_' . time() . '.' . $request->file('image')->getClientOriginalExtension();
+    //         $imagePath = $request->file('image')->storeAs('uploads/addOnItems', $imageName, 'public'); // Store under "uploads/addOnItems"
+    //     }
+    
+    //     // Create the add-on item with the menu_id included
+    //     AddOnItem::create([
+    //         'name' => $validated['name'],
+    //         'price' => $validated['price'],
+    //         'description' => $validated['description'],
+    //         'category_id' => $validated['category_id'], // Corrected to use 'category_id'
+            
+    //         'image' => $imagePath, // Store image path if available
+    //     ]);
+    
+    //     // Redirect back with a success message
+    //     return redirect()->route('addOns.showItems')->with('success', 'Add-On Item created successfully.');
+    // }
+    
     public function storeItem(Request $request)
     {
-        // Validate the input data
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'price' => 'required|numeric',
-            'description' => 'nullable|string', // Description is now optional (nullable)
-            'category_id' => 'required|exists:categories,id', // Ensure the category exists
-            
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240', // Image is optional
+            'description' => 'required|string',
+            'category' => 'required|exists:categories,id', // Ensure the category exists
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240',
         ]);
     
         $imagePath = null;
     
-        // Handle the image upload if an image is provided
+        // Store the image if uploaded
         if ($request->hasFile('image')) {
             // Generate a unique filename with the original extension
             $imageName = Str::slug($validated['name']) . '_' . time() . '.' . $request->file('image')->getClientOriginalExtension();
-            $imagePath = $request->file('image')->storeAs('uploads/addOnItems', $imageName, 'public'); // Store under "uploads/addOnItems"
+            $imagePath = $request->file('image')->storeAs('addOnItems', $imageName, 'public');
         }
     
-        // Create the add-on item with the menu_id included
+        // Create the add-on item
         AddOnItem::create([
             'name' => $validated['name'],
             'price' => $validated['price'],
             'description' => $validated['description'],
-            'category_id' => $validated['category_id'], // Corrected to use 'category_id'
-            
-            'image' => $imagePath, // Store image path if available
+            'category_id' => $validated['category'], // Use category_id instead of category
+            'image' => $imagePath,
         ]);
     
-        // Redirect back with a success message
-        return redirect()->route('addOns.showItems')->with('success', 'Add-On Item created successfully.');
+        return redirect()->route('addOns.showItems')->with('success', 'Add On Item created successfully');
     }
-    
     
 
 
     public function showItems(Request $request)
     {
         $query = $request->get('search');
-        
+        $restaurants =  auth()->user()->restaurants->first();;
+
         if ($query) {
             $items = AddOnItem::where('name', 'like', "%{$query}%")
                             ->orWhere('description', 'like', "%{$query}%")
@@ -197,7 +279,7 @@ class AddOnsController extends Controller
             ]);
         }
 
-        return view('seller.addOns.Items', compact('items'));
+        return view('seller.addOns.Items', compact('items','restaurants'));
     }
     public function editItems($id)
     {
@@ -280,11 +362,13 @@ class AddOnsController extends Controller
         $categories = Category::all();
         $menus = Menutype::all();
         $specificMenu = Menutype::where('name', 'Gujrati Food')->first();
-    
+        $restaurants =  auth()->user()->restaurants->first();;
+
         return view('seller.addOns.AddItems', [
             'categories' => $categories,
             'menus' => $menus,
-            
+            // 'specificMenu'=>$specificMenu,
+            'restaurants'=>$restaurants
         ]);
     }
     

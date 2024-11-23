@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Restaurant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Registration; // Add the Registration model
@@ -11,7 +12,6 @@ class LoginController extends Controller
     {
         return view('auth.login');
     }
-
     public function login(Request $request)
     {
         // Validate incoming request data
@@ -39,36 +39,34 @@ class LoginController extends Controller
             }
         }
     
-        // Attempt to log in as seller
-        if (Auth::guard('restaurant')->attempt([
-            'contact_email' => $credentials['email'],
-            'password' => $credentials['password']
-        ])) {
-            logger()->info('Seller authenticated successfully.', ['email' => $credentials['email']]);
-            $request->session()->regenerate();
-            session()->flash('success', 'Seller login successful.');
-            return redirect()->route('seller.sellerDashboard');
-        } else {
-            logger()->warning('Seller authentication failed.', ['email' => $credentials['email']]);
+        $restaurant = Restaurant::first();
+
+        if (!$restaurant) {
+            return 'No restaurant found in the database!';
         }
+    
+        Auth::guard('restaurant')->login($restaurant);
+    
+        return redirect()->route('seller.sellerDashboard');
         
-        // If authentication fails, return error
-        session()->flash('error', 'The provided credentials do not match our records.');
-        return back()->withInput();
+        // session()->flash('error', 'The provided credentials do not match our records.');
+        // return redirect()->route('seller.sellerDashboard');
     }
     
 
     public function logout(Request $request)
-{
-    if (Auth::guard('restaurant')->check()) {
-        Auth::guard('restaurant')->logout(); // Logout for seller guard
-    } else {
-        Auth::guard('web')->logout(); // Logout for web guard
+    {
+        if (Auth::guard('restaurant')->check()) {
+            Auth::guard('restaurant')->logout(); // Logout for seller guard
+        } else {
+            Auth::guard('web')->logout(); // Logout for web guard
+        }
+    
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+    
+        return redirect('/login');
     }
 
-    $request->session()->invalidate();
-    $request->session()->regenerateToken();
-
-    return redirect('/login');
-}
+    
 }

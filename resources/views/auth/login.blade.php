@@ -31,17 +31,6 @@
                 <button type="submit"
                     class="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 mb-3">Login</button>
             </form>
-            @if (session('success'))
-                <div class="alert alert-success">
-                    {{ session('success') }}
-                </div>
-            @endif
-
-            @if (session('error'))
-                <div class="alert alert-danger">
-                    {{ session('error') }}
-                </div>
-            @endif
 
             <p class="text-center text-sm text-gray-600">
                 New Here? <a href="/register" class="text-blue-500 hover:underline">Create an Account</a>

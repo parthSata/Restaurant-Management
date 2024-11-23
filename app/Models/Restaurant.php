@@ -8,7 +8,9 @@ class Restaurant extends Authenticatable
 {
     use HasFactory;
 
-    // Define fillable fields for mass assignment
+    protected $guard_name = 'restaurant';
+
+
     protected $fillable = [
         'restaurant_name', 
         'restaurant_slug',
@@ -26,12 +28,21 @@ class Restaurant extends Authenticatable
         'logo', 
         'favicon', 
         'feature_image',
+        'role',
     ];
 
-    // Define hidden fields to exclude from serialization
     protected $hidden = ['password', 'remember_token'];
+
     public function setPasswordAttribute($password)
     {
         $this->attributes['password'] = bcrypt($password);
     }
+    public function restaurants()
+{
+    return $this->hasMany(Restaurant::class, 'id');
+}
+public function restaurant()
+{
+    return $this->hasOne(Restaurant::class);
+}
 }

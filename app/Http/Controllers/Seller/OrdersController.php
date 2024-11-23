@@ -9,7 +9,9 @@ class OrdersController extends Controller
 {
     public function index()
     {
+        $restaurants =  auth()->user()->restaurants->first();;
+
         // Return the Blade view for Seller Customer
-        return view('seller.orders.orders');
+        return view('seller.orders.orders', compact('restaurants'));
     }
 }

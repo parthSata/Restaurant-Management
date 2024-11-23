@@ -3,7 +3,6 @@
 @section('title', $restaurants->restaurant_name)
 
 @section('content')
-
     <main class="container mx-auto px-4 py-8">
         <h1 class="text-4xl font-bold text-center mb-12">Checkout</h1>
 
@@ -22,7 +21,6 @@
                         </div>
                         <h2 class="text-xl font-semibold">Account</h2>
                     </div>
-
                     @guest
                         <p class="text-gray-600 mb-4">To place your order now, log in to your existing account or sign up.</p>
                         <div class="flex space-x-4">
@@ -54,20 +52,16 @@
                             <h2 class="text-xl font-semibold">Delivery Address</h2>
                         </div>
                         @forelse($addresses as $address)
-                            <div class="bg-gray-50 p-4 rounded-lg flex justify-between items-center mb-4">
+                            <div class="bg-gray-50 p-4 rounded-lg flex justify-between items-center mb-4 address-card"
+                                data-address-id="{{ $address->id }}">
                                 <div class="flex items-start">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                                    </svg>
                                     <div class="ml-3">
-                                        <h3 class="font-semibold">Address</h3>
-                                        <p class="text-gray-600 text-sm">{{ $address->address }}, {{ $address->city }},
-                                            {{ $address->zip_code }}</p>
+                                        <h3 class="font-semibold">{{ $address->address }}</h3>
+                                        <p class="text-gray-600 text-sm">{{ $address->city }}, {{ $address->zip_code }}</p>
                                     </div>
                                 </div>
-                                <button class="bg-[#ff5722] text-white px-4 py-2 rounded-lg hover:bg-[#f4511e]">
+                                <button class="bg-[#ff5722] text-white px-4 py-2 rounded-lg hover:bg-[#f4511e] deliver-button"
+                                    onclick="selectAddress(this)">
                                     Deliver Here
                                 </button>
                             </div>
@@ -75,7 +69,6 @@
                             <p class="text-gray-600">You have no saved addresses. Add one below.</p>
                         @endforelse
 
-                        <!-- Address Form -->
                         <form method="POST" action="{{ route('delivery.store', ['slug' => $restaurants->restaurant_slug]) }}">
                             @csrf
                             <div class="space-y-4">
@@ -90,67 +83,101 @@
                                     Address</button>
                             </div>
                         </form>
+                        @if (session('error'))
+                            <div class="bg-red-100 text-red-800 px-4 py-2 rounded mb-4">
+                                {{ session('error') }}
+                            </div>
+                        @endif
                     </div>
                 @endauth
-
-                <!-- Payment Section -->
-                <div class="bg-white p-6 rounded-lg shadow-lg">
-                    <div class="flex items-center space-x-4 mb-4">
-                        <div class="bg-gray-200 p-2 rounded-full">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                            </svg>
-                        </div>
-                        <h2 class="text-xl font-semibold">Payment</h2>
-                    </div>
-                    <!-- Razorpay Payment Button -->
-                    <form action="{{ route('payment.handle') }}" method="POST">
-                        @csrf
-                        <script src="https://checkout.razorpay.com/v1/checkout.js" data-key="{{ $razorpayOrder['key'] }}"
-                            data-amount="{{ $razorpayOrder['amount'] }}" data-currency="{{ $razorpayOrder['currency'] }}"
-                            data-order_id="{{ $razorpayOrder['id'] }}" data-buttontext="Pay Now"
-                            data-name="{{ $restaurants->restaurant_name }}" data-description="Complete your payment"
-                            data-theme.color="#ff5722"></script>
-                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                    </form>
-                </div>
             </div>
 
             <!-- Right Column - Order Summary -->
             <div class="lg:col-span-1">
-                <div class="bg-white p-6 rounded-lg shadow-sm">
-                    <div class="border-t pt-4">
-                        <h3 class="font-semibold mb-4">Bill Details</h3>
-                        <div class="space-y-2">
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Item Total</span>
-                                <span>${{ number_format($itemTotal, 2) }}</span>
+                <div class="bg-white p-6 rounded-lg shadow-lg">
+                    <h3 class="font-bold text-xl mb-4">Your Cart</h3>
+                    <div class="space-y-4">
+                        @foreach ($cart as $item)
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="text-gray-700 font-medium">{{ $item['name'] }}</p>
+                                    <p class="text-gray-500 text-sm">Qty: {{ $item['quantity'] }}</p>
+                                </div>
+                                <p class="text-gray-600">${{ $item['price'] }}</p>
                             </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Discount</span>
-                                <span>-${{ number_format($discount, 2) }}</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Tax</span>
-                                <span>${{ number_format($tax, 2) }}</span>
-                            </div>
-                            <div class="flex justify-between border-t pt-2 font-semibold">
-                                <span>To Pay</span>
-                                <span>${{ number_format($toPay, 2) }}</span>
-                            </div>
-                        </div>
-                        <!-- Payment Button -->
-                        <button class="w-full mt-4 bg-[#ff5722] text-white px-6 py-2 rounded-md hover:bg-[#f4511e]"
-                            {{ count($cart) == 0 ? 'disabled' : '' }}>
-                            Proceed to Pay
-                        </button>
+                        @endforeach
                     </div>
+                    <hr class="my-4">
+                    <h3 class="font-bold text-xl mb-4">Select Payment Method</h3>
+                    <form action="{{ route('checkout.process', ['slug' => $restaurants->restaurant_slug]) }}"
+                        method="POST">
+                        @csrf
+                        <div class="space-y-2">
+                            <label class="flex items-center space-x-3">
+                                <input type="radio" name="payment_method" value="razorpay" required>
+                                <span class="text-gray-700">Razorpay</span>
+                            </label>
+                            <label class="flex items-center space-x-3">
+                                <input type="radio" name="payment_method" value="cod" required>
+                                <span class="text-gray-700">Cash on Delivery (COD)</span>
+                            </label>
+                        </div>
+                        <hr class="my-4">
+                        <button type="submit"
+                            class="w-full bg-[#ff5722] text-white px-6 py-2 rounded-lg hover:bg-[#f4511e]">Checkout</button>
+                    </form>
 
                 </div>
             </div>
         </div>
     </main>
+    <script>
+        function selectAddress(button) {
+            // Remove "Selected" from all buttons
+            document.querySelectorAll('.address-card').forEach(card => {
+                card.classList.remove('bg-green-100'); // Reset background
+                const btn = card.querySelector('.deliver-button');
+                btn.textContent = 'Deliver Here';
+            });
 
+            // Mark the clicked address as selected
+            const parentCard = button.closest('.address-card');
+            parentCard.classList.add('bg-green-100'); // Highlight the selected address
+            button.textContent = 'Selected'; // Update the button text
+        }
+
+        function selectAddress(button) {
+            document.querySelectorAll('.address-card').forEach(card => {
+                card.classList.remove('bg-green-100');
+                const btn = card.querySelector('.deliver-button');
+                btn.textContent = 'Deliver Here';
+            });
+
+            const parentCard = button.closest('.address-card');
+            parentCard.classList.add('bg-green-100');
+            button.textContent = 'Selected';
+
+            const addressId = parentCard.getAttribute('data-address-id');
+
+            // Send AJAX request to update the selected address
+            fetch(`/set-selected-address`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    },
+                    body: JSON.stringify({
+                        address_id: addressId
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log('Address selected successfully');
+                    } else {
+                        console.error('Failed to update selected address');
+                    }
+                });
+        }
+    </script>
 @endsection

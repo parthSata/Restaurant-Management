@@ -26,4 +26,9 @@ class AddOnItem extends Model
         {
             return $this->belongsToMany(MenuType::class, 'added_items', 'item_id', 'menu_id');
         }
+
+        public static function getRandomItems(int $limit = 4)
+        {
+            return self::inRandomOrder()->take($limit)->get();
+        }
 }

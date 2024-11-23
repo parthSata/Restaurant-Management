@@ -67,7 +67,7 @@
                     <select id="role" name="role" required
                         class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500">
                         <option value="customer">Customer</option>
-                        <option value="seller">Seller</option>
+                        {{-- <option value="seller">Seller</option>w --}}
 a                    </select>
                 </div>
 

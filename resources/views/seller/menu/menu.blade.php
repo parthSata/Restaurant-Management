@@ -104,8 +104,8 @@
 
     <!-- Modal for Add/Update Menu -->
 
-    <div id="menuModal" class="fixed inset-0 bg-black bg-opacity-50 hidden">
-        <div class="bg-white max-w-md w-full p-10 flex flex-col rounded-lg shadow-lg">
+    <div id="menuModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center hidden">
+        <div class="bg-white  max-w-md w-full p-10 flex flex-col rounded-lg shadow-lg">
             <h2 class="text-lg font-semibold mb-4" id="modalTitle">Add Menu</h2>
             <form id="menuForm" method="POST"
                 action="{{ isset($menu) ? route('menu.update', $menu->id) : route('menu.store') }}"

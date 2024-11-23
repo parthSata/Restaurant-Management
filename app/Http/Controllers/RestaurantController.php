@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AddOnItem;
+use App\Models\Category;
 use App\Models\Restaurant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -17,13 +19,16 @@ class RestaurantController extends Controller
     {
         // Get the search query from the request (if any)
         $search = $request->input('search');
-
-        // Fetch all restaurants or filter based on search query
+    
+        // Fetch all restaurants or filter based on the search query
         $restaurants = Restaurant::when($search, function ($query) use ($search) {
             return $query->where('restaurant_name', 'like', "%{$search}%");
         })->get();
-
-        // Return the user view with all restaurants
+    
+        // Fetch 4 random AddOnItems for the special menu
+        $specialMenuItems = AddOnItem::inRandomOrder()->take(4)->get();
+    
+        // Pass the variables to the view
         return view('user.restaurant', compact('restaurants', 'search'));
     }
     public function contactUs($id)
@@ -64,11 +69,12 @@ class RestaurantController extends Controller
         // Check if a slug is provided
         if ($slug) {
             // Fetch restaurant details using the slug
-            $restaurants = Restaurant::where('restaurant_slug', $slug)->firstOrFail();
+            $restaurants = Restaurant::where('restaurant_slug', $slug)->first();
     
             // Fetch 4 random products associated with this restaurant (if a relationship exists)
-           
-            return view('components.Restaurant.Home.index', compact('restaurants'));
+            $specialMenuItems = AddOnItem::inRandomOrder()->take(4)->get();
+
+            return view('components.Restaurant.Home.index', compact('restaurants','specialMenuItems'));
         } else {
             // Fetch all restaurants to display
             $restaurants = Restaurant::all();

@@ -9,6 +9,8 @@ class TransactionController extends Controller
 {
     public function index()
     {
-        return view('seller.transaction.transaction');
+        $restaurants =  auth()->user()->restaurants->first();;
+
+        return view('seller.transaction.transaction',compact('restaurants'));
     }
 }

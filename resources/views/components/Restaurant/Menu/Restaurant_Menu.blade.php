@@ -98,6 +98,8 @@
 
             function addToCart(id, name, price, image) {
                 let existingItem = cartItems.find(item => item.id === id);
+                console.log(`Added to cart: ${itemName}, Price: $${itemPrice}`);
+
                 if (existingItem) {
                     existingItem.quantity++;
                 } else {
@@ -180,7 +182,7 @@
                         .then(data => {
                             if (data.message === 'Cart synced successfully') {
                                 window.location.href =
-                                '{{ route('checkout', ['slug' => $restaurants->restaurant_slug]) }}';
+                                    '{{ route('checkout', ['slug' => $restaurants->restaurant_slug]) }}';
                             }
                         })
                         .catch(error => console.error('Error syncing cart:', error));

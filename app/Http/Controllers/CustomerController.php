@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\Restaurant;
 use Illuminate\Http\Request;
 use App\Models\Customer; 
 use Illuminate\Support\Facades\Auth;
@@ -36,8 +37,28 @@ public function dashboard()
     $customer = auth()->user(); // Fetch the authenticated customer
     $user = Auth::user();  // Retrieve the authenticated user
     $fullName = $user->first_name . ' ' . $user->last_name;// Fetch the authenticated customer
-    return view('user.dashboard.customerDashboard', ['customer' => $customer], compact('user','fullName'));
-}
+      // Fetch the latest orders for the authenticated user
+      $orders = Order::where('customer_id', Auth::id())
+      ->latest()
+      ->take(5) // Limit to the latest 5 orders (or modify as needed)
+      ->get();
+
+      $restaurants = Restaurant::whereIn('id', $orders->pluck('restaurant_id'))->get();
+
+      $totalOrders = Order::where('customer_id', $user->id)->count();
+      $processingOrders = Order::where('customer_id', $user->id)->where('order_status', 'processing')->count();
+      $receivedOrders = Order::where('customer_id', $user->id)->where('order_status', 'received')->count();
+  
+      return view('user.dashboard.customerDashboard', compact(
+        'customer',
+        'user',
+        'fullName',
+        'orders',
+        'restaurants',
+        'totalOrders',
+        'processingOrders',
+        'receivedOrders'
+    ));}
 
     public function orders($id)
     {

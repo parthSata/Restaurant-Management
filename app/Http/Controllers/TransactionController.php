@@ -17,6 +17,7 @@ class TransactionController extends Controller
         $transactions = Transaction::when($search, function ($query) use ($search) {
             return $query->where('transaction_id', 'like', "%{$search}%");
         })->get();
+
     
         // Debugging: Log the retrieved transactions
         \Log::info($transactions);
