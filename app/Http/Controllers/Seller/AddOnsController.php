@@ -15,6 +15,7 @@ use App\Http\Controllers\Menu;
 use App\Models\MenuType;
 
 
+
 class AddOnsController extends Controller
 {
     public function index()
@@ -26,7 +27,7 @@ class AddOnsController extends Controller
     // Return the Blade view for Seller Customer with categories data
     return view('seller.addOns.AddCategories', compact('categories','restaurants'));
     }
-
+    
     public function updateCategories(Request $request, $id)
     {
         $request->validate([
@@ -34,86 +35,50 @@ class AddOnsController extends Controller
             'description' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
-    
-        $restaurants = auth()->guard('restaurant')->user();
-        if (!$restaurants) {
-            return redirect()->back()->with('error', 'You must be logged in as a restaurant to update categories.');
-        }
-    
+
         $category = Category::findOrFail($id);
-        if ($category->restaurant_id !== $restaurants->id) {
-            return redirect()->back()->with('error', 'Unauthorized access to update this category.');
-        }
-    
-        // Update category fields
+
         $category->name = $request->name;
         $category->description = $request->description;
-    
-        // Handle image upload
+
         if ($request->hasFile('image')) {
-            // Delete the old image if it exists
             if ($category->image) {
                 Storage::disk('public')->delete($category->image);
             }
-    
-            $imageName = Str::slug($request->name) . '_' . time() . '.' . $request->file('image')->getClientOriginalExtension();
-            $category->image = $request->file('image')->storeAs('Categories', $imageName, 'public');
+            $category->image = $request->file('image')->store('categories', 'public');
         }
-    
-        // Save updated category
-        $category->save();
-    
-        return redirect()->route('addOns.index')->with('success', 'Category updated successfully!');
-    }    
 
+        $category->save();
+        return redirect()->route('addOns.index')->with('success', 'Category updated successfully.');
+    }
     public function editCategories($id)
     {
         $categoryForUpdate = Category::findOrFail($id);
-        return view('seller.addOns.AddCategories', compact('categoryForUpdate'));
+        $categories = Category::where('restaurant_id', auth()->guard('restaurant')->user()->id)->get();
+        $restaurants = auth()->guard('restaurant')->user(); // Fetch the logged-in restaurant
+    
+        return view('seller.addOns.AddCategories', compact('categoryForUpdate', 'categories', 'restaurants'));
     }
     
+
     public function storeCategories(Request $request)
     {
-        // Validate the incoming request data
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validate the image
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
-    
-        // Get the logged-in restaurant
-        $restaurant = auth()->guard('restaurant')->user();
-    
-        // Ensure a restaurant is logged in
-        if (!$restaurant) {
-            return redirect()->back()->with('error', 'You must be logged in as a restaurant to add categories.');
-        }
-    
-        // Retrieve the restaurant_id from the logged-in user
-        $restaurantId = $restaurant->id;
-    
-        // Create and store the new category
+
         $category = new Category();
         $category->name = $request->name;
         $category->description = $request->description;
-        $category->restaurant_id = $restaurantId; 
-    
-        // Handle the image upload if present
+        $category->restaurant_id = $request->restaurant_id;
+
         if ($request->hasFile('image')) {
-            $image = $request->file('image');
-    
-            // Generate a unique name for the image
-            $imageName = Str::slug($request->name) . '_' . time() . '.' . $image->getClientOriginalExtension();
-    
-            // Store the image in the 'public' storage folder
-            $imagePath = $image->storeAs('Categories', $imageName, 'public');
-    
-            $category->image = $imagePath;
+            $category->image = $request->file('image')->store('categories', 'public');
         }
-    
-        // Save the category to the database
+
         $category->save();
-    
         return redirect()->route('addOns.index')->with('success', 'Category created successfully.');
     }
     

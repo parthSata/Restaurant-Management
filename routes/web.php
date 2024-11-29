@@ -118,12 +118,12 @@ Route::prefix('seller')->middleware('auth:restaurant')->group(function () {
     Route::get('/reservation', [SellerReservationController::class, 'index'])->name('reservation.index');
     Route::get('/reservation/tables', [SellerReservationController::class, 'showTables'])->name('reservation.showTables');
 
-    Route::get('/addOns', [SellerAddOnsController::class, 'index'])->name('addOns.index'); // View categories
+    Route::get('/addOns', [SellerAddOnsController::class, 'index'])->name('addOns.index');
     Route::post('/addOns/categories', [SellerAddOnsController::class, 'storeCategories'])->name('categories.store');
-    Route::delete('/addOns/categories/{id}', [SellerAddOnsController::class, 'destroyCategory'])->name('categories.destroy');
     Route::get('/addOns/categories/{id}/edit', [SellerAddOnsController::class, 'editCategories'])->name('categories.edit');
     Route::put('/addOns/categories/{id}', [SellerAddOnsController::class, 'updateCategories'])->name('categories.update');
-
+    Route::delete('/addOns/categories/{id}', [SellerAddOnsController::class, 'destroyCategory'])->name('categories.destroy');
+    
 
     Route::get('/add-ons/items', [SellerAddOnsController::class, 'showItems'])->name('addOns.showItems');
     Route::get('/addOns/addItems/create/{menu_id}', [SellerAddOnsController::class, 'createItems'])->name('items.create');

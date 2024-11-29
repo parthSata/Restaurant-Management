@@ -1,6 +1,6 @@
 @extends('layouts.seller')
 
-@section('title', isset($category) ? 'Update Category' : 'Add Category')
+@section('title', isset($categoryForUpdate) ? 'Update Category' : 'Add Category')
 
 @section('content')
 
@@ -13,41 +13,39 @@
             </ul>
         </div>
     @endif
+
     <!-- Main Content Container -->
     <div class="container mx-auto p-6 bg-gray-50">
         <div class="bg-white rounded-lg shadow-md p-6">
             <div class="flex justify-between items-center mb-6">
-                <div class="flex justify-between mb-4">
-                    <div class="relative flex justify-center items-center gap-2">
-                        <div class="">
-                            <input type="text" placeholder="Search" class="w-full pl-10 py-2 border rounded-lg">
-                            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
-                        </div>
-                        <ul class="flex gap-4 items-center">
-                            <a href="{{ route('addOns.index') }}" class="">
-                                <li class="cursor-pointer hover:underline text-lg font-serif">Add On Category</li>
-                            </a>
-                            <a href="{{ route('addOns.showItems') }}" class="">
-                                <li class="cursor-pointer hover:underline text-lg font-serif">Add On Items</li>
-                            </a>
-                        </ul>
-                    </div>
+                <div class="relative flex gap-4">
+                    <input type="text" placeholder="Search" id="searchInput" 
+                        class="w-64 pl-10 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600">
+                    <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+
+                    <ul class="flex gap-4 items-center">
+                        <a href="{{ route('addOns.index') }}">
+                            <li class="cursor-pointer hover:underline text-lg font-serif">Add On Category</li>
+                        </a>
+                        <a href="{{ route('addOns.showItems') }}">
+                            <li class="cursor-pointer hover:underline text-lg font-serif">Add On Items</li>
+                        </a>
+                    </ul>
                 </div>
-                <button id="openModalBtn"
+
+                <button id="openModalBtn" 
                     class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-300">
-                    {{ isset($category) ? 'Update Category' : 'Add Category' }}
+                    {{ isset($categoryForUpdate) ? 'Update Category' : 'Add Category' }}
                 </button>
             </div>
 
             <!-- Modal for Add/Update -->
-            <div id="modalDialog"
+            <div id="modalDialog" aria-hidden="true"
                 class="fixed flex inset-0 z-50 bg-gray-600 bg-opacity-50 items-center justify-center hidden">
                 <div class="bg-white p-6 rounded-lg flex flex-col shadow-lg max-w-md w-full relative">
-                    <button id="closeModalBtn"
-                        class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">&times;</button>
+                    <button id="closeModalBtn" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">&times;</button>
 
-                    <h2 class="text-xl font-bold mb-4">{{ isset($categoryForUpdate) ? 'Update Category' : 'Add Category' }}
-                    </h2>
+                    <h2 class="text-xl font-bold mb-4" id="modalTitle">{{ isset($categoryForUpdate) ? 'Update Category' : 'Add Category' }}</h2>
 
                     <form method="POST" id="categoryForm"
                         action="{{ isset($categoryForUpdate) ? route('categories.update', $categoryForUpdate->id) : route('categories.store') }}"
@@ -57,53 +55,49 @@
                             @method('PUT')
                         @endif
 
-                        <!-- Restaurant ID (hidden input) -->
+                        <!-- Hidden Inputs -->
                         <input type="hidden" name="restaurant_id" value="{{ $restaurants->id }}">
 
                         <div class="mb-4">
                             <label for="name" class="block text-sm font-medium text-gray-700">Name:</label>
                             <input type="text" name="name" id="name"
                                 class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
-                                value="{{ isset($categoryForUpdate) ? $categoryForUpdate->name : old('name') }}"
-                                placeholder="Category Name" required>
+                                value="{{ old('name', $categoryForUpdate->name ?? '') }}" placeholder="Category Name" required>
                         </div>
 
                         <div class="mb-4">
                             <label for="description" class="block text-sm font-medium text-gray-700">Description:</label>
                             <textarea name="description" id="description"
-                                class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600" placeholder="Description"
-                                required>{{ isset($categoryForUpdate) ? $categoryForUpdate->description : old('description') }}</textarea>
+                                class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                                placeholder="Description" required>{{ old('description', $categoryForUpdate->description ?? '') }}</textarea>
                         </div>
 
-                        <!-- Image Upload -->
-                        <label for="feature-image-input">Image:</label>
-                        <div class="relative flex items-center">
-                            <div class="bg-white border">
+                        <div class="mb-4">
+                            <label for="feature-image-input">Image:</label>
+                            <div class="relative flex items-center">
                                 <img id="imagePreview"
                                     src="{{ isset($categoryForUpdate) ? Storage::url($categoryForUpdate->image) : asset('image/placeholder.jpeg') }}"
                                     alt="Feature Image placeholder" class="w-32 h-28 object-cover rounded-md">
+                                <input type="file" id="feature-image-input" name="image" accept="image/*"
+                                    onchange="previewImage(event, 'imagePreview')" class="hidden" />
+                                <label for="feature-image-input"
+                                    class="absolute bg-white p-2 -top-2 left-24 flex justify-center items-center border border-gray-300 rounded-full cursor-pointer">
+                                    <i class="fa-solid fa-pen fa-md" style="color: #aaaeb5;"></i>
+                                </label>
                             </div>
-                            <input type="file" id="feature-image-input" name="image" accept="image/*"
-                                onchange="previewImage(event, 'imagePreview')" class="hidden" />
-                            <label for="feature-image-input"
-                                class="absolute bg-white p-2 -top-2 left-24 flex justify-center items-center border border-gray-300 rounded-full cursor-pointer">
-                                <i class="fa-solid fa-pen fa-md" style="color: #aaaeb5;"></i>
-                            </label>
                         </div>
 
                         <div class="flex justify-end mt-4">
                             <button type="submit" id="modalsubmit"
                                 class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 mr-2">
-                                {{ isset($categoryForUpdate) ? 'Update Category' : 'Save Category' }} </button>
-                            <button type="button" id="closeModalBtnBottom"
-                                class="bg-gray-400 text-white px-4 py-2 rounded-lg hover:bg-gray-500">Discard
+                                {{ isset($categoryForUpdate) ? 'Update Category' : 'Save Category' }}
                             </button>
+                            <button type="button" id="closeModalBtnBottom"
+                                class="bg-gray-400 text-white px-4 py-2 rounded-lg hover:bg-gray-500">Discard</button>
                         </div>
                     </form>
                 </div>
             </div>
-
-
 
             <!-- Table for Categories -->
             <table class="min-w-full mt-6">
@@ -114,7 +108,7 @@
                         <th class="pb-4">ACTION</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="categoryTable">
                     @foreach ($categories as $item)
                         <tr class="border-t border-gray-200">
                             <td class="py-4">
@@ -158,70 +152,75 @@
     </div>
 
     <script>
-        // Preview Image
-        function previewImage(event, elementId) {
-            const image = document.getElementById(elementId);
-            image.src = URL.createObjectURL(event.target.files[0]);
+       // Open Add Category Modal
+document.getElementById('openModalBtn').addEventListener('click', function () {
+    resetModal(); // Reset modal fields
+    openModal('Add Category', 'Save Category', '{{ route('categories.store') }}');
+});
+
+// Open Edit Category Modal
+function openUpdateModal(id, name, description, imageUrl) {
+    // Populate modal fields
+    document.getElementById('name').value = name;
+    document.getElementById('description').value = description;
+    document.getElementById('imagePreview').src = imageUrl;
+
+    // Update modal title and form action
+    const updateAction = '{{ route('categories.update', ':id') }}'.replace(':id', id);
+    openModal('Update Category', 'Update Category', updateAction, 'PUT');
+}
+
+// Function to Reset Modal Fields
+function resetModal() {
+    document.getElementById('name').value = '';
+    document.getElementById('description').value = '';
+    document.getElementById('imagePreview').src = '{{ asset('image/placeholder.jpeg') }}';
+
+    const form = document.getElementById('categoryForm');
+    form.action = '';
+    const methodInput = form.querySelector('input[name="_method"]');
+    if (methodInput) methodInput.remove(); // Remove PUT method if present
+}
+
+// Function to Open Modal
+function openModal(title, submitText, action, method = null) {
+    // Set modal title and submit button text
+    document.getElementById('modalTitle').textContent = title;
+    document.getElementById('modalsubmit').textContent = submitText;
+
+    // Update form action and method
+    const form = document.getElementById('categoryForm');
+    form.action = action;
+
+    if (method) {
+        let methodInput = form.querySelector('input[name="_method"]');
+        if (!methodInput) {
+            methodInput = document.createElement('input');
+            methodInput.type = 'hidden';
+            methodInput.name = '_method';
+            form.appendChild(methodInput);
         }
-        // Open Add Category Modal
-        document.getElementById('openModalBtn').addEventListener('click', function() {
-            // Reset the form fields
-            document.getElementById('name').value = '';
-            document.getElementById('description').value = '';
-            document.getElementById('imagePreview').src = '{{ asset('image/placeholder.jpeg') }}';
+        methodInput.value = method;
+    }
 
-            // Change modal title and button text to reflect "Add Category"
-            document.querySelector('h2').textContent = 'Add Category';
-            document.getElementById('modalsubmit').textContent = 'Save Category';
+    // Show modal
+    document.getElementById('modalDialog').classList.remove('hidden');
+    document.getElementById('modalDialog').setAttribute('aria-hidden', 'false');
+}
 
-            // Set the form's action to the store route
-            const form = document.querySelector('form');
-            form.action = '{{ route('categories.store') }}';
-            form.querySelector('input[name="_method"]')?.remove(); // Remove any existing _method input
+// Close Modal
+document.getElementById('closeModalBtn').addEventListener('click', function () {
+    closeModal();
+});
 
-            // Open the modal
-            document.getElementById('modalDialog').classList.remove('hidden');
-        });
+document.getElementById('closeModalBtnBottom').addEventListener('click', function () {
+    closeModal();
+});
 
-        // Open Update Category Modal
-        function openUpdateModal(id, name, description, imageUrl) {
-            // Populate the form fields with the category data
-            document.getElementById('name').value = name || '';
-            document.getElementById('description').value = description || '';
-            document.getElementById('imagePreview').src = imageUrl || '{{ asset('image/placeholder.jpeg') }}';
+function closeModal() {
+    document.getElementById('modalDialog').classList.add('hidden');
+    document.getElementById('modalDialog').setAttribute('aria-hidden', 'true');
+}
 
-            // Update modal title and button text
-            document.querySelector('h2').textContent = 'Update Category';
-            document.getElementById('modalsubmit').textContent = 'Update Category';
-
-            // Set the form's action to the update route
-            const form = document.querySelector('form');
-            const formAction = '{{ route('categories.update', ':id') }}'.replace(':id', id);
-            form.action = formAction;
-
-            // Add the hidden _method input for the PUT request
-            let methodInput = form.querySelector('input[name="_method"]');
-            if (!methodInput) {
-                methodInput = document.createElement('input');
-                methodInput.type = 'hidden';
-                methodInput.name = '_method';
-                methodInput.value = 'PUT';
-                form.appendChild(methodInput);
-            } else {
-                methodInput.value = 'PUT';
-            }
-
-            // Open the modal
-            document.getElementById('modalDialog').classList.remove('hidden');
-        }
-        // Close Modal
-        document.getElementById('closeModalBtn').addEventListener('click', function() {
-            document.getElementById('modalDialog').classList.add('hidden');
-        });
-
-        document.getElementById('closeModalBtnBottom').addEventListener('click', function() {
-            document.getElementById('modalDialog').classList.add('hidden');
-        });
     </script>
-
 @endsection
