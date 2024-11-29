@@ -37,12 +37,14 @@ class Restaurant extends Authenticatable
     {
         $this->attributes['password'] = bcrypt($password);
     }
+
     public function restaurants()
-{
-    return $this->hasMany(Restaurant::class, 'id');
-}
-public function restaurant()
-{
-    return $this->hasOne(Restaurant::class);
-}
+    {
+        return $this->hasMany(Restaurant::class, 'id');
+    }
+       
+    public function restaurant()
+    {
+        return $this->hasMany(Restaurant::class);
+    }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Seller;
 
 use App\Http\Controllers\Controller;
 use App\Models\AddOnItem;
+use Auth;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use Illuminate\Support\Facades\Storage;
@@ -33,108 +34,89 @@ class AddOnsController extends Controller
             'description' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
-
-        $category = Category::findOrFail($id);
-        $category->name = $request->name;
-        $category->description = $request->description; // Make sure to include this
-
-        // Handle image upload for update
-        if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $imageName = Str::slug($request->name) . '_' . time() . '.' . $image->getClientOriginalExtension();
-            $imagePath = $image->storeAs('Categories', $imageName, 'public');
-            $category->image = $imagePath; // Save the new image path
+    
+        $restaurants = auth()->guard('restaurant')->user();
+        if (!$restaurants) {
+            return redirect()->back()->with('error', 'You must be logged in as a restaurant to update categories.');
         }
-
-        $category->save(); // Save the category
-
-        return redirect()->route('addOns.index')->with('success', 'Category updated successfully.');
-    }
+    
+        $category = Category::findOrFail($id);
+        if ($category->restaurant_id !== $restaurants->id) {
+            return redirect()->back()->with('error', 'Unauthorized access to update this category.');
+        }
+    
+        // Update category fields
+        $category->name = $request->name;
+        $category->description = $request->description;
+    
+        // Handle image upload
+        if ($request->hasFile('image')) {
+            // Delete the old image if it exists
+            if ($category->image) {
+                Storage::disk('public')->delete($category->image);
+            }
+    
+            $imageName = Str::slug($request->name) . '_' . time() . '.' . $request->file('image')->getClientOriginalExtension();
+            $category->image = $request->file('image')->storeAs('Categories', $imageName, 'public');
+        }
+    
+        // Save updated category
+        $category->save();
+    
+        return redirect()->route('addOns.index')->with('success', 'Category updated successfully!');
+    }    
 
     public function editCategories($id)
     {
-        $categoryForUpdate = Category::find($id); // Fetch the category by ID
-        if (!$categoryForUpdate) {
-            return redirect()->route('categories.index')->with('error', 'Category not found.');
-        }
-        return view('seller.addOns.AddCategories', compact('categoryForUpdate')); // Pass the single category
+        $categoryForUpdate = Category::findOrFail($id);
+        return view('seller.addOns.AddCategories', compact('categoryForUpdate'));
     }
-
-    // public function storeCategories(Request $request)
-    // {
-    //     $request->validate([
-    //         'name' => 'required|string|max:255',
-    //         'description' => 'nullable|string',
-    //         'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validate the image
-    //         'restaurant_id' => 'required|exists:restaurants,id', // Validate the restaurant_id
-    //     ]);
-
-    //     $category = new Category();
-    //     $category->name = $request->name;
-    //     $category->description = $request->description;
-    //     $category->restaurant_id = $request->restaurant_id; // Store the restaurant_id
-
-    //     if ($request->hasFile('image')) {
-    //         $image = $request->file('image');
-
-    //         $imageName = Str::slug($request->name) . '_' . time() . '.' . $image->getClientOriginalExtension();
-
-    //         $imagePath = $image->storeAs('Categories', $imageName, 'public');
-
-    //         $category->image = $imagePath;
-    //     }
-
-    //     $category->save(); // Save the category
-
-    //     return redirect()->route('addOns.index')->with('success', 'Category created successfully.');
-    // }
-
+    
     public function storeCategories(Request $request)
-{
-    // Validate the incoming request data
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'description' => 'nullable|string',
-        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validate the image
-    ]);
-
-    // Get the logged-in seller (restaurant owner)
-    $user = auth()->user();
-
-    // Check if the seller has a restaurant
-    if (!$user->restaurant) {
-        return redirect()->back()->with('error', 'You must have a restaurant to add categories.');
+    {
+        // Validate the incoming request data
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validate the image
+        ]);
+    
+        // Get the logged-in restaurant
+        $restaurant = auth()->guard('restaurant')->user();
+    
+        // Ensure a restaurant is logged in
+        if (!$restaurant) {
+            return redirect()->back()->with('error', 'You must be logged in as a restaurant to add categories.');
+        }
+    
+        // Retrieve the restaurant_id from the logged-in user
+        $restaurantId = $restaurant->id;
+    
+        // Create and store the new category
+        $category = new Category();
+        $category->name = $request->name;
+        $category->description = $request->description;
+        $category->restaurant_id = $restaurantId; 
+    
+        // Handle the image upload if present
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+    
+            // Generate a unique name for the image
+            $imageName = Str::slug($request->name) . '_' . time() . '.' . $image->getClientOriginalExtension();
+    
+            // Store the image in the 'public' storage folder
+            $imagePath = $image->storeAs('Categories', $imageName, 'public');
+    
+            $category->image = $imagePath;
+        }
+    
+        // Save the category to the database
+        $category->save();
+    
+        return redirect()->route('addOns.index')->with('success', 'Category created successfully.');
     }
-
-    // Retrieve the restaurant_id from the logged-in user
-    $restaurantId = $user->restaurant->id;
-
-    // Create and store the new category
-    $category = new Category();
-    $category->name = $request->name;
-    $category->description = $request->description;
-    $category->restaurant_id = $restaurantId; 
-
-    // Handle the image upload if present
-    if ($request->hasFile('image')) {
-        $image = $request->file('image');
-
-        // Generate a unique name for the image
-        $imageName = Str::slug($request->name) . '_' . time() . '.' . $image->getClientOriginalExtension();
-
-        // Store the image in the 'public' storage folder
-        $imagePath = $image->storeAs('Categories', $imageName, 'public');
-
-        $category->image = $imagePath;
-    }
-
-    // Save the category to the database
-    $category->save();
-
-    return redirect()->route('addOns.index')->with('success', 'Category created successfully.');
-}
-
-
+    
     
     public function destroyCategory($id)
     {
@@ -145,42 +127,6 @@ class AddOnsController extends Controller
     }
 
     // Items
-    
-
-    // public function storeItem(Request $request)
-    // {
-    //     // Validate the input data
-    //     $validated = $request->validate([
-    //         'name' => 'required|string|max:255',
-    //         'price' => 'required|numeric',
-    //         'description' => 'nullable|string', // Description is now optional (nullable)
-    //         'category_id' => 'required|exists:categories,id', // Ensure the category exists
-            
-    //         'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240', // Image is optional
-    //     ]);
-
-    //     $imagePath = null;
-    
-    //     // Handle the image upload if an image is provided
-    //     if ($request->hasFile('image')) {
-    //         // Generate a unique filename with the original extension
-    //         $imageName = Str::slug($validated['name']) . '_' . time() . '.' . $request->file('image')->getClientOriginalExtension();
-    //         $imagePath = $request->file('image')->storeAs('uploads/addOnItems', $imageName, 'public'); // Store under "uploads/addOnItems"
-    //     }
-    
-    //     // Create the add-on item with the menu_id included
-    //     AddOnItem::create([
-    //         'name' => $validated['name'],
-    //         'price' => $validated['price'],
-    //         'description' => $validated['description'],
-    //         'category_id' => $validated['category_id'], // Corrected to use 'category_id'
-            
-    //         'image' => $imagePath, // Store image path if available
-    //     ]);
-    
-    //     // Redirect back with a success message
-    //     return redirect()->route('addOns.showItems')->with('success', 'Add-On Item created successfully.');
-    // }
     
     public function storeItem(Request $request)
     {
@@ -285,6 +231,8 @@ class AddOnsController extends Controller
     {
         // Retrieve the item by its ID
         $item = AddOnItem::find($id);
+        $restaurants =  auth()->user()->restaurants->first();;
+
 
         // Check if item exists
         if (!$item) {
@@ -298,7 +246,7 @@ class AddOnsController extends Controller
         $categories = Category::all();
 
         // Pass item, image, and categories to the view
-        return view('seller.addOns.AddItems', compact('item', 'itemImage', 'categories'));
+        return view('seller.addOns.AddItems', compact('item','restaurants', 'itemImage', 'categories'));
     }
     public function updateItems(Request $request, $id)
     {

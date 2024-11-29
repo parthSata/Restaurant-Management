@@ -11,7 +11,7 @@ class CustomerController extends Controller
     public function index()
     {
         // Retrieve all restaurants
-        $restaurants = Restaurant::all(); // Get all restaurants
+        $restaurants =  auth()->user()->restaurants->first();;
     
         // Return the Blade view for Seller Customer with restaurant data
         return view('seller.customers.customer', ['restaurants' => $restaurants]);
@@ -19,7 +19,9 @@ class CustomerController extends Controller
     
     public function showEnquiries()
     {
+        $restaurants =  auth()->user()->restaurants->first();;
+
         // Return the Blade view for Seller Enquiries
-        return view('seller.customers.enquiries');
+        return view('seller.customers.enquiries',compact('restaurants'));
     }
 }

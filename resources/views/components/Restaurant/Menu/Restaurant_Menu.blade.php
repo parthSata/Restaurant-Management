@@ -98,7 +98,6 @@
 
             function addToCart(id, name, price, image) {
                 let existingItem = cartItems.find(item => item.id === id);
-                console.log(`Added to cart: ${itemName}, Price: $${itemPrice}`);
 
                 if (existingItem) {
                     existingItem.quantity++;

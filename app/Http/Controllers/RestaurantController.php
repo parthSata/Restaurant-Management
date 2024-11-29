@@ -81,7 +81,8 @@ class RestaurantController extends Controller
             return view('user.restaurant', compact('restaurants'));
         }
     }
-    
+
+
 
 
     
@@ -89,6 +90,7 @@ class RestaurantController extends Controller
     {
         return view('admin.Home.RestaurantHome');
     }
+
     public function destroy($id)
     {
         $restaurant = Restaurant::findOrFail($id);
@@ -108,7 +110,8 @@ class RestaurantController extends Controller
         // Debugging: Log the variables being passed
     
         return view('admin.Restaurants.AddRestaurant', compact('restaurant', 'service_type', 'statuses', 'currencies', 'restaurantTypes'));
-    }       
+    }     
+
     public function update(Request $request, $id)
     {
         // Find the restaurant by ID
@@ -177,7 +180,7 @@ class RestaurantController extends Controller
     
         return redirect()->route('restaurants.index')->with('success', 'Restaurant updated successfully.');
     }
-    
+
     public function create()
     {
         $service_type = ['Delivery', 'Dine In', 'Pickup'];

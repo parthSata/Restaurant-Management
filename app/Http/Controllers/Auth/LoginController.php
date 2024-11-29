@@ -38,19 +38,33 @@ class LoginController extends Controller
                     return redirect()->route('user.home');
             }
         }
-    
-        $restaurant = Restaurant::first();
 
-        if (!$restaurant) {
-            return 'No restaurant found in the database!';
-        }
+
+    // Fetch the restaurant associated with the seller's email
+    $restaurant = Restaurant::where('contact_email', $request->email)->first();
+
+    if (!$restaurant) {
+        return back()->withErrors([
+            'email' => 'No restaurant found associated with this email.',
+        ]);
+    }
+
+    // Authenticate the seller and regenerate session
+    Auth::guard('restaurant')->login($restaurant);
+    $request->session()->regenerate();
+
+    return redirect()->route('seller.sellerDashboard');
     
-        Auth::guard('restaurant')->login($restaurant);
+        // $restaurant = Restaurant::first();
+
+        // if (!$restaurant) {
+        //     return 'No restaurant found in the database!';
+        // }
     
-        return redirect()->route('seller.sellerDashboard');
-        
-        // session()->flash('error', 'The provided credentials do not match our records.');
+        // Auth::guard('restaurant')->login($restaurant);
+    
         // return redirect()->route('seller.sellerDashboard');
+    
     }
     
 

@@ -115,7 +115,8 @@ class MenuController extends Controller
     
         // Fetch added items for the specific menu
         $addedItems = AddedItem::where('menu_id', $menuId)->with('item')->get();
-    
+        // dd($addedItems);
+
         return view('seller.menu.AddItemsinMenu', compact('addOnItems', 'addedItems','restaurants', 'menuId'));
     }   
    
@@ -136,6 +137,7 @@ class MenuController extends Controller
     
         // Fetch added items based on menu_id
         $addedItems = AddedItem::where('menu_id', $menuId)->with('item')->get();
+        dd($addedItems);
     
         // Return the view with add-on items, added items, and the menu ID
         return view('seller.menu.AddItemsinMenu', compact('addOnItems', 'addedItems', 'menuId'));
@@ -152,6 +154,9 @@ class MenuController extends Controller
         if ($exists) {
             return redirect()->back()->with('error', 'Item is already added to this menu.');
         }
+
+        $restaurants =  auth()->user()->restaurants->first();;
+
     
         // Insert into added_items table
         AddedItem::create([
@@ -159,7 +164,7 @@ class MenuController extends Controller
             'item_id' => $id,
         ]);
     
-        return redirect()->back()->with('success', 'Item added successfully.');
+        return redirect()->back()->with('success', 'Item added successfully.')->with('restaurants', $restaurants);
     }
       
     public function removeItem($id, Request $request)
@@ -176,6 +181,7 @@ class MenuController extends Controller
     
         return redirect()->back()->with('error', 'Item not found.');
     }
+
 
 
 }

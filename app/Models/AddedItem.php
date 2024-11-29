@@ -9,7 +9,7 @@ class AddedItem extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['menu_id', 'item_id']; // Fillable fields
+    protected $fillable = ['menu_id', 'item_id' ]; // Fillable fields
 
     public function item()
     {
