@@ -3,11 +3,11 @@
 @section('title', 'Contact Us Page')
 
 @section('content')
-
     <div class="">
         <main class="container mx-auto flex flex-col gap-6 px-4 py-8">
             <div class="">
                 <h1 class="text-4xl font-bold text-center mb-8">Contact Us</h1>
+
 
                 <h2 class="text-2xl font-semibold text-center mb-8">Get In Touch With Us</h2>
 
@@ -41,31 +41,39 @@
                     <h2 class="text-2xl font-semibold text-center ">We Want To Here From Yo</h2>
                 </div>
 
-                <form class=" flex flex-col justify-center ">
+                <form action="{{ route('contact.store') }}" method="POST" class="flex flex-col justify-center">
+                    @csrf
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                        <input type="text" placeholder="Your Name"
+                        <input type="text" name="name" placeholder="Your Name" required
                             class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400">
-                        <input type="email" placeholder="Your Email"
+                        <input type="email" name="email" placeholder="Your Email" required
                             class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400">
                     </div>
                     <div class="mb-6">
                         <div class="flex items-center border border-gray-300 rounded-lg overflow-hidden">
                             <span class="bg-gray-100 px-4 py-2 text-gray-500">+91</span>
-                            <input type="number" placeholder="Phone Number"
+                            <input type="number" name="phone" placeholder="Phone Number" required
                                 class="w-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400  [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
                         </div>
                     </div>
                     <div class="mb-6">
-                        <textarea placeholder="Type your message..." rows="4"
-                            class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none"
-                            rows="5" cols="5"></textarea>
+                        <textarea name="message" placeholder="Type your message..." rows="4" required
+                            class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none"></textarea>
                     </div>
                     <div class="text-center">
                         <button type="submit"
-                            class="bg-yellow-400 text-gray-900 px-8 py-3 rounded-full font-semibold hover:bg-yellow-500 transition duration-300">Send
-                            Message</button>
+                            class="bg-yellow-400 text-gray-900 px-8 py-3 rounded-full font-semibold hover:bg-yellow-500 transition duration-300">
+                            Send Message
+                        </button>
                     </div>
+                    <!-- Success Message -->
+                    @if (session('success'))
+                        <div class="bg-green-100 mt-4 text-green-700 border border-green-400 p-4 rounded-md text-sm">
+                            {{ session('success') }}
+                        </div>
+                    @endif
                 </form>
+
             </div>
         </main>
     </div>

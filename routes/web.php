@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DeliveryController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\Seller\OrdersController;
@@ -29,7 +30,7 @@ Route::get('/restaurant-home', [adminRestaurantController::class, 'restaurantHom
 
 // Static View Routes (For User)
 Route::view('/contact', 'user.contact')->name('contact');
-
+Route::post('/contact/store', [ContactController::class, 'store'])->name('contact.store');
 
 
 // Authentication Routes
@@ -66,7 +67,7 @@ Route::get('/reservation/{id}', [adminRestaurantController::class, 'reservation'
 
 
 // Admin Routes
-    Route::prefix('admin')->middleware('auth')->group(function () {
+Route::prefix('admin')->middleware('auth')->group(function () {
 
 
     Route::get('/dashboard', function () {
@@ -83,10 +84,10 @@ Route::get('/reservation/{id}', [adminRestaurantController::class, 'reservation'
     Route::delete('/restaurants/{id}', [adminRestaurantController::class, 'destroy'])->name('restaurants.destroy');
 
     // Customer Routes
-    Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');  // Make sure this is present
-    // Route::get('/customers/{id}', [CustomerController::class, 'show'])->name('customers.show');
-    Route::get('/customers/enquiries', [CustomerController::class, 'showEnquiries'])->name('customers.showEnquiries');
-
+    Route::get('/customers', [ContactController::class, 'index'])->name('customers.index');
+    Route::get('/customers/{id}', [ContactController::class, 'show'])->name('customers.show');
+    Route::get('/customers/enquiries', [ContactController::class, 'showEnquiries'])->name('customers.showEnquiries');
+    Route::delete('/customers/{id}', [ContactController::class, 'destroy'])->name('customers.destroy');
 
     // Transaction Routes
     Route::get('/transaction', [TransactionController::class, 'index'])->name('transactions.index');
@@ -101,6 +102,7 @@ Route::get('/reservation/{id}', [adminRestaurantController::class, 'reservation'
     Route::delete('coupons/{id}', [CouponController::class, 'destroy'])->name('coupons.destroy');
 });
 
+    
 // Seller
 Route::prefix('seller')->middleware('auth:restaurant')->group(function () {
 

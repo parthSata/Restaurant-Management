@@ -11,11 +11,7 @@ use Illuminate\Support\Facades\Auth;
 
 class CustomerController extends Controller
 {
-    public function index()
-    {
-        $customers = Customer::all(); // Fetch all customers from the database
-        return view('admin.customers.customers', compact('customers'));
-    }
+   
 
     // Display a specific customer by ID
     // public function show($id)

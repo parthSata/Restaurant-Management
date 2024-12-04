@@ -20,14 +20,15 @@ class AddOnsController extends Controller
 {
     public function index()
     {
-        $restaurants =  auth()->user()->restaurants->first();;
+        // Fetch the first restaurant associated with the logged-in user
+        $restaurants = Auth::user()->restaurants->first();
 
-        $categories = Category::all();
+        // Fetch only categories belonging to this restaurant
+        $categories = Category::where('restaurant_id', $restaurants->id)->get();
 
-    // Return the Blade view for Seller Customer with categories data
-    return view('seller.addOns.AddCategories', compact('categories','restaurants'));
+        // Return the Blade view for Seller Add-Ons with categories data
+        return view('seller.addOns.AddCategories', compact('categories', 'restaurants'));
     }
-    
     public function updateCategories(Request $request, $id)
     {
         $request->validate([
@@ -123,9 +124,6 @@ class AddOnsController extends Controller
     
         return redirect()->route('addOns.showItems')->with('success', 'Add On Item created successfully');
     }
-    
-
-
     public function showItems(Request $request)
     {
         $query = $request->get('search');
@@ -283,9 +281,6 @@ class AddOnsController extends Controller
             // 'specificMenu'=>$specificMenu,
             'restaurants'=>$restaurants
         ]);
-    }
-    
-    
-    
+    }    
 
 }

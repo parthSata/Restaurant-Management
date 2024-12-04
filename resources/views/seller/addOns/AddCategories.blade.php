@@ -19,7 +19,7 @@
         <div class="bg-white rounded-lg shadow-md p-6">
             <div class="flex justify-between items-center mb-6">
                 <div class="relative flex gap-4">
-                    <input type="text" placeholder="Search" id="searchInput" 
+                    <input type="text" placeholder="Search" id="searchInput"
                         class="w-64 pl-10 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600">
                     <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
 
@@ -33,7 +33,7 @@
                     </ul>
                 </div>
 
-                <button id="openModalBtn" 
+                <button id="openModalBtn"
                     class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-300">
                     {{ isset($categoryForUpdate) ? 'Update Category' : 'Add Category' }}
                 </button>
@@ -43,9 +43,11 @@
             <div id="modalDialog" aria-hidden="true"
                 class="fixed flex inset-0 z-50 bg-gray-600 bg-opacity-50 items-center justify-center hidden">
                 <div class="bg-white p-6 rounded-lg flex flex-col shadow-lg max-w-md w-full relative">
-                    <button id="closeModalBtn" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">&times;</button>
+                    <button id="closeModalBtn"
+                        class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">&times;</button>
 
-                    <h2 class="text-xl font-bold mb-4" id="modalTitle">{{ isset($categoryForUpdate) ? 'Update Category' : 'Add Category' }}</h2>
+                    <h2 class="text-xl font-bold mb-4" id="modalTitle">
+                        {{ isset($categoryForUpdate) ? 'Update Category' : 'Add Category' }}</h2>
 
                     <form method="POST" id="categoryForm"
                         action="{{ isset($categoryForUpdate) ? route('categories.update', $categoryForUpdate->id) : route('categories.store') }}"
@@ -62,14 +64,15 @@
                             <label for="name" class="block text-sm font-medium text-gray-700">Name:</label>
                             <input type="text" name="name" id="name"
                                 class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
-                                value="{{ old('name', $categoryForUpdate->name ?? '') }}" placeholder="Category Name" required>
+                                value="{{ old('name', $categoryForUpdate->name ?? '') }}" placeholder="Category Name"
+                                required>
                         </div>
 
                         <div class="mb-4">
                             <label for="description" class="block text-sm font-medium text-gray-700">Description:</label>
                             <textarea name="description" id="description"
-                                class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
-                                placeholder="Description" required>{{ old('description', $categoryForUpdate->description ?? '') }}</textarea>
+                                class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600" placeholder="Description"
+                                required>{{ old('description', $categoryForUpdate->description ?? '') }}</textarea>
                         </div>
 
                         <div class="mb-4">
@@ -152,75 +155,80 @@
     </div>
 
     <script>
-       // Open Add Category Modal
-document.getElementById('openModalBtn').addEventListener('click', function () {
-    resetModal(); // Reset modal fields
-    openModal('Add Category', 'Save Category', '{{ route('categories.store') }}');
-});
-
-// Open Edit Category Modal
-function openUpdateModal(id, name, description, imageUrl) {
-    // Populate modal fields
-    document.getElementById('name').value = name;
-    document.getElementById('description').value = description;
-    document.getElementById('imagePreview').src = imageUrl;
-
-    // Update modal title and form action
-    const updateAction = '{{ route('categories.update', ':id') }}'.replace(':id', id);
-    openModal('Update Category', 'Update Category', updateAction, 'PUT');
-}
-
-// Function to Reset Modal Fields
-function resetModal() {
-    document.getElementById('name').value = '';
-    document.getElementById('description').value = '';
-    document.getElementById('imagePreview').src = '{{ asset('image/placeholder.jpeg') }}';
-
-    const form = document.getElementById('categoryForm');
-    form.action = '';
-    const methodInput = form.querySelector('input[name="_method"]');
-    if (methodInput) methodInput.remove(); // Remove PUT method if present
-}
-
-// Function to Open Modal
-function openModal(title, submitText, action, method = null) {
-    // Set modal title and submit button text
-    document.getElementById('modalTitle').textContent = title;
-    document.getElementById('modalsubmit').textContent = submitText;
-
-    // Update form action and method
-    const form = document.getElementById('categoryForm');
-    form.action = action;
-
-    if (method) {
-        let methodInput = form.querySelector('input[name="_method"]');
-        if (!methodInput) {
-            methodInput = document.createElement('input');
-            methodInput.type = 'hidden';
-            methodInput.name = '_method';
-            form.appendChild(methodInput);
+        // Preview Image
+        function previewImage(event, elementId) {
+            const image = document.getElementById(elementId);
+            image.src = URL.createObjectURL(event.target.files[0]);
         }
-        methodInput.value = method;
-    }
 
-    // Show modal
-    document.getElementById('modalDialog').classList.remove('hidden');
-    document.getElementById('modalDialog').setAttribute('aria-hidden', 'false');
-}
+        // Open Add Category Modal
+        document.getElementById('openModalBtn').addEventListener('click', function() {
+            resetModal(); // Reset modal fields
+            openModal('Add Category', 'Save Category', '{{ route('categories.store') }}');
+        });
 
-// Close Modal
-document.getElementById('closeModalBtn').addEventListener('click', function () {
-    closeModal();
-});
+        // Open Edit Category Modal
+        function openUpdateModal(id, name, description, imageUrl) {
+            // Populate modal fields
+            document.getElementById('name').value = name;
+            document.getElementById('description').value = description;
+            document.getElementById('imagePreview').src = imageUrl;
 
-document.getElementById('closeModalBtnBottom').addEventListener('click', function () {
-    closeModal();
-});
+            // Update modal title and form action
+            const updateAction = '{{ route('categories.update', ':id') }}'.replace(':id', id);
+            openModal('Update Category', 'Update Category', updateAction, 'PUT');
+        }
 
-function closeModal() {
-    document.getElementById('modalDialog').classList.add('hidden');
-    document.getElementById('modalDialog').setAttribute('aria-hidden', 'true');
-}
+        // Function to Reset Modal Fields
+        function resetModal() {
+            document.getElementById('name').value = '';
+            document.getElementById('description').value = '';
+            document.getElementById('imagePreview').src = '{{ asset('image/placeholder.jpeg') }}';
 
+            const form = document.getElementById('categoryForm');
+            form.action = '';
+            const methodInput = form.querySelector('input[name="_method"]');
+            if (methodInput) methodInput.remove(); // Remove PUT method if present
+        }
+
+        // Function to Open Modal
+        function openModal(title, submitText, action, method = null) {
+            // Set modal title and submit button text
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalsubmit').textContent = submitText;
+
+            // Update form action and method
+            const form = document.getElementById('categoryForm');
+            form.action = action;
+
+            if (method) {
+                let methodInput = form.querySelector('input[name="_method"]');
+                if (!methodInput) {
+                    methodInput = document.createElement('input');
+                    methodInput.type = 'hidden';
+                    methodInput.name = '_method';
+                    form.appendChild(methodInput);
+                }
+                methodInput.value = method;
+            }
+
+            // Show modal
+            document.getElementById('modalDialog').classList.remove('hidden');
+            document.getElementById('modalDialog').setAttribute('aria-hidden', 'false');
+        }
+
+        // Close Modal
+        document.getElementById('closeModalBtn').addEventListener('click', function() {
+            closeModal();
+        });
+
+        document.getElementById('closeModalBtnBottom').addEventListener('click', function() {
+            closeModal();
+        });
+
+        function closeModal() {
+            document.getElementById('modalDialog').classList.add('hidden');
+            document.getElementById('modalDialog').setAttribute('aria-hidden', 'true');
+        }
     </script>
 @endsection
