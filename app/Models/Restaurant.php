@@ -38,9 +38,18 @@ class Restaurant extends Authenticatable
         $this->attributes['password'] = bcrypt($password);
     }
 
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'restaurant_id', 'id');
+    }
     public function restaurants()
     {
         return $this->hasMany(Restaurant::class, 'id');
+    }
+
+    public function ordersDashboard()
+    {
+        return $this->hasMany(Order::class, 'restaurant_id', 'id');
     }
        
     public function restaurant()

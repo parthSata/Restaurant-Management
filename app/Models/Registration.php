@@ -27,4 +27,15 @@ class Registration extends Authenticatable
     {
         $this->attributes['password'] = bcrypt($value); // Ensures the password is hashed
     }
+
+    public function getNameAttribute()
+    {
+        return $this->first_name . ' ' . $this->last_name;
+    }
+
+    // Relationship for orders
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'customer_id', 'id');
+    }
 }

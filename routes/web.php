@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DeliveryController;
 use App\Http\Controllers\MenuController;
@@ -69,11 +70,7 @@ Route::get('/reservation/{id}', [adminRestaurantController::class, 'reservation'
 // Admin Routes
 Route::prefix('admin')->middleware('auth')->group(function () {
 
-
-    Route::get('/dashboard', function () {
-        return view('admin.dashboard.dashboard');
-    })->name('admin.dashboard');
-
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
 
     // Restaurant Routes
     Route::get('/restaurants', [adminRestaurantController::class, 'index'])->name('restaurants.index');  // Update this line
@@ -84,10 +81,12 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::delete('/restaurants/{id}', [adminRestaurantController::class, 'destroy'])->name('restaurants.destroy');
 
     // Customer Routes
-    Route::get('/customers', [ContactController::class, 'index'])->name('customers.index');
-    Route::get('/customers/{id}', [ContactController::class, 'show'])->name('customers.show');
-    Route::get('/customers/enquiries', [ContactController::class, 'showEnquiries'])->name('customers.showEnquiries');
-    Route::delete('/customers/{id}', [ContactController::class, 'destroy'])->name('customers.destroy');
+    Route::get('/customers', [ContactController::class, 'index'])->name('customers.index'); // List customers
+    Route::delete('/customers/{id}', [ContactController::class, 'destroy'])->name('customers.destroy'); // Delete customer
+
+    // Enquiries Routes
+    Route::get('/customers/enquiries', [ContactController::class, 'showEnquiries'])->name('a'); // List enquiries
+    Route::delete('/customers/enquiries/{id}', [ContactController::class, 'deleteEnquiry'])->name('customers.deleteEnquiry'); // Delete enquiry
 
     // Transaction Routes
     Route::get('/transaction', [TransactionController::class, 'index'])->name('transactions.index');

@@ -35,9 +35,31 @@ class Order extends Model
     return $this->belongsTo(Restaurant::class);
 }
 
+
+public function customerDashboard()
+{
+    return $this->belongsTo(Customer::class);
+}
+
     public function items()
     {
         return $this->hasMany(Order::class); // Assuming OrderItem is the related model
     }
+
+
+    // Accessor for full name
+    public function getNameAttribute()
+    {
+        return $this->first_name . ' ' . $this->last_name;
+    }
+
+    // Relationship with orders
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'customer_id', 'id');
+    }
+
+    
+    
 
 }

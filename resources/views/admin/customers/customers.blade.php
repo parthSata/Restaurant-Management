@@ -7,8 +7,13 @@
     <div class="container mx-auto p-4">
         <div class="flex justify-between mb-4">
             <div class="relative flex justify-center items-center gap-2">
-                <input type="text" placeholder="Search" class="w-full pl-10 py-2 border rounded-lg">
-                <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                <form method="GET" action="{{ route('customers.index') }}" class="w-full">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Search"
+                        class="w-full pl-10 py-2 border rounded-lg">
+                    <button type="submit" class="absolute left-3 top-3 text-gray-400">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
             </div>
             <ul class="flex gap-4">
                 <a href="{{ route('customers.index') }}">
@@ -32,10 +37,10 @@
                     <tr>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email
+                        {{-- <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email
                             Verified</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status
-                        </th>
+                        </th> --}}
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Orders
                         </th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action
@@ -43,7 +48,7 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                    @foreach ($customers as $customer)
+                    @forelse ($customers as $customer)
                         <tr>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center">
@@ -58,39 +63,38 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <!-- Toggle for Email Verified -->
-                                <label class="switch">
-                                    <input type="checkbox" {{ $customer->email_verified ? 'checked' : '' }}
-                                        class="toggle-email" data-id="{{ $customer->id }}">
-                                    <span class="slider round"></span>
-                                </label>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <!-- Toggle for Status -->
-                                <label class="switch">
-                                    <input type="checkbox" {{ $customer->status ? 'checked' : '' }} class="toggle-status"
-                                        data-id="{{ $customer->id }}">
-                                    <span class="slider round"></span>
-                                </label>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
                                 <span
-                                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">{{ $customer->orders_count }}</span>
+                                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                    {{ $customer->orders_count }}
+                                </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                 <form action="{{ route('customers.destroy', $customer->id) }}" method="POST"
                                     onsubmit="return confirm('Are you sure you want to delete this customer?');">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="text-red-600 hover:text-red-900"><i
-                                            class="fas fa-trash"></i></button>
+                                    <button type="submit" class="text-red-600 hover:text-red-900">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
                                 </form>
                             </td>
                         </tr>
-                    @endforeach
+                    @empty
+                        <tr>
+                            <td colspan="4" class="text-center px-6 py-4 text-gray-500">
+                                No customers found for "{{ request('search') }}".
+                            </td>
+                        </tr>
+                    @endforelse
                 </tbody>
+
             </table>
         </div>
+    </div>
+
+    <!-- Pagination Links -->
+    <div class="mt-4">
+        {{ $customers->links() }}
     </div>
 
     <style>
