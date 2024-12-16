@@ -46,36 +46,15 @@
         <!-- Food Categories -->
         <section class="py-20">
             <div class="grid grid-cols-3 md:grid-cols-6 gap-8">
-                <div class="text-center">
-                    <img src="/placeholder.svg?height=100&width=100" alt="Kimchi"
-                        class="rounded-full w-24 h-24 object-cover mx-auto mb-2">
-                    <p class="text-gray-800">Kimchi</p>
-                </div>
-                <div class="text-center">
-                    <img src="/placeholder.svg?height=100&width=100" alt="Italian Pizza"
-                        class="rounded-full w-24 h-24 object-cover mx-auto mb-2">
-                    <p class="text-gray-800">Italian Pizza</p>
-                </div>
-                <div class="text-center">
-                    <img src="/placeholder.svg?height=100&width=100" alt="Lasagna"
-                        class="rounded-full w-24 h-24 object-cover mx-auto mb-2">
-                    <p class="text-gray-800">Lasagna</p>
-                </div>
-                <div class="text-center">
-                    <img src="/placeholder.svg?height=100&width=100" alt="Coffee"
-                        class="rounded-full w-24 h-24 object-cover mx-auto mb-2">
-                    <p class="text-gray-800">Coffee</p>
-                </div>
-                <div class="text-center">
-                    <img src="/placeholder.svg?height=100&width=100" alt="Tea"
-                        class="rounded-full w-24 h-24 object-cover mx-auto mb-2">
-                    <p class="text-gray-800">Tea</p>
-                </div>
-                <div class="text-center">
-                    <img src="/placeholder.svg?height=100&width=100" alt="Wine"
-                        class="rounded-full w-24 h-24 object-cover mx-auto mb-2">
-                    <p class="text-gray-800">Wine</p>
-                </div>
+                @foreach ($categories as $category)
+                    <div class="text-center">
+                        <img src="{{ asset('storage/Uploaded_Images/' . $category->image) }}" alt="{{ $category->name }}"
+                            class="w-full  object-cover">
+                        <img src="{{ asset('storage/Uploaded_Images/' . $category->image ?? 'placeholder.svg') }}"
+                            alt="{{ $category->name }}" class="rounded-full w-24 h-24 object-cover mx-auto mb-2">
+                        <p class="text-gray-800">{{ $category->name }}</p>
+                    </div>
+                @endforeach
             </div>
         </section>
 

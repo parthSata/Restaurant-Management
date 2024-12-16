@@ -86,6 +86,7 @@ class ContactController extends Controller
     public function deleteEnquiry($id)
     {
         $enquiry = Contact::findOrFail($id); // Find the enquiry by ID
+        dd($enquiry);
         $enquiry->delete(); // Delete the enquiry
         
         return redirect()->route('customers.showEnquiries')->with('success', 'Enquiry deleted successfully.');

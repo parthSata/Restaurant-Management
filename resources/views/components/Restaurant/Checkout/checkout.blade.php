@@ -132,19 +132,19 @@
         </div>
     </main>
     <script>
-        function selectAddress(button) {
-            // Remove "Selected" from all buttons
-            document.querySelectorAll('.address-card').forEach(card => {
-                card.classList.remove('bg-green-100'); // Reset background
-                const btn = card.querySelector('.deliver-button');
-                btn.textContent = 'Deliver Here';
-            });
+        // function selectAddress(button) {
+        //     // Remove "Selected" from all buttons
+        //     document.querySelectorAll('.address-card').forEach(card => {
+        //         card.classList.remove('bg-green-100'); // Reset background
+        //         const btn = card.querySelector('.deliver-button');
+        //         btn.textContent = 'Deliver Here';
+        //     });
 
-            // Mark the clicked address as selected
-            const parentCard = button.closest('.address-card');
-            parentCard.classList.add('bg-green-100'); // Highlight the selected address
-            button.textContent = 'Selected'; // Update the button text
-        }
+        //     // Mark the clicked address as selected
+        //     const parentCard = button.closest('.address-card');
+        //     parentCard.classList.add('bg-green-100'); // Highlight the selected address
+        //     button.textContent = 'Selected'; // Update the button text
+        // }
 
         function selectAddress(button) {
             document.querySelectorAll('.address-card').forEach(card => {

@@ -20,15 +20,23 @@ class AddOnsController extends Controller
 {
     public function index()
     {
-        // Fetch the first restaurant associated with the logged-in user
-        $restaurants = Auth::user()->restaurants->first();
-
-        // Fetch only categories belonging to this restaurant
-        $categories = Category::where('restaurant_id', $restaurants->id)->get();
-
-        // Return the Blade view for Seller Add-Ons with categories data
-        return view('seller.addOns.AddCategories', compact('categories', 'restaurants'));
+        // Fetch all restaurants associated with the logged-in user
+        $restaurants = Auth::user()->restaurants;
+    
+        if ($restaurants->isEmpty()) {
+            // Handle the case where no restaurants are found
+            return redirect()->back()->with('error', 'No restaurants found.');
+        }
+    
+        // Fetch the first restaurant
+        $restaurant = $restaurants->first();
+    
+        // Pass the first restaurant and categories to the view
+        $categories = Category::where('restaurant_id', $restaurant->id)->get();
+        return view('seller.addOns.AddCategories', compact('categories', 'restaurant','restaurants'));
     }
+    
+    
     public function updateCategories(Request $request, $id)
     {
         $request->validate([
@@ -127,7 +135,7 @@ class AddOnsController extends Controller
     public function showItems(Request $request)
     {
         $query = $request->get('search');
-        $restaurants =  auth()->user()->restaurants->first();;
+                $restaurants =  auth()->user()->restaurants;
 
         if ($query) {
             $items = AddOnItem::where('name', 'like', "%{$query}%")
@@ -194,7 +202,7 @@ class AddOnsController extends Controller
     {
         // Retrieve the item by its ID
         $item = AddOnItem::find($id);
-        $restaurants =  auth()->user()->restaurants->first();;
+                $restaurants =  auth()->user()->restaurants;;
 
 
         // Check if item exists
@@ -273,7 +281,7 @@ class AddOnsController extends Controller
         $categories = Category::all();
         $menus = Menutype::all();
         $specificMenu = Menutype::where('name', 'Gujrati Food')->first();
-        $restaurants =  auth()->user()->restaurants->first();;
+                $restaurants =  auth()->user()->restaurants;;
 
         return view('seller.addOns.AddItems', [
             'categories' => $categories,

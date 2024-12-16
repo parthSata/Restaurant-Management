@@ -85,7 +85,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::delete('/customers/{id}', [ContactController::class, 'destroy'])->name('customers.destroy'); // Delete customer
 
     // Enquiries Routes
-    Route::get('/customers/enquiries', [ContactController::class, 'showEnquiries'])->name('a'); // List enquiries
+    Route::get('/customers/enquiries', [ContactController::class, 'showEnquiries'])->name('customers.showEnquiries'); // List enquiries
     Route::delete('/customers/enquiries/{id}', [ContactController::class, 'deleteEnquiry'])->name('customers.deleteEnquiry'); // Delete enquiry
 
     // Transaction Routes
@@ -107,9 +107,13 @@ Route::prefix('seller')->middleware('auth:restaurant')->group(function () {
 
     Route::get('/dashboard', [SellerDashboardController::class, 'index'])->name('seller.sellerDashboard');
 
-
     Route::get('/customer', [SellerCustomerController::class, 'index'])->name('customer.index');
-    Route::get('/customers/enquiries', [SellerCustomerController::class, 'showEnquiries'])->name('customer.showEnquiries');
+    Route::delete('/customers/{id}', [ContactController::class, 'destroy'])->name('customer.destroy'); // Delete customer
+
+    
+    Route::get('/customer/enquiries', [SellerCustomerController::class, 'showEnquiries'])->name('customer.showEnquiries');
+    Route::delete('/customer/enquiries/{id}', [SellerCustomerController::class, 'deleteEnquiry'])->name('customer.deleteEnquiry'); // Delete enquiry
+
 
 
     Route::get('/orders', [OrdersController::class, 'index'])->name('orders.index');

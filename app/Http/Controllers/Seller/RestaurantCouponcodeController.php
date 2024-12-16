@@ -11,14 +11,14 @@ class RestaurantCouponcodeController extends Controller
     public function index()
     {
         $couponCodes = RestaurantCouponcode::all();
-        $restaurants =  auth()->user()->restaurants->first();;
+                $restaurants =  auth()->user()->restaurants;;
 
         return view('seller.Couponcodes.CouponCodes', compact('couponCodes','restaurants'));
     }
 
     public function create()
     {
-        $restaurants =  auth()->user()->restaurants->first();;
+                $restaurants =  auth()->user()->restaurants;;
         $daysAvailable = []; // Initialize as an empty array for create
 
         return view('seller.Couponcodes.AddRestaurantCouonCodes',compact('restaurants','daysAvailable'));
@@ -28,7 +28,7 @@ class RestaurantCouponcodeController extends Controller
     {
         // Fetch the coupon, or fail if not found
         $coupon = RestaurantCouponcode::findOrFail($id);
-        $restaurants =  auth()->user()->restaurants->first();;
+                $restaurants =  auth()->user()->restaurants;;
 
         // Decode the days_available field into an array
         $daysAvailable = isset($coupon->days_available) ? json_decode($coupon->days_available, true) : [];

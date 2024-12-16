@@ -1,6 +1,6 @@
 @extends('layouts.restaurant')
 
-@section('title', $restaurants->pluck('restaurant_name')->implode(', ')) <!-- Join all names with a comma -->
+@section('title', $restaurants->restaurant_name)
 
 @section('content')
 

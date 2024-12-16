@@ -29,7 +29,7 @@ class RestaurantController extends Controller
         $specialMenuItems = AddOnItem::inRandomOrder()->take(4)->get();
     
         // Pass the variables to the view
-        return view('user.restaurant', compact('restaurants', 'search'));
+        return view('user.restaurant', compact('restaurants', 'search' ,'specialMenuItems'));
     }
     public function contactUs($id)
     {
@@ -73,8 +73,9 @@ class RestaurantController extends Controller
     
             // Fetch 4 random products associated with this restaurant (if a relationship exists)
             $specialMenuItems = AddOnItem::inRandomOrder()->take(4)->get();
+            $categories = Category::where('restaurant_id', $restaurants->id)->get();
 
-            return view('components.Restaurant.Home.index', compact('restaurants','specialMenuItems'));
+            return view('components.Restaurant.Home.index', compact('restaurants','categories','specialMenuItems'));
         } else {
             // Fetch all restaurants to display
             $restaurants = Restaurant::all();

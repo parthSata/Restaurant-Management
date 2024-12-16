@@ -9,7 +9,7 @@
             <!-- Total Customers -->
             <div class="bg-indigo-600 rounded-lg p-6 flex justify-between items-center">
                 <div>
-                    <div class="text-4xl font-bold">6</div>
+                    <div class="text-4xl font-bold">{{ $totalCustomers }}</div>
                     <div class="text-sm">Total Customers</div>
                 </div>
                 <div class="bg-indigo-700 p-3 rounded-lg">
@@ -20,10 +20,10 @@
                 </div>
             </div>
 
-            <!-- Processing -->
+            <!-- Processing Orders -->
             <div class="bg-emerald-600 rounded-lg p-6 flex justify-between items-center">
                 <div>
-                    <div class="text-4xl font-bold">32</div>
+                    <div class="text-4xl font-bold">{{ $processingOrders }}</div>
                     <div class="text-sm">Processing</div>
                 </div>
                 <div class="bg-emerald-700 p-3 rounded-lg">
@@ -39,7 +39,7 @@
             <!-- Ready For Delivery -->
             <div class="bg-yellow-500 rounded-lg p-6 flex justify-between items-center">
                 <div>
-                    <div class="text-4xl font-bold">4</div>
+                    <div class="text-4xl font-bold">{{ $readyForDeliveryOrders }}</div>
                     <div class="text-sm">Ready For Delivery</div>
                 </div>
                 <div class="bg-yellow-600 p-3 rounded-lg">
@@ -55,7 +55,7 @@
             <!-- Item On The Way -->
             <div class="bg-blue-500 rounded-lg p-6 flex justify-between items-center">
                 <div>
-                    <div class="text-4xl font-bold">3</div>
+                    <div class="text-4xl font-bold">{{ $onTheWayOrders }}</div>
                     <div class="text-sm">Item On The Way</div>
                 </div>
                 <div class="bg-blue-600 p-3 rounded-lg">
@@ -72,7 +72,7 @@
             <!-- Delivered -->
             <div class="bg-[#FFFFFF] shadow-lg rounded-lg p-6 flex justify-between items-center">
                 <div>
-                    <div class="text-4xl font-bold">3</div>
+                    <div class="text-4xl font-bold">{{ $deliveredOrders }}</div>
                     <div class="text-sm">Delivered</div>
                 </div>
                 <div class="bg-white shadow-lg p-3 rounded-lg">
@@ -87,7 +87,7 @@
             <!-- Returned -->
             <div class="bg-red-500 rounded-lg p-6 flex justify-between items-center">
                 <div>
-                    <div class="text-4xl font-bold">2</div>
+                    <div class="text-4xl font-bold">{{ $returnedOrders }}</div>
                     <div class="text-sm">Returned</div>
                 </div>
                 <div class="bg-red-600 p-3 rounded-lg">
@@ -103,7 +103,7 @@
             <!-- Cancelled -->
             <div class="bg-white shadow-lg rounded-lg p-6 flex justify-between items-center">
                 <div>
-                    <div class="text-4xl font-bold">2</div>
+                    <div class="text-4xl font-bold">{{ $cancelledOrders }}</div>
                     <div class="text-sm">Cancelled</div>
                 </div>
                 <div class="bg-gray-800 p-3 rounded-lg">
@@ -118,7 +118,7 @@
             <!-- Total Orders -->
             <div class="bg-indigo-500 rounded-lg p-6 flex justify-between items-center">
                 <div>
-                    <div class="text-4xl font-bold">49</div>
+                    <div class="text-4xl font-bold">{{ $totalOrders }}</div>
                     <div class="text-sm">Total Orders</div>
                 </div>
                 <div class="bg-indigo-600 p-3 rounded-lg">
@@ -132,20 +132,20 @@
             </div>
         </div>
 
-        <div class="flex w-full flex-row justify-between gap-6">
+        <div class="flex w-full flex-wrap flex-row justify-between gap-6">
             <div class="flex flex-col w-full ">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <div class="bg-white p-4 rounded-lg shadow">
                         <div class="flex justify-between items-center">
                             <i class="fas fa-home text-gray-500 text-2xl"></i>
-                            <span class="text-2xl font-bold text-gray-700">0</span>
+                            <span class="text-2xl font-bold text-gray-700">{{ $orderReceived }}</span>
                         </div>
                         <p class="text-sm text-gray-500 mt-2">Order Received</p>
                     </div>
                     <div class="bg-white p-4 rounded-lg shadow">
                         <div class="flex justify-between items-center">
                             <i class="fas fa-truck text-gray-500 text-2xl"></i>
-                            <span class="text-2xl font-bold text-gray-700">0</span>
+                            <span class="text-2xl font-bold text-gray-700">{{ $todayDelivered ?? 0 }}</span>
                         </div>
                         <p class="text-sm text-gray-500 mt-2">Today Delivered</p>
                     </div>
@@ -166,99 +166,95 @@
                     <canvas id="salesChart" width="400" height="200"></canvas>
                 </div>
 
+
                 <div class="bg-white p-4 rounded-lg shadow">
                     <h2 class="text-lg font-semibold mb-4">Popular Restaurants</h2>
                     <ul>
-                        <li class="flex justify-between items-center mb-2">
-                            <div class="flex items-center">
-                                <div class="w-10 h-10 bg-red-500 rounded-full mr-3"></div>
-                                <span>Spicy Garden Restaurant</span>
-                            </div>
-                            <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">4.5</span>
-                        </li>
-                        <!-- Add more restaurant items here -->
+                        @forelse ($popularRestaurants as $restaurant)
+                            <li class="flex justify-between items-center mb-2">
+                                <div class="flex gap-4 items-center">
+                                    <img src="{{ asset('/storage/Uploaded_Images/' . $restaurant->logo) }}"
+                                        alt="Restaurant Logo" class="flex-shrink-0 ml-4 rounded-full h-10 w-10" />
+                                    <span>{{ $restaurant->restaurant_name }}</span>
+                                </div>
+                                <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">
+                                    {{ $restaurant->orders_count }} Orders
+                                </span>
+                            </li>
+                        @empty
+                            <li>No popular restaurants available</li>
+                        @endforelse
                     </ul>
                 </div>
 
             </div>
-            <div class=" gap-4">
 
-                <div class="bg-white p-4 rounded-lg shadow h-full">
+            <div class="grid grid-row shadow-lg w-full gap-6">
+                <div class="bg-white rounded-lg p-6 shadow-sm">
                     <h2 class="text-lg font-semibold mb-4">Top Customers</h2>
-                    <ul>
-                        <li class="flex justify-between items-center mb-2">
-                            <div class="flex items-center">
-                                <div class="w-10 h-10 bg-gray-300 rounded-full mr-3"></div>
-                                <span>Mr Customer</span>
-                            </div>
-                            <span class="text-gray-500">$250.00</span>
-                        </li>
-                        <li class="flex justify-between items-center mb-2">
-                            <div class="flex items-center">
-                                <div class="w-10 h-10 bg-gray-300 rounded-full mr-3"></div>
-                                <span>Mr Customer</span>
-                            </div>
-                            <span class="text-gray-500">$250.00</span>
-                        </li>
-                        <li class="flex justify-between items-center mb-2">
-                            <div class="flex items-center">
-                                <div class="w-10 h-10 bg-gray-300 rounded-full mr-3"></div>
-                                <span>Mr Customer</span>
-                            </div>
-                            <span class="text-gray-500">$250.00</span>
-                        </li>
-                        <li class="flex justify-between items-center mb-2">
-                            <div class="flex items-center">
-                                <div class="w-10 h-10 bg-gray-300 rounded-full mr-3"></div>
-                                <span>Mr Customer</span>
-                            </div>
-                            <span class="text-gray-500">$250.00</span>
-                        </li>
-                        <!-- Add more customer items here -->
+                    <ul class="flex flex-col gap-4">
+                        @foreach ($topCustomers as $customer)
+                            <li class="flex gap-4 items-center">
+                                <!-- Restaurant image (fallback to placeholder if no image) -->
+                                <img src="{{ $customer->picture ? asset('storage/Uploaded_Images/' . $customer->picture) : asset('assets/images.jpeg') }}"
+                                    alt="{{ $customer->full_name }}" class="w-10 h-10 rounded-full" />
+                                <span class="font-semibold">{{ $customer->full_name }}</span>
+                                - ${{ number_format($customer->subtotal, 2) }}
+                            </li>
+                        @endforeach
                     </ul>
+                </div>
+                <div class="bg-white rounded-lg p-6 shadow-sm">
                     <h3 class="text-lg font-semibold mt-4 mb-2">Recent Transactions</h3>
-                    <ul>
-                        <li class="flex justify-between items-center mb-2">
-                            <div class="flex items-center">
-                                <div class="w-10 h-10 bg-red-500 rounded-full mr-3"></div>
-                                <span>Spicy Garden Restaurant</span>
+                    <ul class="flex flex-col gap-4">
+                        @foreach ($recentTransactions as $transaction)
+                            <div class="flex items-center gap-4 justify-between">
+                                <div class="flex items-center gap-3">
+                                    <!-- Restaurant image (fallback to placeholder if no image) -->
+                                    <img src="{{ $transaction->restaurant->feature_image ? asset('storage/Uploaded_Images/' . $transaction->restaurant->feature_image) : '/placeholder.svg' }}"
+                                        alt="{{ $transaction->restaurant->restaurant_name }}"
+                                        class="w-10 h-10 rounded-full" />
+                                    <div>
+                                        <div class="font-medium">{{ $transaction->restaurant->restaurant_name }}</div>
+                                        <div class="text-sm text-gray-500">Order #{{ $transaction->id }}</div>
+                                    </div>
+                                </div>
+                                <span class="text-gray-600">${{ number_format($transaction->subtotal, 2) }}</span>
                             </div>
-                            <span class="text-gray-500">$32.00</span>
-                        </li>
-                        <li class="flex justify-between items-center mb-2">
-                            <div class="flex items-center">
-                                <div class="w-10 h-10 bg-red-500 rounded-full mr-3"></div>
-                                <span>Spicy Garden Restaurant</span>
-                            </div>
-                            <span class="text-gray-500">$32.00</span>
-                        </li>
-                        <li class="flex justify-between items-center mb-2">
-                            <div class="flex items-center">
-                                <div class="w-10 h-10 bg-red-500 rounded-full mr-3"></div>
-                                <span>Spicy Garden Restaurant</span>
-                            </div>
-                            <span class="text-gray-500">$32.00</span>
-                        </li>
-                        <li class="flex justify-between items-center mb-2">
-                            <div class="flex items-center">
-                                <div class="w-10 h-10 bg-red-500 rounded-full mr-3"></div>
-                                <span>Spicy Garden Restaurant</span>
-                            </div>
-                            <span class="text-gray-500">$32.00</span>
-                        </li>
-                        <li class="flex justify-between items-center mb-2">
-                            <div class="flex items-center">
-                                <div class="w-10 h-10 bg-red-500 rounded-full mr-3"></div>
-                                <span>Spicy Garden Restaurant</span>
-                            </div>
-                            <span class="text-gray-500">$32.00</span>
-                        </li>
-                        <!-- Add more transaction items here -->
+                        @endforeach
                     </ul>
                 </div>
             </div>
         </div>
 
     </div>
+    <script>
+        const salesData = @json($formattedSalesData);
 
+        const ctx = document.getElementById('salesChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                datasets: [{
+                    label: 'Sales',
+                    data: salesData,
+                    borderColor: 'rgb(255, 159, 64)',
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + value;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
 @endsection

@@ -17,7 +17,7 @@ class MenuController extends Controller
     public function index()
     {
         $menuTypes = MenuType::all();
-        $restaurants =  auth()->user()->restaurants->first();
+                $restaurants =  auth()->user()->restaurants;
 
         return view('seller.menu.menu', compact('menuTypes','restaurants'));
     }
@@ -102,7 +102,7 @@ class MenuController extends Controller
     public function create(Request $request)
     {
         $menuId = $request->input('menu_id'); 
-        $restaurants =  auth()->user()->restaurants->first();
+                $restaurants =  auth()->user()->restaurants;
 
         if (!$menuId) {
             return redirect()->back()->withErrors('Menu ID is missing.');
@@ -155,7 +155,7 @@ class MenuController extends Controller
             return redirect()->back()->with('error', 'Item is already added to this menu.');
         }
 
-        $restaurants =  auth()->user()->restaurants->first();;
+                $restaurants =  auth()->user()->restaurants;;
 
     
         // Insert into added_items table

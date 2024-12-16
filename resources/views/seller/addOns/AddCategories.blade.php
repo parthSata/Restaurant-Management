@@ -58,7 +58,7 @@
                         @endif
 
                         <!-- Hidden Inputs -->
-                        <input type="hidden" name="restaurant_id" value="{{ $restaurants->id }}">
+                        <input type="hidden" name="restaurant_id" value="{{ $restaurant->id }}">
 
                         <div class="mb-4">
                             <label for="name" class="block text-sm font-medium text-gray-700">Name:</label>

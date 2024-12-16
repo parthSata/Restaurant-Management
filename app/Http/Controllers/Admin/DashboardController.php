@@ -47,7 +47,8 @@ class DashboardController extends Controller
             ->with('customer') // Fetch associated customer data
             ->get()
             ->map(function ($order) {
-                $order->full_name = $order->customer->first_name . ' ' . $order->customer->last_name;
+                $order->full_name = $order->customer ? $order->customer->first_name . ' ' . $order->customer->last_name : 'Unknown Customer';
+                $order->subtotal = $order->total_spent;
                 return $order;
             });
     

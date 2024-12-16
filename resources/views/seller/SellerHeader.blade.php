@@ -15,13 +15,16 @@
             <!-- Logo and Restaurant Name Section -->
             <div class="flex items-center">
                 @if ($restaurants)
-                    <img src="{{ asset('storage/Uploaded_Images/' . $restaurants->logo) }}"
-                        alt="{{ $restaurants->restaurant_name }}" class="inline-block h-12 w-12 rounded-full" />
-                    <span class="text-md ml-2">{{ $restaurants->restaurant_name }}</span>
+                    @foreach ($restaurants as $restaurant)
+                        <img src="{{ asset('storage/Uploaded_Images/' . $restaurant->logo) }}"
+                            alt="{{ $restaurant->restaurant_name }}" class="inline-block h-12 w-12 rounded-full" />
+                        <span class="text-md ml-2">{{ $restaurant->restaurant_name }}</span>
+                    @endforeach
                 @else
                     <span class="text-md ml-2">No Restaurant Found</span>
                 @endif
             </div>
+
 
             <!-- Desktop Navigation -->
             <nav class="hidden lg:flex space-x-8">
