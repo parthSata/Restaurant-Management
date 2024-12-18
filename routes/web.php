@@ -5,6 +5,7 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DeliveryController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\Seller\OrdersController;
+use App\Http\Controllers\Seller\ReservationController;
 use App\Http\Controllers\SellerDashboardController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RegistrationController;
@@ -122,6 +123,17 @@ Route::prefix('seller')->middleware('auth:restaurant')->group(function () {
 
     Route::get('/reservation', [SellerReservationController::class, 'index'])->name('reservation.index');
     Route::get('/reservation/tables', [SellerReservationController::class, 'showTables'])->name('reservation.showTables');
+    Route::get('reservation/create', [SellerReservationController::class, 'create'])->name('reservation.create');
+
+    // Reservation CRUD Routes
+    Route::post('/reservation/store', [ReservationController::class, 'store'])->name('reservation.store'); // Store reservation
+    Route::get('/reservation/{id}/edit', [ReservationController::class, 'edit'])->name('reservation.edit'); // Edit reservation
+    Route::put('/reservation/{id}', [ReservationController::class, 'update'])->name('reservation.update'); // Update reservation
+    Route::delete('/reservation/{id}', [ReservationController::class, 'destroy'])->name('reservation.destroy'); // Delete reservation
+
+    // Booking Routes
+    Route::post('/check-availability', [ReservationController::class, 'checkAvailability'])->name('checkAvailability');
+    Route::post('/store-booking', [ReservationController::class, 'storeBooking'])->name('storeBooking');
 
     Route::get('/addOns', [SellerAddOnsController::class, 'index'])->name('addOns.index');
     Route::post('/addOns/categories', [SellerAddOnsController::class, 'storeCategories'])->name('categories.store');

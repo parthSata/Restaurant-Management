@@ -43,40 +43,51 @@
             </div>
         </section>
 
-        <!-- Food Categories -->
-        <section class="py-20">
-            <div class="grid grid-cols-3 md:grid-cols-6 gap-8">
-                @foreach ($categories as $category)
-                    <div class="text-center">
-                        <img src="{{ asset('storage/Uploaded_Images/' . $category->image) }}" alt="{{ $category->name }}"
-                            class="w-full  object-cover">
-                        <img src="{{ asset('storage/Uploaded_Images/' . $category->image ?? 'placeholder.svg') }}"
-                            alt="{{ $category->name }}" class="rounded-full w-24 h-24 object-cover mx-auto mb-2">
-                        <p class="text-gray-800">{{ $category->name }}</p>
-                    </div>
-                @endforeach
+        <!-- Food Categories Slider -->
+        <div class="container mx-auto px-4 py-8">
+            <div class="swiper-container overflow-hidden">
+                <div class="swiper-wrapper flex flex-row gap-5 items-center justify-center">
+                    @foreach ($categories as $category)
+                        <!-- Category Slide -->
+                        <div class="swiper-slide flex flex-col items-center justify-center">
+                            <div
+                                class="w-24 h-24 md:w-32 md:h-32 rounded-full bg-white shadow-lg p-2 flex items-center justify-center">
+                                <img src="{{ asset('storage/' . $category->image ?? 'placeholder.svg') }}"
+                                    alt="{{ $category->name }}" class="w-full h-full rounded-full object-contain">
+                            </div>
+                            <h3 class="text-center text-sm md:text-md font-medium text-gray-800 mt-2">
+                                {{ $category->name }}
+                            </h3>
+                        </div>
+                    @endforeach
+                </div>
             </div>
-        </section>
+        </div>
+
+
+
 
         <!-- Special Menu -->
         <section class="py-20">
-            <h2 class="text-3xl font-bold text-gray-800 mb-12 text-center">Special Menu</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                @foreach ($specialMenuItems as $item)
-                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                        <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->name }}"
-                            class="w-full  object-cover">
-                        <div class="p-4">
-                            <h3 class="text-xl font-semibold text-gray-800 mb-2">{{ $item->name }}</h3>
-                            <p class="text-gray-600 mb-4">{{ $item->description }}</p>
+            <div class="container mx-auto px-4 py-12">
+                <h1 class="text-4xl font-bold text-center mb-12">Special Menu</h1>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    @foreach ($specialMenuItems as $item)
+                        <!-- Pizza Card -->
+                        <div class=" bg-white rounded-2xl p-6 shadow-lg">
+                            <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->name }}"
+                                class="w-full h-48 object-cover rounded-xl mb-4">
+                            <h2 class="text-2xl font-semibold mb-2">{{ $item->name }}</h2>
+                            <p class="text-gray-500 mb-6 text-sm">{{ $item->description }}</p>
                             <p class="text-gray-800 font-bold">Price: ${{ $item->price }}</p>
                             <button
-                                class="bg-orange-500 text-white px-4 py-2 rounded-full hover:bg-orange-600 transition duration-300">
+                                class="w-full bg-orange-500 text-white py-3 px-6 rounded-lg hover:bg-orange-600 transition-colors">
                                 Order Now
                             </button>
                         </div>
-                    </div>
-                @endforeach
+                    @endforeach
+                </div>
             </div>
             <div class="container mx-auto px-4 py-16">
                 <section class="flex flex-col md:flex-row items-center justify-between">
@@ -104,5 +115,134 @@
                 </section>
             </div>
         </section>
+
+        {{-- Reservation --}}
+        {{-- <div class="min-h-screen flex items-center justify-center p-4">
+            <div class="w-full max-w-6xl relative overflow-hidden rounded-2xl">
+                <!-- Background Image -->
+                <div class="absolute inset-0">
+                    <img src="{{ asset('assets/reservation-bg.png') }}" alt="Restaurant Interior"
+                        class="w-full h-full object-cover">
+                </div>
+
+                <!-- Orange Overlay with Rough Edge Effect -->
+                <div class="relative flex flex-col md:flex-row">
+                    <div class="bg-orange-500 p-8 md:p-12 lg:p-16 md:w-1/2 text-white relative">
+                        <div class="max-w-md">
+                            <h2 class="text-sm font-semibold tracking-wider mb-4">RESERVATION</h2>
+                            <h1 class="text-4xl md:text-5xl font-bold mb-8">Book A Table For You</h1>
+
+                            <form class="space-y-6">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <!-- Total Person Input -->
+                                    <div class="relative">
+                                        <input type="number"
+                                            class="w-full bg-transparent border-b border-white/50 py-2 text-white placeholder-white/70 focus:outline-none focus:border-white"
+                                            placeholder="Total Person">
+                                    </div>
+
+                                    <!-- Expected Date Input -->
+                                    <div class="relative">
+                                        <input type="date"
+                                            class="w-full bg-transparent border-b border-white/50 py-2 text-white placeholder-white/70 focus:outline-none focus:border-white"
+                                            placeholder="Expected Date">
+                                    </div>
+                                </div>
+
+                                <!-- Expected Time Input -->
+                                <div class="relative">
+                                    <input type="time"
+                                        class="w-full bg-transparent border-b border-white/50 py-2 text-white placeholder-white/70 focus:outline-none focus:border-white"
+                                        placeholder="Expected Time">
+                                </div>
+
+                                <!-- Submit Button -->
+                                <button type="submit"
+                                    class="mt-8 bg-white text-orange-500 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                                    Book a Table
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Decorative Edge -->
+                        <div class="absolute -right-8 top-0 bottom-0 w-8 transform -skew-x-6 bg-orange-500"></div>
+                    </div>
+
+                    <!-- Right side spacer -->
+                    <div class="md:w-1/2"></div>
+                </div>
+            </div>
+        </div> --}}
+
+
+        <div class="container mx-auto px-4 py-12">
+            <div class="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12">
+                <!-- Left Section -->
+                <div class="lg:w-1/3">
+                    <h2 class="text-3xl lg:text-4xl font-bold mb-4">
+                        <span class="text-3xl lg:text-4xl font-bold mb-4">Outdoor Dining</span>
+                    </h2>
+                    <p class="text-gray-600 leading-relaxed">
+                        Outdoor dining provides an opportunity to connect with nature. You can enjoy the beauty of
+                        trees, flowers, or even a view of the cityscape or waterfront, depending on the location. This
+                        connection to nature can enhance your overall dining experience and create a sense of
+                        relaxation.
+                    </p>
+                </div>
+
+                <!-- Center Image -->
+                <div class="lg:w-1/3 flex  justify-center">
+                    <div class="relative">
+                        <div class="w-64 h-64 bg-orange-500 rounded-full"></div>
+                        <img src="{{ asset('assets/delivery.png') }}" alt="Delivery Person"
+                            class="absolute top-1/2 left-1/2 transform h-full -translate-x-1/2 -translate-y-1/2 w-56">
+                    </div>
+                </div>
+
+                <!-- Right Section -->
+                <div class="lg:w-1/3 text-right">
+                    <h2 class="text-3xl lg:text-4xl font-bold mb-4">
+                        Gluten-Free and Vegan Options
+                    </h2>
+                    <p class="text-gray-600 leading-relaxed">
+                        Outdoor dining provides an opportunity to connect with nature. You can enjoy the beauty of
+                        trees, flowers, or even a view of the cityscape or waterfront, depending on the location. This
+                        connection to nature can enhance your overall dining experience and create a sense of
+                        relaxation.
+                    </p>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <!-- Swiper JS -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var swiper = new Swiper('.swiper-container', {
+                slidesPerView: 5, // Number of items visible at once
+                spaceBetween: 20, // Space between items
+                loop: true, // Infinite loop
+                autoplay: { // Automatic sliding
+                    delay: 2000, // Delay in milliseconds (2 seconds)
+                    disableOnInteraction: false, // Continue autoplay after manual interaction
+                },
+                speed: 2000, // Transition speed in milliseconds
+                // grabCursor: true, // Show grab cursor on hover
+                breakpoints: {
+                    640: {
+                        slidesPerView: 2
+                    }, // Small screens
+                    768: {
+                        slidesPerView: 3
+                    }, // Medium screens
+                    1024: {
+                        slidesPerView: 5
+                    }, // Large screens
+                }
+            });
+        });
+    </script>
+
+
+
 @endsection

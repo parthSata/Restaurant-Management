@@ -47,7 +47,7 @@
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center">
-                                        <div class="flex-shrink-0 h-10 w-10">
+                                        <div class="i">
                                             <img src="{{ asset('/storage/Uploaded_Images/' . $restaurant->logo) }}" alt="Restaurant Logo" />
 
                                         </div>

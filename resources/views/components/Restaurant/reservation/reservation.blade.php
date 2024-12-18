@@ -1,6 +1,6 @@
 @extends('layouts.restaurant')
 
-@section('title', $restaurants->restaurant_name)
+@section('title', 'Reservation')
 
 @section('content')
 
@@ -27,7 +27,7 @@
                 </div>
             </div>
 
-            <!-- Reservation Form Section -->
+            {{-- <!-- Reservation Form Section -->
             <div class="bg-white rounded-3xl shadow-2xl p-8 w-full  mx-4">
                 <div class="text-center mb-6">
                     <p class="text-orange-500 text-sm font-semibold uppercase tracking-wide">RESERVATION</p>
@@ -82,9 +82,224 @@
                     </div>
 
                 </form>
+            </div> --}}
+
+            <!-- Reservation Form Section -->
+            <div class="bg-white rounded-3xl shadow-2xl p-8 w-full mx-4">
+                <div class="text-center mb-6">
+                    <p class="text-orange-500 text-sm font-semibold uppercase tracking-wide">RESERVATION</p>
+                    <h1 class="text-3xl font-bold text-gray-900 mt-2">Book A Table For You</h1>
+                </div>
+                <form id="reservation-form" class="space-y-6">
+                    @csrf
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div class="flex flex-col gap-2">
+                            <label for="total-person" class="block text-sm font-medium text-gray-700 mb-1">
+                                Total Person
+                            </label>
+                            <input type="number" name="total_person" id="total-person"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
+                                placeholder="Number of guests">
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <label for="expected-date" class="block text-sm font-medium text-gray-700 mb-1">Expected
+                                Date</label>
+                            <input type="date" name="expected_date" id="expected-date"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500">
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <label for="expected-time" class="block text-sm font-medium text-gray-700 mb-1">Expected
+                                Time</label>
+                            <input type="time" name="expected_time" id="expected-time"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500">
+                        </div>
+                        <div class="text-center">
+                            <button type="submit"
+                                class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition duration-150 ease-in-out">
+                                Check Availability
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+
+            <!-- Availability Table Section -->
+            <div id="available-tables" class="mt-6"></div>
+
+            <!-- Hidden Booking Modal -->
+            <div id="booking-dialog" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+                <div class="bg-white rounded-lg p-6 w-full max-w-md">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-semibold">Booking Details</h2>
+                        <button onclick="closeBookingDialog()" class="text-gray-500 hover:text-gray-700">&times;</button>
+                    </div>
+
+                    <form action="{{ route('storeBooking') }}" method="POST" class="space-y-4">
+                        @csrf
+                        <input type="hidden" id="table-id" name="table_id">
+
+                        <div>
+                            <label for="name" class="block text-sm font-medium text-gray-700">Name:</label>
+                            <input type="text" name="name" required class="w-full px-3 py-2 border rounded-md">
+                        </div>
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-700">Email:</label>
+                            <input type="email" name="email" required class="w-full px-3 py-2 border rounded-md">
+                        </div>
+                        <div>
+                            <label for="phone" class="block text-sm font-medium text-gray-700">Phone:</label>
+                            <input type="text" name="phone" required class="w-full px-3 py-2 border rounded-md">
+                        </div>
+                        <div>
+                            <label for="notes" class="block text-sm font-medium text-gray-700">Notes:</label>
+                            <textarea name="notes" rows="3" class="w-full px-3 py-2 border rounded-md"></textarea>
+                        </div>
+
+                        <div class="flex justify-end gap-4">
+                            <button type="button" onclick="closeBookingDialog()"
+                                class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-100">
+                                Discard
+                            </button>
+                            <button type="submit"
+                                class="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600">
+                                Save
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
 
+    <script>
+        document.getElementById('reservation-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+
+            fetch("{{ route('checkAvailability') }}", {
+                    method: "POST",
+                    headers: {
+                        'X-CSRF-TOKEN': "{{ csrf_token() }}",
+                        'Accept': 'application/json',
+                    },
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const tableContainer = document.getElementById('available-tables');
+                    tableContainer.innerHTML = '';
+
+                    if (data.tables && data.tables.length > 0) {
+                        let html = `
+                        <table class="min-w-full bg-white border rounded-lg">
+                            <thead>
+                                <tr>
+                                    <th class="py-2 px-4 border">Title</th>
+                                    <th class="py-2 px-4 border">Capacity</th>
+                                    <th class="py-2 px-4 border">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                    `;
+
+                        data.tables.forEach(table => {
+                            html += `
+                            <tr>
+                                <td class="py-2 px-4 border text-center">${table.name}</td>
+                                <td class="py-2 px-4 border text-center">${table.capacity}</td>
+                                <td class="py-2 px-4 border text-center">
+                                    <button onclick="openBookingDialog(${table.id})" class="bg-orange-500 text-white px-4 py-1 rounded hover:bg-orange-700">Book</button>
+                                </td>
+                            </tr>
+                        `;
+                        });
+
+                        html += `</tbody></table>`;
+                        tableContainer.innerHTML = html;
+                    } else {
+                        tableContainer.innerHTML =
+                            '<p class="text-center text-gray-500">No tables available.</p>';
+                    }
+                });
+        });
+
+        function openBookingDialog(tableId) {
+            document.getElementById('table-id').value = tableId;
+            document.getElementById('booking-dialog').classList.remove('hidden');
+        }
+
+        function closeBookingDialog() {
+            document.getElementById('booking-dialog').classList.add('hidden');
+        }
+    </script>
+
+    {{-- <script>
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+
+            fetch("{{ route('checkAvailability') }}", {
+                    method: "POST",
+                    headers: {
+                        'X-CSRF-TOKEN': "{{ csrf_token() }}",
+                        'Accept': 'application/json',
+                    },
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const tableContainer = document.getElementById('available-tables');
+                    tableContainer.innerHTML = '';
+
+                    if (data.tables.length > 0) {
+                        let html = `
+                        <table class="min-w-full bg-white border rounded-lg">
+                            <thead>
+                                <tr>
+                                    <th class="py-2 px-4 border">Title</th>
+                                    <th class="py-2 px-4 border">Capacity</th>
+                                    <th class="py-2 px-4 border">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                    `;
+
+                        data.tables.forEach(table => {
+                            html += `
+                            <tr>
+                                <td class="py-2 px-4 border text-center">${table.name}</td>
+                                <td class="py-2 px-4 border text-center">${table.capacity}</td>
+                                <td class="py-2 px-4 border text-center">
+                                    <button onclick="openBookingDialog(${table.id})" 
+                                        class="bg-orange-500 text-white px-4 py-1 rounded hover:bg-orange-700">
+                                        Booking
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                        });
+
+                        html += `</tbody></table>`;
+                        tableContainer.innerHTML = html;
+                    } else {
+                        tableContainer.innerHTML =
+                            '<p class="text-center text-gray-500">No tables available.</p>';
+                    }
+                });
+        });
+
+        function openBookingDialog(tableId) {
+            // Set table ID in a hidden input field for form submission
+            document.getElementById('table-id').value = tableId;
+            document.getElementById('booking-dialog').classList.remove('hidden');
+        }
+
+        function closeBookingDialog() {
+            document.getElementById('booking-dialog').classList.add('hidden');
+        }
+    </script> --}}
 
 @endsection

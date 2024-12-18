@@ -69,33 +69,44 @@
                         cuisines, from exotic international dishes to comforting local favorites.</p>
                 </div>
             </div>
-            <div class="flex items-center flex-wrap sm:flex-wrap  lg:flex-nowrap gap-6">
-                <div class="flex flex-col  items-center mb-12">
-                    <div class=" ">
-                        <h2 class="text-2xl font-semibold mb-4">Outdoor Dining</h2>
-                        <p class="text-gray-600 mb-4">
+            <div class="container mx-auto px-4 py-12">
+                <div class="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12">
+                    <!-- Left Section -->
+                    <div class="lg:w-1/3">
+                        <h2 class="text-3xl lg:text-4xl font-bold mb-4">
+                            <span class="text-3xl lg:text-4xl font-bold mb-4">Outdoor Dining</span>
+                        </h2>
+                        <p class="text-gray-600 leading-relaxed">
                             Outdoor dining provides an opportunity to connect with nature. You can enjoy the beauty of
-                            trees,
-                            flowers, and landscaping while savoring your meal. Some restaurants offer views of mountains,
-                            beaches, or cityscapes, depending on the location. This connection to nature can enhance your
-                            overall dining experience and create a sense of relaxation.
+                            trees, flowers, or even a view of the cityscape or waterfront, depending on the location. This
+                            connection to nature can enhance your overall dining experience and create a sense of
+                            relaxation.
                         </p>
                     </div>
-                </div>
-                <div class="flex flex-col  items-center">
-                    <div class="">
-                        <h2 class="text-2xl font-semibold mb-4">Gluten-Free and Vegan Options</h2>
-                        <p class="text-gray-600 mb-4">
-                            Gluten-free diets are essential for people with celiac disease or gluten sensitivity, while many
-                            people choose vegan diets for ethical, environmental, or health reasons, seeking lighter,
-                            plant-based options or avoiding ingredients that may cause discomfort or allergic reactions. By
-                            offering these dietary alternatives, restaurants can cater to individuals with specific dietary
-                            needs or preferences, ensuring a more inclusive dining experience for all customers.
+
+                    <!-- Center Image -->
+                    <div class="lg:w-1/3 flex justify-center">
+                        <div class="relative">
+                            <div class="w-64 h-64 bg-orange-500 rounded-full"></div>
+                            <img src="{{ asset('assets/delivery.png') }}" alt="Delivery Person"
+                                class="absolute top-1/2 left-1/2 transform h-full -translate-x-1/2 -translate-y-1/2 w-56">
+                        </div>
+                    </div>
+
+                    <!-- Right Section -->
+                    <div class="lg:w-1/3 text-right">
+                        <h2 class="text-3xl lg:text-4xl font-bold mb-4">
+                            Gluten-Free and Vegan Options
+                        </h2>
+                        <p class="text-gray-600 leading-relaxed">
+                            Outdoor dining provides an opportunity to connect with nature. You can enjoy the beauty of
+                            trees, flowers, or even a view of the cityscape or waterfront, depending on the location. This
+                            connection to nature can enhance your overall dining experience and create a sense of
+                            relaxation.
                         </p>
                     </div>
                 </div>
             </div>
-        </main>
     </div>
 
 @endsection
