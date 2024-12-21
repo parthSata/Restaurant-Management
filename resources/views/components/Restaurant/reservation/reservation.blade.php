@@ -92,6 +92,8 @@
                 </div>
                 <form id="reservation-form" class="space-y-6">
                     @csrf
+                    <input type="hidden" name="_token" value="fchUTb40TR3ywdy6GZlTOmvSecMXzlb9EYpoLe5Y">
+
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                         <div class="flex flex-col gap-2">
                             <label for="total-person" class="block text-sm font-medium text-gray-700 mb-1">
@@ -105,7 +107,8 @@
                             <label for="expected-date" class="block text-sm font-medium text-gray-700 mb-1">Expected
                                 Date</label>
                             <input type="date" name="expected_date" id="expected-date"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500">
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
+                                min="{{ date('Y-m-d') }}" required>
                         </div>
                         <div class="flex flex-col gap-2">
                             <label for="expected-time" class="block text-sm font-medium text-gray-700 mb-1">Expected
@@ -178,52 +181,56 @@
 
             const formData = new FormData(this);
 
-            fetch("{{ route('checkAvailability') }}", {
-                    method: "POST",
+            fetch('{{ route('checkAvailability') }}', {
+                    method: 'POST',
                     headers: {
-                        'X-CSRF-TOKEN': "{{ csrf_token() }}",
-                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                     },
-                    body: formData
+                    body: formData,
                 })
                 .then(response => response.json())
                 .then(data => {
-                    const tableContainer = document.getElementById('available-tables');
-                    tableContainer.innerHTML = '';
-
-                    if (data.tables && data.tables.length > 0) {
-                        let html = `
-                        <table class="min-w-full bg-white border rounded-lg">
-                            <thead>
-                                <tr>
-                                    <th class="py-2 px-4 border">Title</th>
-                                    <th class="py-2 px-4 border">Capacity</th>
-                                    <th class="py-2 px-4 border">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                    `;
-
-                        data.tables.forEach(table => {
-                            html += `
-                            <tr>
-                                <td class="py-2 px-4 border text-center">${table.name}</td>
-                                <td class="py-2 px-4 border text-center">${table.capacity}</td>
-                                <td class="py-2 px-4 border text-center">
-                                    <button onclick="openBookingDialog(${table.id})" class="bg-orange-500 text-white px-4 py-1 rounded hover:bg-orange-700">Book</button>
-                                </td>
-                            </tr>
-                        `;
-                        });
-
-                        html += `</tbody></table>`;
-                        tableContainer.innerHTML = html;
+                    if (data.status === 'success') {
+                        renderAvailableTables(data.data);
                     } else {
-                        tableContainer.innerHTML =
-                            '<p class="text-center text-gray-500">No tables available.</p>';
+                        console.error('Error fetching data:', data);
                     }
+                })
+                .catch(error => {
+                    console.error('Request failed:', error);
                 });
         });
+
+        function renderAvailableTables(tables) {
+            const container = document.getElementById('available-tables');
+            container.innerHTML = '';
+
+            if (tables.length === 0) {
+                container.innerHTML = '<p class="text-center text-gray-500">No tables available.</p>';
+                return;
+            }
+
+            tables.forEach(table => {
+                const tableCard = document.createElement('div');
+                tableCard.className = 'border rounded-lg p-4 shadow-md mb-4';
+
+                tableCard.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="font-semibold text-lg">${table.title}</h3>
+                        <p>Capacity: ${table.capacity}</p>
+                        <p>Status: ${table.is_booked}</p>
+                    </div>
+                    <button onclick="openBookingDialog(${table.id})" class="bg-orange-500 text-white px-4 py-2 rounded-md">
+                        Book Now
+                    </button>
+                </div>
+            `;
+                container.appendChild(tableCard);
+            });
+        }
+
+
 
         function openBookingDialog(tableId) {
             document.getElementById('table-id').value = tableId;
@@ -234,72 +241,4 @@
             document.getElementById('booking-dialog').classList.add('hidden');
         }
     </script>
-
-    {{-- <script>
-        document.querySelector('form').addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const formData = new FormData(this);
-
-            fetch("{{ route('checkAvailability') }}", {
-                    method: "POST",
-                    headers: {
-                        'X-CSRF-TOKEN': "{{ csrf_token() }}",
-                        'Accept': 'application/json',
-                    },
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    const tableContainer = document.getElementById('available-tables');
-                    tableContainer.innerHTML = '';
-
-                    if (data.tables.length > 0) {
-                        let html = `
-                        <table class="min-w-full bg-white border rounded-lg">
-                            <thead>
-                                <tr>
-                                    <th class="py-2 px-4 border">Title</th>
-                                    <th class="py-2 px-4 border">Capacity</th>
-                                    <th class="py-2 px-4 border">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                    `;
-
-                        data.tables.forEach(table => {
-                            html += `
-                            <tr>
-                                <td class="py-2 px-4 border text-center">${table.name}</td>
-                                <td class="py-2 px-4 border text-center">${table.capacity}</td>
-                                <td class="py-2 px-4 border text-center">
-                                    <button onclick="openBookingDialog(${table.id})" 
-                                        class="bg-orange-500 text-white px-4 py-1 rounded hover:bg-orange-700">
-                                        Booking
-                                    </button>
-                                </td>
-                            </tr>
-                        `;
-                        });
-
-                        html += `</tbody></table>`;
-                        tableContainer.innerHTML = html;
-                    } else {
-                        tableContainer.innerHTML =
-                            '<p class="text-center text-gray-500">No tables available.</p>';
-                    }
-                });
-        });
-
-        function openBookingDialog(tableId) {
-            // Set table ID in a hidden input field for form submission
-            document.getElementById('table-id').value = tableId;
-            document.getElementById('booking-dialog').classList.remove('hidden');
-        }
-
-        function closeBookingDialog() {
-            document.getElementById('booking-dialog').classList.add('hidden');
-        }
-    </script> --}}
-
 @endsection

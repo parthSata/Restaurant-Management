@@ -48,60 +48,54 @@ class ReservationController extends Controller
         return view('seller.reservation.tables', compact('tables', 'restaurants', 'reservations', 'search'));
     }
 
+   
+
     public function checkAvailability(Request $request)
-{
-    $request->validate([
-        'total-person' => 'required|integer|min:1',
-        'expected-date' => 'required|date',
-        'expected-time' => 'required|date_format:H:i',
-    ]);
+    {
+        // Validate input
+        $request->validate([
+            'total_person' => 'required|integer|min:1',
+            'expected_date' => 'required|date|after_or_equal:today',
+            'expected_time' => 'required|date_format:H:i',
+        ]);
 
-    $totalPersons = $request->input('total-person');
+        // Fetch available reservations
+        $reservations = Reservation::available()->active()->get();
 
-    // Fetch tables that match the requested capacity
-    $availableTables = Table::where('capacity', '<=', $totalPersons)
-        ->whereDoesntHave('reservations', function ($query) use ($request) {
-            $query->where('expected_date', $request->input('expected-date'))
-                  ->where('expected_time', $request->input('expected-time'));
-        })->get();
-
-    return response()->json([
-        'tables' => $availableTables,
-    ]);
-}
-
+        // Return response
+        return response()->json([
+            'status' => 'success',
+            'data' => $reservations,
+        ]);
+    }
 
     public function storeBooking(Request $request)
-    {
-        $validated = $request->validate([
-            'table_id' => 'required|exists:tables,id',
-            'customer_name' => 'required|string|max:255',
-            'phone' => 'required|string|max:20',
-            'expected_person' => 'required|integer|min:1',
-            'expected_date' => 'required|date',
-            'expected_time' => 'required',
-        ]);
-    
-        // Fetch the table's capacity
-        $table = Reservation::findOrFail($validated['table_id']);
-    
-        // Check if the table can accommodate the requested guests
-        if ($validated['expected_person'] > $table->capacity) {
-            return redirect()->back()->with('error', 'The table cannot accommodate the number of guests.');
-        }
-    
-        // Store the booking if capacity is sufficient
-        Booking::create([
-            'table_name' => $table->name,
-            'customer_name' => $validated['customer_name'],
-            'phone' => $validated['phone'],
-            'expected_person' => $validated['expected_person'],
-            'expected_date' => $validated['expected_date'],
-            'expected_time' => $validated['expected_time'],
-        ]);
-    
-        return redirect()->back()->with('success', 'Booking successful!');
-    }
+{
+    // Assuming you're fetching the available table by its ID
+    $reservation = Reservation::find($request->reservation_id);
+
+    // Create a new booking
+    $booking = new Booking([
+        'table_name' => $reservation->title, // or any other property you wish to store
+        'customer_name' => $request->customer_name,
+        'phone' => $request->phone,
+        'expected_person' => $request->expected_person,
+        'expected_date' => $request->expected_date,
+        'expected_time' => $request->expected_time,
+        'reservation_id' => $reservation->id, // Associate with reservation
+    ]);
+
+    $booking->save();
+
+    // Mark the reservation as booked
+    $reservation->is_booked = true;
+    $reservation->save();
+
+    return response()->json([
+        'message' => 'Table booked successfully!',
+        'booking' => $booking
+    ]);
+}
     
 
 

@@ -30,6 +30,10 @@ Route::get('/restaurants', [adminRestaurantController::class, 'userIndex'])->nam
 Route::get('/restaurant/{slug}', [adminRestaurantController::class, 'show'])->name('restaurant.show');
 Route::get('/restaurant-home', [adminRestaurantController::class, 'restaurantHome'])->name('restaurant.home');
 
+    // Booking Routes
+    Route::post('/check-availability', [ReservationController::class, 'checkAvailable'])->name('checkAvailability');
+    Route::post('/store-booking', [ReservationController::class, 'storeBooking'])->name('storeBooking');
+
 // Static View Routes (For User)
 Route::view('/contact', 'user.contact')->name('contact');
 Route::post('/contact/store', [ContactController::class, 'store'])->name('contact.store');
@@ -130,10 +134,6 @@ Route::prefix('seller')->middleware('auth:restaurant')->group(function () {
     Route::get('/reservation/{id}/edit', [ReservationController::class, 'edit'])->name('reservation.edit'); // Edit reservation
     Route::put('/reservation/{id}', [ReservationController::class, 'update'])->name('reservation.update'); // Update reservation
     Route::delete('/reservation/{id}', [ReservationController::class, 'destroy'])->name('reservation.destroy'); // Delete reservation
-
-    // Booking Routes
-    Route::post('/check-availability', [ReservationController::class, 'checkAvailability'])->name('checkAvailability');
-    Route::post('/store-booking', [ReservationController::class, 'storeBooking'])->name('storeBooking');
 
     Route::get('/addOns', [SellerAddOnsController::class, 'index'])->name('addOns.index');
     Route::post('/addOns/categories', [SellerAddOnsController::class, 'storeCategories'])->name('categories.store');

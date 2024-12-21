@@ -46,4 +46,9 @@ class Reservation extends Model
     {
         return $query->where('status', true);
     }
+
+    public function booking()
+    {
+        return $this->hasMany(Booking::class, 'reservation_id');
+    }
 }

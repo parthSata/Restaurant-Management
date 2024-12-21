@@ -10,6 +10,7 @@ class Booking extends Model
     use HasFactory;
 
     protected $fillable = [
+        'reservation_id', // Store the reservation_id here
         'table_name',
         'customer_name',
         'phone',
@@ -17,4 +18,11 @@ class Booking extends Model
         'expected_date',
         'expected_time',
     ];
+
+
+    public function reservation()
+    {
+        return $this->belongsTo(Reservation::class, 'reservation_id');
+    }
+    
 }
