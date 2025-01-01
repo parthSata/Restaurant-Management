@@ -25,13 +25,14 @@ use App\Http\Controllers\HomeController;
 // Public Restaurant Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/home/{id}', [HomeController::class, 'index'])->name('Home.index');
+Route::get('/most-expensive-items', [AdminRestaurantController::class, 'showMostExpensiveItems'])->name('most.expensive.items');
 
 Route::get('/restaurants', [adminRestaurantController::class, 'userIndex'])->name('restaurants.user.index');
-Route::get('/restaurant/{slug}', [adminRestaurantController::class, 'show'])->name('restaurant.show');
+Route::get('/restaurant/{slug?}', [adminRestaurantController::class, 'show'])->name('restaurant.show');
 Route::get('/restaurant-home', [adminRestaurantController::class, 'restaurantHome'])->name('restaurant.home');
 
     // Booking Routes
-    Route::post('/check-availability', [ReservationController::class, 'checkAvailable'])->name('checkAvailability');
+    Route::post('/check-availability', [ReservationController::class, 'checkAvailability'])->name('checkAvailability');
     Route::post('/store-booking', [ReservationController::class, 'storeBooking'])->name('storeBooking');
 
 // Static View Routes (For User)
@@ -46,6 +47,9 @@ Route::post('/register', [RegistrationController::class, 'register']);
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+
+
 
 
 // Admin Routes
@@ -174,18 +178,32 @@ Route::prefix('seller')->middleware('auth:restaurant')->group(function () {
     Route::delete('/couponcodes/{id}', [SellerCouponCodesController::class, 'destroy'])->name('couponcodes.destroy'); 
 });
 
-// Customer
+// // Customer
+// Route::prefix('customer')->middleware('auth')->group(function () {
+//     Route::get('/dashboard', [CustomerController::class, 'dashboard'])->name('customer.dashboard');
+//     Route::get('/orders/{id}', [CustomerController::class, 'orders'])->name('customer.orders');
+//     Route::post('/logout', [CustomerController::class, 'logout'])->name('customer.logout'); // Logout route
+
+//     Route::get('/checkout/{slug}', [MenuController::class, 'checkout'])->name('checkout');
+//     Route::post('/delivery/store/{slug}', [DeliveryController::class, 'store'])->name('delivery.store');
+//     Route::post('/checkout/process/{slug}', [DeliveryController::class, 'processCheckout'])->name('checkout.process');
+//     Route::post('/cart/sync', [MenuController::class, 'syncCart'])->name('syncCart');
+//     Route::post('/payment/handle/{slug}', [DeliveryController::class, 'handlePayment'])->name('payment.handle');
+//     Route::get('/order/confirmation/{slug}', [DeliveryController::class, 'confirmation'])->name('order.confirmation');
+//     Route::get('/restaurant/{slug}/menu', [MenuController::class, 'showMenu'])->name('restaurant');
+// });
+
 Route::prefix('customer')->middleware('auth')->group(function () {
     Route::get('/dashboard', [CustomerController::class, 'dashboard'])->name('customer.dashboard');
     Route::get('/orders/{id}', [CustomerController::class, 'orders'])->name('customer.orders');
     Route::post('/logout', [CustomerController::class, 'logout'])->name('customer.logout'); // Logout route
 
-    Route::get('/checkout/{slug}', [MenuController::class, 'checkout'])->name('checkout');
-    Route::post('/delivery/store/{slug}', [DeliveryController::class, 'store'])->name('delivery.store');
-    Route::post('/checkout/process/{slug}', [DeliveryController::class, 'processCheckout'])->name('checkout.process');
-    
+Route::get('/checkout/{slug}', [MenuController::class, 'checkout'])->name('checkout');
+Route::post('/delivery/store/{slug}', action: [DeliveryController::class, 'store'])->name('delivery.store');
+Route::post('/checkout/process/{slug}', [DeliveryController::class, 'processCheckout'])->name('checkout.process');
     Route::post('/cart/sync', [MenuController::class, 'syncCart'])->name('syncCart');
-    Route::post('/payment/handle/{slug}', [DeliveryController::class, 'handlePayment'])->name('payment.handle');
+    Route::post('/payment/handle/', [DeliveryController::class, 'handlePayment'])->name('payment.handle');
     Route::get('/order/confirmation/{slug}', [DeliveryController::class, 'confirmation'])->name('order.confirmation');
-    Route::get('/restaurant/{slug}/menu', [MenuController::class, 'showMenu'])->name('restaurant');
+Route::get('/restaurant/{slug}/menu', [MenuController::class, 'showMenu'])->name('restaurant');
+
 });

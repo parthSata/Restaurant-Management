@@ -56,4 +56,9 @@ class Restaurant extends Authenticatable
     {
         return $this->hasMany(Restaurant::class);
     }
+
+    public function addOnItems()
+    {
+        return $this->hasMany(AddOnItem::class, 'restaurant_id');
+    }
 }

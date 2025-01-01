@@ -59,7 +59,10 @@ public function customerDashboard()
         return $this->hasMany(Order::class, 'customer_id', 'id');
     }
 
-    
+    public function orderItems()
+{
+    return $this->hasMany(OrderItem::class, 'order_id' , 'id');
+}
     
 
 }

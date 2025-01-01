@@ -92,8 +92,6 @@
                 </div>
                 <form id="reservation-form" class="space-y-6">
                     @csrf
-                    <input type="hidden" name="_token" value="fchUTb40TR3ywdy6GZlTOmvSecMXzlb9EYpoLe5Y">
-
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                         <div class="flex flex-col gap-2">
                             <label for="total-person" class="block text-sm font-medium text-gray-700 mb-1">
@@ -101,7 +99,7 @@
                             </label>
                             <input type="number" name="total_person" id="total-person"
                                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
-                                placeholder="Number of guests">
+                                placeholder="Number of guests" required min="1">
                         </div>
                         <div class="flex flex-col gap-2">
                             <label for="expected-date" class="block text-sm font-medium text-gray-700 mb-1">Expected
@@ -114,21 +112,22 @@
                             <label for="expected-time" class="block text-sm font-medium text-gray-700 mb-1">Expected
                                 Time</label>
                             <input type="time" name="expected_time" id="expected-time"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500">
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-orange-500"
+                                required>
                         </div>
                         <div class="text-center">
-                            <button type="submit"
+                            <button type="submit" id="check-availability-btn"
                                 class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition duration-150 ease-in-out">
                                 Check Availability
                             </button>
                         </div>
                     </div>
                 </form>
+                <div id="available-tables" class="mt-6 text-center"></div>
             </div>
 
 
             <!-- Availability Table Section -->
-            <div id="available-tables" class="mt-6"></div>
 
             <!-- Hidden Booking Modal -->
             <div id="booking-dialog" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
@@ -140,23 +139,33 @@
 
                     <form action="{{ route('storeBooking') }}" method="POST" class="space-y-4">
                         @csrf
-                        <input type="hidden" id="table-id" name="table_id">
+                        <input type="hidden" id="reservation_id" name="reservation_id">
+
+                        <!-- Ensure this value is set dynamically -->
 
                         <div>
-                            <label for="name" class="block text-sm font-medium text-gray-700">Name:</label>
-                            <input type="text" name="name" required class="w-full px-3 py-2 border rounded-md">
-                        </div>
-                        <div>
-                            <label for="email" class="block text-sm font-medium text-gray-700">Email:</label>
-                            <input type="email" name="email" required class="w-full px-3 py-2 border rounded-md">
+                            <label for="customer_name" class="block text-sm font-medium text-gray-700">Name:</label>
+                            <input type="text" name="customer_name" required class="w-full px-3 py-2 border rounded-md">
                         </div>
                         <div>
                             <label for="phone" class="block text-sm font-medium text-gray-700">Phone:</label>
                             <input type="text" name="phone" required class="w-full px-3 py-2 border rounded-md">
                         </div>
                         <div>
-                            <label for="notes" class="block text-sm font-medium text-gray-700">Notes:</label>
-                            <textarea name="notes" rows="3" class="w-full px-3 py-2 border rounded-md"></textarea>
+                            <label for="expected_person" class="block text-sm font-medium text-gray-700">Expected
+                                Persons:</label>
+                            <input type="number" name="expected_person" required
+                                class="w-full px-3 py-2 border rounded-md">
+                        </div>
+                        <div>
+                            <label for="expected_date" class="block text-sm font-medium text-gray-700">Expected
+                                Date:</label>
+                            <input type="date" name="expected_date" required class="w-full px-3 py-2 border rounded-md">
+                        </div>
+                        <div>
+                            <label for="expected_time" class="block text-sm font-medium text-gray-700">Expected
+                                Time:</label>
+                            <input type="time" name="expected_time" required class="w-full px-3 py-2 border rounded-md">
                         </div>
 
                         <div class="flex justify-end gap-4">
@@ -170,43 +179,50 @@
                             </button>
                         </div>
                     </form>
+
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        document.getElementById('reservation-form').addEventListener('submit', function(e) {
+        const form = document.getElementById('reservation-form');
+        const btn = document.getElementById('check-availability-btn');
+
+        form.addEventListener('submit', async function(e) {
             e.preventDefault();
 
-            const formData = new FormData(this);
+            btn.disabled = true;
+            btn.textContent = 'Checking...';
 
-            fetch('{{ route('checkAvailability') }}', {
+            const formData = new FormData(form);
+
+            try {
+                const response = await fetch('{{ route('checkAvailability') }}', {
                     method: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                     },
                     body: formData,
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        renderAvailableTables(data.data);
-                    } else {
-                        console.error('Error fetching data:', data);
-                    }
-                })
-                .catch(error => {
-                    console.error('Request failed:', error);
                 });
+
+                const data = await response.json();
+                renderAvailableTables(data.data || []);
+            } catch (error) {
+                console.error('Error:', error);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Check Availability';
+            }
         });
 
         function renderAvailableTables(tables) {
             const container = document.getElementById('available-tables');
             container.innerHTML = '';
 
-            if (tables.length === 0) {
-                container.innerHTML = '<p class="text-center text-gray-500">No tables available.</p>';
+            if (!tables.length) {
+                container.innerHTML =
+                    `<p class="text-center text-red-500 font-medium">No tables available for the selected date and time.</p>`;
                 return;
             }
 
@@ -215,29 +231,51 @@
                 tableCard.className = 'border rounded-lg p-4 shadow-md mb-4';
 
                 tableCard.innerHTML = `
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h3 class="font-semibold text-lg">${table.title}</h3>
-                        <p>Capacity: ${table.capacity}</p>
-                        <p>Status: ${table.is_booked}</p>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="font-semibold text-lg">${table.title}</h3>
+                            <p>Capacity: ${table.capacity}</p>
+                            <p>Status: ${table.is_booked ? 'Booked' : 'Available'}</p>
+                        </div>
+                        <p>${table.id}</p>
+                        <button onclick="openBookingDialog(${table.id})" class="bg-orange-500 text-white px-4 py-2 rounded-md">
+                            Book Now
+                        </button>
                     </div>
-                    <button onclick="openBookingDialog(${table.id})" class="bg-orange-500 text-white px-4 py-2 rounded-md">
-                        Book Now
-                    </button>
-                </div>
-            `;
+                `;
                 container.appendChild(tableCard);
             });
         }
 
-
-
-        function openBookingDialog(tableId) {
-            document.getElementById('table-id').value = tableId;
+        function openBookingDialog(reservation_id) {
+            const dialog = document.getElementById('booking-dialog');
+            dialog.classList.remove('hidden');
+            document.getElementById('reservation_id').value = reservation_id;
             document.getElementById('booking-dialog').classList.remove('hidden');
+
         }
 
+        // Helper function to show toast notifications
+        function showToast(message, type) {
+            const backgroundColors = {
+                success: '#28a745',
+                warning: '#ffc107',
+                error: '#dc3545',
+            };
+
+            Toastify({
+                text: message,
+                duration: 3000,
+                gravity: 'top',
+                position: 'center',
+                backgroundColor: backgroundColors[type] || '#007bff',
+            }).showToast();
+        }
+
+
         function closeBookingDialog() {
+            const dialog = document.getElementById('booking-dialog');
+            dialog.classList.add('hidden');
             document.getElementById('booking-dialog').classList.add('hidden');
         }
     </script>

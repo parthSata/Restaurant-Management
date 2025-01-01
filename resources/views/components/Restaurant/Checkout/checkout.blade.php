@@ -92,7 +92,65 @@
                 @endauth
             </div>
 
-            <!-- Right Column - Order Summary -->
+            <!-- Payment Section -->
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <div class="flex items-center space-x-4 mb-4">
+                    <div class="bg-gray-200 p-2 rounded-full">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                        </svg>
+                    </div>
+                    <h2 class="text-xl font-semibold">Payment</h2>
+                </div>
+                <!-- Razorpay Payment Button -->
+                <form action="{{ route('payment.handle') }}" method="POST">
+                    @csrf
+                    <script src="https://checkout.razorpay.com/v1/checkout.js" data-key="{{ $razorpayOrder['key'] }}"
+                        data-amount="{{ $razorpayOrder['amount'] }}" data-currency="{{ $razorpayOrder['currency'] }}"
+                        data-order_id="{{ $razorpayOrder['id'] }}" data-buttontext="Pay Now"
+                        data-name="{{ $restaurants->restaurant_name }}" data-description="Complete your payment"
+                        data-theme.color="#ff5722"></script>
+                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                </form>
+            </div>
+        </div>
+
+        <!-- Right Column - Order Summary -->
+        <div class="lg:col-span-1">
+            <div class="bg-white p-6 rounded-lg shadow-sm">
+                <div class="border-t pt-4">
+                    <h3 class="font-semibold mb-4">Bill Details</h3>
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Item Total</span>
+                            <span>${{ number_format($itemTotal, 2) }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Discount</span>
+                            <span>-${{ number_format($discount, 2) }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Tax</span>
+                            <span>${{ number_format($tax, 2) }}</span>
+                        </div>
+                        <div class="flex justify-between border-t pt-2 font-semibold">
+                            <span>To Pay</span>
+                            <span>${{ number_format($toPay, 2) }}</span>
+                        </div>
+                    </div>
+                    <!-- Payment Button -->
+                    <button class="w-full mt-4 bg-[#ff5722] text-white px-6 py-2 rounded-md hover:bg-[#f4511e]"
+                        {{ count($cart) == 0 ? 'disabled' : '' }}>
+                        Proceed to Pay
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+        {{-- <!-- Right Column - Order Summary -->
             <div class="lg:col-span-1">
                 <div class="bg-white p-6 rounded-lg shadow-lg">
                     <h3 class="font-bold text-xl mb-4">Your Cart</h3>
@@ -128,24 +186,10 @@
                     </form>
 
                 </div>
-            </div>
+            </div> --}}
         </div>
     </main>
     <script>
-        // function selectAddress(button) {
-        //     // Remove "Selected" from all buttons
-        //     document.querySelectorAll('.address-card').forEach(card => {
-        //         card.classList.remove('bg-green-100'); // Reset background
-        //         const btn = card.querySelector('.deliver-button');
-        //         btn.textContent = 'Deliver Here';
-        //     });
-
-        //     // Mark the clicked address as selected
-        //     const parentCard = button.closest('.address-card');
-        //     parentCard.classList.add('bg-green-100'); // Highlight the selected address
-        //     button.textContent = 'Selected'; // Update the button text
-        // }
-
         function selectAddress(button) {
             document.querySelectorAll('.address-card').forEach(card => {
                 card.classList.remove('bg-green-100');

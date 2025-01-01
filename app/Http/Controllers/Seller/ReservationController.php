@@ -7,6 +7,7 @@ use App\Models\Booking;
 use App\Models\Reservation;
 use DB;
 use Illuminate\Http\Request;
+use Log;
 
 class ReservationController extends Controller
 {
@@ -48,8 +49,6 @@ class ReservationController extends Controller
         return view('seller.reservation.tables', compact('tables', 'restaurants', 'reservations', 'search'));
     }
 
-   
-
     public function checkAvailability(Request $request)
     {
         // Validate input
@@ -58,48 +57,53 @@ class ReservationController extends Controller
             'expected_date' => 'required|date|after_or_equal:today',
             'expected_time' => 'required|date_format:H:i',
         ]);
-
-        // Fetch available reservations
-        $reservations = Reservation::available()->active()->get();
-
+    
+        // Fetch available reservations matching criteria
+        $reservations = Reservation::select('id', 'title', 'capacity')
+            ->where('capacity', '>=', $request->total_person)
+            ->get();
+    
         // Return response
         return response()->json([
             'status' => 'success',
             'data' => $reservations,
         ]);
-    }
+    }    
 
     public function storeBooking(Request $request)
-{
-    // Assuming you're fetching the available table by its ID
-    $reservation = Reservation::find($request->reservation_id);
-
-    // Create a new booking
-    $booking = new Booking([
-        'table_name' => $reservation->title, // or any other property you wish to store
-        'customer_name' => $request->customer_name,
-        'phone' => $request->phone,
-        'expected_person' => $request->expected_person,
-        'expected_date' => $request->expected_date,
-        'expected_time' => $request->expected_time,
-        'reservation_id' => $reservation->id, // Associate with reservation
-    ]);
-
-    $booking->save();
-
-    // Mark the reservation as booked
-    $reservation->is_booked = true;
-    $reservation->save();
-
-    return response()->json([
-        'message' => 'Table booked successfully!',
-        'booking' => $booking
-    ]);
-}
+    {
+        $validated = $request->validate([
+            'reservation_id' => 'required|exists:reservations,id',
+            'customer_name' => 'required|string|max:255',
+            'phone' => 'required|string|max:15',
+            'expected_person' => 'required|integer|min:1',
+            'expected_date' => 'required|date',
+            'expected_time' => 'required|date_format:H:i',
+        ]);
     
-
-
-
+        // Fetch the reservation
+        $reservation = Reservation::findOrFail($validated['reservation_id']);
+        // Create a new booking
+        $booking = new Booking([
+            'reservation_id' => $reservation->id,
+            'table_name' => $reservation->title,
+            'customer_name' => $validated['customer_name'],
+            'phone' => $validated['phone'],
+            'expected_person' => $validated['expected_person'],
+            'expected_date' => $validated['expected_date'],
+            'expected_time' => $validated['expected_time'],
+        ]);
+    
+        $booking->save();
+        $reservation->status = true;
+        $reservation->save();
+        
+        return response()->json([
+            'message' => 'Table booked successfully!',
+            'booking' => $booking
+        ]);
+    }
+    
     public function create()
     {
         $restaurants =  auth()->user()->restaurants;

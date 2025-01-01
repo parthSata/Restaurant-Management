@@ -32,5 +32,10 @@ class AddOnItem extends Model
             return self::inRandomOrder()->take($limit)->get();
         }
 
-       
+        public function restaurant()
+{
+    return $this->belongsTo(Restaurant::class, 'restaurant_id'); // Or use the correct column name if different
+}
+
+    
 }

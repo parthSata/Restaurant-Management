@@ -69,7 +69,7 @@
                     class="px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors">
                     View Details
                 </a> --}}
-                <a href="{{ url('/customer/restaurant/' . $restaurants->slug . '/menu') }}"
+                <a href="{{ url('/customer/restaurant/' . $restaurants->restaurant_slug . '/menu') }}"
                     class="px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors">
                     Back to Menu
                 </a>

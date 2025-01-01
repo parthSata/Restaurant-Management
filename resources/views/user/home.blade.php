@@ -39,60 +39,54 @@
         </div>
     </div>
 
-    <div class="bg-gray-100">
-        <div class="container mx-auto px-4 py-8">
-            <h2 class="text-3xl font-bold text-center mb-8 text-gray-800">Customer's Favourite Home</h2>
+    <!-- Special Menu -->
+    <section class="py-20">
+        <div class="container mx-auto px-4 py-12">
+            <h1 class="text-4xl font-bold text-center mb-12">Special Menu</h1>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <!-- Butter Milk -->
-                <div class="bg-white rounded-t-[80px] rounded-b-lg w-[250px] shadow-md p-4 flex flex-col items-center">
-                    <img src="image/Butte-milk.png" alt="Butter Milk" class="w-40 h-40 object-cover rounded-full mb-4">
-                    <h3 class="text-xl font-semibold mb-1">Butter Milk</h3>
-                    <p class="text-sm text-gray-500 mb-2">SPICE GARDEN RE...</p>
-                    <p class="text-lg font-bold mb-4">$ 20</p>
-                    <button
-                        class="bg-yellow-400 text-gray-800 px-6 py-2 rounded-full font-semibold hover:bg-yellow-500 transition duration-300">Order
-                        Now</button>
-                </div>
-
-                <!-- Veggie Delight -->
-                <div class="bg-white rounded-t-[80px] rounded-b-lg w-[250px] shadow-md p-4 flex flex-col items-center">
-                    <img src="image/Veggie-Delight.png" alt="Veggie Delight"
-                        class="w-40 h-40 object-cover rounded-full mb-4">
-                    <h3 class="text-xl font-semibold mb-1">Veggie Delight ...</h3>
-                    <p class="text-sm text-gray-500 mb-2">Mr.Chef Fast Fo...</p>
-                    <p class="text-lg font-bold mb-4">$ 250</p>
-                    <button
-                        class="bg-yellow-400 text-gray-800 px-6 py-2 rounded-full font-semibold hover:bg-yellow-500 transition duration-300">Order
-                        Now</button>
-                </div>
-
-                <!-- Greek Salad -->
-                <div class="bg-white rounded-t-[80px] rounded-b-lg w-[250px] shadow-md p-4 flex flex-col items-center">
-                    <img src="image/greeksalad.png" alt="Greek Salad" class="w-40 h-40 object-cover rounded-full mb-4">
-                    <h3 class="text-xl font-semibold mb-1">Greek Salad</h3>
-                    <p class="text-sm text-gray-500 mb-2">Been House</p>
-                    <p class="text-lg font-bold mb-4">$ 250</p>
-                    <button
-                        class="bg-yellow-400 text-gray-800 px-6 py-2 rounded-full font-semibold hover:bg-yellow-500 transition duration-300">Order
-                        Now</button>
-                </div>
-
-                <!-- Chicken Curry -->
-                <div class="bg-white rounded-t-[80px] rounded-b-lg w-[250px] shadow-md p-4 flex flex-col items-center">
-                    <img src="image/CheeseBurger.png" alt="Chicken Curry" class="w-40 h-40 object-cover rounded-full mb-4">
-                    <h3 class="text-xl font-semibold mb-1">Cheese Burger</h3>
-                    <p class="text-sm text-gray-500 mb-2">Nibble Bites Ca...</p>
-                    <p class="text-lg font-bold mb-4">$ 300</p>
-                    <button
-                        class="bg-yellow-400 text-gray-800 px-6 py-2 rounded-full font-semibold hover:bg-yellow-500 transition duration-300">Order
-                        Now</button>
-                </div>
+                @foreach ($specialMenuItems as $item)
+                    <!-- Pizza Card -->
+                    <div class=" bg-white rounded-2xl p-6 shadow-lg">
+                        <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->name }}"
+                            class="w-full h-48 object-cover rounded-xl mb-4">
+                        <h2 class="text-2xl font-semibold mb-2">{{ $item->name }}</h2>
+                        <p class="text-gray-500 mb-6 text-sm">{{ $item->description }}</p>
+                        <p class="text-gray-800 font-bold">Price: ${{ $item->price }}</p>
+                        <button
+                            class="w-full bg-orange-500 text-white py-3 px-6 rounded-lg hover:bg-orange-600 transition-colors">
+                            Order Now
+                        </button>
+                    </div>
+                @endforeach
             </div>
         </div>
+        <div class="container mx-auto px-4 py-16">
+            <section class="flex flex-col md:flex-row items-center justify-between">
+                <div class="md:w-1/2 mb-8 md:mb-0">
+                    <h2 class="text-orange-500 text-xl font-semibold mb-2">DISCOVER</h2>
+                    <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">Our Menu</h1>
+                    <p class="text-gray-600 mb-6 max-w-md">
+                        Welcome to our restaurant! Get ready to embark on a culinary journey through our thoughtfully
+                        crafted menu, designed to delight your taste buds and satisfy your cravings.
+                    </p>
+                </div>
+                <div class="md:w-1/3 relative">
+                    <div class="grid grid-cols-2 gap-4">
+                        <img src="https://restaurant-management.nyc3.digitaloceanspaces.com/image_one/607/Frame-105.png"
+                            alt="Grilled meat skewers" class="w-full h-48 object-cover rounded-lg">
+                        <img src="https://restaurant-management.nyc3.digitaloceanspaces.com/image_two/608/Frame-107.png"
+                            alt="Soup or curry dish" class="w-full h-48 object-cover rounded-lg">
+                    </div>
+
+                </div>
+            </section>
+        </div>
+    </section>
     </div>
 
-    <div class="bg-gray-100">
+
+    {{-- <div class="bg-gray-100">
         <div class="container mx-auto px-4 py-8">
             <div class="relative flex">
                 <h2 class="text-3xl font-bold mb-6">Featured Restaurants</h2>
@@ -100,7 +94,7 @@
 
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                @foreach ($restaurants as $restaurant)
+                @foreach ($restaurantss as $restaurant)
                     <a href="{{ route('restaurant.show', $restaurant->id) }}" class="block">
                         <div class="bg-white rounded-lg shadow-md overflow-hidden">
                             <img src="{{ asset('/storage/Uploaded_Images/' . $restaurant->feature_image) }}"
@@ -116,5 +110,5 @@
                 @endforeach
             </div>
         </div>
-    </div>
+    </div> --}}
 @endsection

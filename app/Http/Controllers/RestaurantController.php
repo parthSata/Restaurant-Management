@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\AddOnItem;
 use App\Models\Category;
+use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\Restaurant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -81,12 +83,7 @@ class RestaurantController extends Controller
             $restaurants = Restaurant::all();
             return view('user.restaurant', compact('restaurants'));
         }
-    }
-
-
-
-
-    
+    }   
     public function restaurantHome()
     {
         return view('admin.Home.RestaurantHome');
