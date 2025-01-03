@@ -10,9 +10,16 @@ use Razorpay\Api\Api;
 
 
 class DeliveryController extends Controller
-{
-    protected $razorpayApiKey = 'rzp_test_eFufbivICL2J9n';
-    protected $razorpaySecretKey = 'mRgia0i8MPKcNq4di2FiiBO5';
+{   
+    protected $razorpayApiKey;
+    protected $razorpaySecretKey;
+
+    public function __construct()
+    {
+        $this->razorpayApiKey = config('services.razorpay.key');
+        $this->razorpaySecretKey = config('services.razorpay.secret');
+    }
+
     public function store(Request $request, $slug)
     {
         // Get the logged-in user's ID
@@ -20,9 +27,7 @@ class DeliveryController extends Controller
         if (!$customerId) {
             return redirect()->route('login')->with('error', 'Please log in to continue');
         }
-        
-        // Retrieve the restaurant by its slug
-        // $restaurant = Restaurant::where('restaurant_slug', $slug)->firstOrFail();
+
         $restaurant = Restaurant::where('restaurant_slug', $slug)->first();
         if (!$restaurant) {
             return redirect()->route('restaurants.index')->with('error', 'Restaurant not found');
@@ -31,9 +36,14 @@ class DeliveryController extends Controller
         $request->validate([
             'address' => 'required|string|max:255',
             'city' => 'required|string|max:100',
-            'zip_code' => 'required|string|max:20',
+            'zip_code' => 'required|string|max:10|regex:/^\d{5,10}$/',
         ]);
     
+        
+        $delivery = DeliveryAddress::updateOrCreate(
+            ['customer_id' => $customerId, 'restaurant_id' => $restaurant->id],
+            $request->only('address', 'city', 'zip_code')
+        );
         // Store the delivery address with the customer_id and restaurant_id
         $delivery = new DeliveryAddress();
         $delivery->customer_id = $customerId; // Make sure this links to the customer correctly
@@ -42,19 +52,73 @@ class DeliveryController extends Controller
         $delivery->city = $request->city;
         $delivery->zip_code = $request->zip_code;
         $delivery->save();
+
     
         return redirect()->route('checkout', ['slug' => $slug])->with('success', 'Delivery address saved successfully!');
     }
+
+    private function storeOrder(Request $request, $slug, $paymentMethod)
+    {
+        $customerId = Auth::id();
+        if (!$customerId) {
+            return redirect()->route('login')->with('error', 'Please log in to place an order.');
+        }
+    
+        $restaurant = Restaurant::where('restaurant_slug', $slug)->first();
+        if (!$restaurant) {
+            return redirect()->route('restaurants.index')->with('error', 'Restaurant not found.');
+        }
+    
+        // Retrieve the cart from the session
+        $cart = session('cart', []);
+        if (empty($cart)) {
+            return redirect()->back()->with('error', 'Your cart is empty.');
+        }
+    
+        // Calculate totals
+        $itemTotal = collect($cart)->sum(fn($item) => $item['quantity'] * $item['price']);
+        $deliveryFee = 50; // Example fee
+        $totalAmount = $itemTotal + $deliveryFee;
+    
+        // Create the order
+        $order = new \App\Models\Order();
+        $order->customer_id = $customerId;
+        $order->restaurant_id = $restaurant->id;
+        $order->total_amount = $totalAmount;
+        $order->payment_method = $paymentMethod;
+        $order->status = 'pending';
+        $order->save();
+    
+        // Save order items
+        foreach ($cart as $item) {
+            $order->items()->create([
+                'name' => $item['name'],
+                'quantity' => $item['quantity'],
+                'price' => $item['price'],
+            ]);
+        }
+    
+        // Clear the cart after order is placed
+        session()->forget('cart');
+    
+        return $order;
+    }
+        
     
     public function show($slug)
     {
         $customerId = Auth::id();
+        if (!$customerId) {
+            return redirect()->route('login')->with('error', 'Please log in to continue');
+        }
+
         $user = Auth::user();  // Retrieve the authenticated user
         $fullName = $user->first_name . ' ' . $user->last_name;
-        
-        // Retrieve the restaurant by its slug
         $restaurants = Restaurant::where('restaurant_slug', $slug)->firstOrFail();
-        
+        if (!$restaurants) {
+            return redirect()->route('restaurants.index')->with('error', 'Restaurant not found');
+        }
+
         // Fetch all delivery addresses for the logged-in user and the given restaurant
         $addresses = DeliveryAddress::where('customer_id', $customerId)
                                     ->where('restaurant_id', $restaurants->id)
@@ -75,13 +139,17 @@ class DeliveryController extends Controller
 
     private function createRazorpayOrder($amount)
     {
-        $api = new Api($this->razorpayApiKey, $this->razorpaySecretKey);
-        $order = $api->order->create([
-            'receipt' => uniqid(),
-            'amount' => $amount,
-            'currency' => 'INR',
-        ]);
-        return $order;
+        try {
+            $api = new Api($this->razorpayApiKey, $this->razorpaySecretKey);
+            return $api->order->create([
+                'receipt' => uniqid(),
+                'amount' => $amount,
+                'currency' => 'INR',
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Razorpay Order Error: ' . $e->getMessage());
+            throw $e;
+        }
     }
 
     public function handlePayment(Request $request)
@@ -91,13 +159,37 @@ class DeliveryController extends Controller
         try {
             $payment = $api->payment->fetch($request->razorpay_payment_id);
             if ($payment->status == 'captured') {
-                return redirect()->route('success')->with('success', 'Payment successful!');
-            }
+                $order = $this->storeOrder($request, $request->input('slug'), 'razorpay');
+
+                return redirect()->route('order.confirmation', ['slug' => $request->input('slug')])
+                    ->with('success', 'Payment successful and order placed!');         
+                }
         } catch (\Exception $e) {
             return redirect()->route('checkout')->with('error', 'Payment failed! ' . $e->getMessage());
         }
     }
     
+    public function processCheckout(Request $request, $slug)
+    {
+        $customerId = Auth::id();
+        $deliveryAddress = DeliveryAddress::where('customer_id', $customerId)->where('restaurant_id', $slug)->first();
+
+        if (!$deliveryAddress) {
+            return back()->withErrors(['error' => 'Please select an address before proceeding.']);
+        }
+
+        $paymentMethod = $request->input('payment_method');
+        if ($paymentMethod === 'razorpay') {
+            // Handle Razorpay logic
+            return redirect()->route('payment.handle');
+        } elseif ($paymentMethod === 'cod') {
+            // Handle COD logic
+            $order = $this->storeOrder($request, $slug, 'cod');
+            return redirect()->route('order.confirmation', ['slug' => $slug])->with('success', 'Order placed successfully.')->with(compact('order'));
+        }
+    
+        return back()->withErrors(['error' => 'Invalid payment method.']);
+    }
 
     
     // public function processCheckout(Request $request, $slug)

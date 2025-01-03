@@ -188,7 +188,7 @@
 
             // Check if the selected date is today or a future date
             if (selectedDate <= today.setHours(0, 0, 0, 0)) {
-                alert('Please select a future date for the expiry.');
+                console.log('Please select a future date for the expiry.');
                 this.value = ''; // Clear the invalid date
             }
         });

@@ -31,7 +31,7 @@
                     @foreach ($orders->items as $item)
                         <div class="flex justify-between py-2 border-b">
                             <span class="font-medium">{{ $item->name }} ({{ $item->quantity }})</span>
-                            <span>${{ number_format($item->price, 2) }}</span>
+                            <span>{{ number_format($item->price, 2) }}</span>
                         </div>
                     @endforeach
 

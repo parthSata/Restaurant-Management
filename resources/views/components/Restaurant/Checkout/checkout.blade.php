@@ -92,104 +92,162 @@
                 @endauth
             </div>
 
-            <!-- Payment Section -->
-            <div class="bg-white p-6 rounded-lg shadow-lg">
-                <div class="flex items-center space-x-4 mb-4">
-                    <div class="bg-gray-200 p-2 rounded-full">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                        </svg>
-                    </div>
-                    <h2 class="text-xl font-semibold">Payment</h2>
-                </div>
-                <!-- Razorpay Payment Button -->
-                <form action="{{ route('payment.handle') }}" method="POST">
-                    @csrf
-                    <script src="https://checkout.razorpay.com/v1/checkout.js" data-key="{{ $razorpayOrder['key'] }}"
-                        data-amount="{{ $razorpayOrder['amount'] }}" data-currency="{{ $razorpayOrder['currency'] }}"
-                        data-order_id="{{ $razorpayOrder['id'] }}" data-buttontext="Pay Now"
-                        data-name="{{ $restaurants->restaurant_name }}" data-description="Complete your payment"
-                        data-theme.color="#ff5722"></script>
-                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                </form>
-            </div>
-        </div>
-
-        <!-- Right Column - Order Summary -->
-        <div class="lg:col-span-1">
-            <div class="bg-white p-6 rounded-lg shadow-sm">
-                <div class="border-t pt-4">
-                    <h3 class="font-semibold mb-4">Bill Details</h3>
-                    <div class="space-y-2">
-                        <div class="flex justify-between">
-                            <span class="text-gray-600">Item Total</span>
-                            <span>${{ number_format($itemTotal, 2) }}</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-600">Discount</span>
-                            <span>-${{ number_format($discount, 2) }}</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-600">Tax</span>
-                            <span>${{ number_format($tax, 2) }}</span>
-                        </div>
-                        <div class="flex justify-between border-t pt-2 font-semibold">
-                            <span>To Pay</span>
-                            <span>${{ number_format($toPay, 2) }}</span>
-                        </div>
-                    </div>
-                    <!-- Payment Button -->
-                    <button class="w-full mt-4 bg-[#ff5722] text-white px-6 py-2 rounded-md hover:bg-[#f4511e]"
-                        {{ count($cart) == 0 ? 'disabled' : '' }}>
-                        Proceed to Pay
-                    </button>
-                </div>
-
-            </div>
-        </div>
-
-        {{-- <!-- Right Column - Order Summary -->
             <div class="lg:col-span-1">
                 <div class="bg-white p-6 rounded-lg shadow-lg">
                     <h3 class="font-bold text-xl mb-4">Your Cart</h3>
                     <div class="space-y-4">
                         @foreach ($cart as $item)
                             <div class="flex justify-between items-center">
-                                <div>
+                                <div class="">
+                                    <img src="{{ asset('storage/addOnItems/' . ($item['image'] ?? 'default.jpg')) }}"
+                                        class="w-16 h-16 rounded-full object-cover" />
                                     <p class="text-gray-700 font-medium">{{ $item['name'] }}</p>
                                     <p class="text-gray-500 text-sm">Qty: {{ $item['quantity'] }}</p>
                                 </div>
-                                <p class="text-gray-600">${{ $item['price'] }}</p>
+                                <p class="text-gray-600">{{ $item['price'] }}</p>
                             </div>
                         @endforeach
                     </div>
                     <hr class="my-4">
-                    <h3 class="font-bold text-xl mb-4">Select Payment Method</h3>
-                    <form action="{{ route('checkout.process', ['slug' => $restaurants->restaurant_slug]) }}"
-                        method="POST">
-                        @csrf
-                        <div class="space-y-2">
-                            <label class="flex items-center space-x-3">
-                                <input type="radio" name="payment_method" value="razorpay" required>
-                                <span class="text-gray-700">Razorpay</span>
-                            </label>
-                            <label class="flex items-center space-x-3">
-                                <input type="radio" name="payment_method" value="cod" required>
-                                <span class="text-gray-700">Cash on Delivery (COD)</span>
-                            </label>
-                        </div>
-                        <hr class="my-4">
-                        <button type="submit"
-                            class="w-full bg-[#ff5722] text-white px-6 py-2 rounded-lg hover:bg-[#f4511e]">Checkout</button>
-                    </form>
+                    <div class="space-y-4">
+                        <h3 class="font-bold text-xl mb-4">Select Payment Method</h3>
+                        <form action="{{ route('checkout.process', ['slug' => $restaurants->restaurant_slug]) }}"
+                            method="POST" id="paymentForm">
+                            @csrf
+                            <input type="hidden" name="slug" value="{{ $restaurants->restaurant_slug }}">
+                            <div class="space-y-2">
+                                <label class="flex items-center space-x-3">
+                                    <input type="radio" name="payment_method" onclick="togglePaymentGateway('razorpay')"
+                                        value="razorpay" required>
+                                    <span class="text-gray-700">Razorpay</span>
+                                </label>
+                                <label class="flex items-center space-x-3">
+                                    <input type="radio" onclick="togglePaymentGateway('cod')" name="payment_method"
+                                        value="cod" required>
+                                    <span class="text-gray-700">Cash on Delivery (COD)</span>
+                                </label>
+                            </div>
+                            <hr class="my-4">
+                            <button type="submit" id="checkoutButton"
+                                class="w-full bg-[#ff5722] text-white px-6 py-2 rounded-lg hover:bg-[#f4511e]">Checkout</button>
+                        </form>
 
+                    </div>
+                    {{-- <!-- Coupon -->
+                    <div class="border border-dashed border-gray-300 rounded-lg p-4 mb-6">
+                        <div class="flex gap-2">
+                            <input type="text" placeholder="Apply Coupon"
+                                class="flex-1 bg-gray-50 rounded px-4 py-2" />
+                            <button class="bg-orange-500 text-white px-6 py-2 rounded hover:bg-orange-600">
+                                Apply
+                            </button>
+                        </div>
+                    </div> --}}
+
+                    <!-- Bill Details -->
+                    <div class="space-y-4">
+                        <h3 class="font-semibold text-lg">Bill Details</h3>
+                        <div class="space-y-2 text-gray-600">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Item Total</span>
+                                <span>{{ number_format($itemTotal, 2) }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Delivery Fee</span>
+                                <span>{{ number_format($deliveryFee, 2) }}</span>
+                            </div>
+                            <div class="h-px bg-orange-600 my-2"></div>
+                            <div class="flex justify-between font-semibold text-black">
+                                <span class="text-gray-600">To Pay</span>
+                                <span>{{ number_format($toPay, 2) }}</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div> --}}
+            </div>
+
+        </div>
         </div>
     </main>
     <script>
+        var restaurantName = @json($restaurants->restaurant_name);
+        var razorpayKey = @json($razorpayOrder['key']);
+        var razorpayOrderId = @json($razorpayOrder['id']);
+
+        function togglePaymentGateway(method) {
+            if (method === 'razorpay') {
+                // Set up Razorpay payment
+                var options = {
+                    key: 'rzp_test_uKarYDqSoNLovi', // Replace with your Razorpay API Key
+                    amount: 10000, // Amount in paise (e.g., ₹100 = 10000 paise)
+                    currency: "INR",
+                    name: restaurantName,
+                    description: "Order Payment",
+                    order_id: razorpayOrderId, // Razorpay order ID
+                    handler: function(response) {
+                        fetch("{{ route('payment.handle') }}", {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                                },
+                                body: JSON.stringify({
+                                    razorpay_payment_id: response.razorpay_payment_id,
+                                    razorpay_order_id: response.razorpay_order_id,
+                                    razorpay_signature: response.razorpay_signature
+                                })
+                            })
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.success) {
+                                    window.location.href =
+                                        "{{ route('order.confirmation', ['slug' => $restaurants->restaurant_slug]) }}";
+                                } else {
+                                    console.log("Payment Failed. Try again.");
+                                }
+                            })
+                            .catch(err => {
+                                console.error("Error:", err);
+                                console.log("Payment Failed. Try again.");
+                            });
+                    },
+                    theme: {
+                        color: "#3399cc",
+                    },
+                };
+
+                var rzp = new Razorpay(options);
+                rzp.open();
+            } else {
+                // Adjust UI for COD if needed
+                console.log('Cash on Delivery selected');
+            }
+        }
+
+        document.getElementById('checkoutButton').addEventListener('click', function() {
+            const selectedMethod = document.querySelector('input[name="payment_method"]:checked').value;
+            if (selectedMethod === 'razorpay') {
+                const razorpayOptions = {
+                    "key": "{{ $razorpayOrder['key'] }}",
+                    "amount": "{{ $razorpayOrder['amount'] }}",
+                    "currency": "{{ $razorpayOrder['currency'] }}",
+                    "order_id": "{{ $razorpayOrder['id'] }}",
+                    "handler": function(response) {
+                        document.getElementById('paymentForm')
+                            .submit(); // Submit the form after successful payment
+                    },
+                    "theme": {
+                        "color": "#ff5722"
+                    }
+                };
+                const rzp = new Razorpay(razorpayOptions);
+                rzp.open();
+            } else {
+                document.getElementById('paymentForm').submit(); // Submit the form directly for COD
+            }
+        });
+
+
         function selectAddress(button) {
             document.querySelectorAll('.address-card').forEach(card => {
                 card.classList.remove('bg-green-100');
@@ -208,7 +266,8 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                            'content'),
                     },
                     body: JSON.stringify({
                         address_id: addressId

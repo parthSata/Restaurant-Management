@@ -39,9 +39,8 @@ class MenuController extends Controller
     
         // Calculate totals
         $itemTotal = collect($cart)->sum(fn($item) => $item['quantity'] * $item['price']);
-        $discount = 10;
-        $tax = ($itemTotal - $discount) * 0.1;
-        $toPay = $itemTotal - $discount + $tax;
+        $deliveryFee = 50;
+        $toPay = $itemTotal + $deliveryFee;
     
         // Razorpay integration
         $api = new Api(env('RAZORPAY_KEY'), env('RAZORPAY_SECRET'));
@@ -58,7 +57,7 @@ class MenuController extends Controller
         $razorpayOrder['key'] = env('RAZORPAY_KEY');
     
         return view('components.Restaurant.Checkout.Checkout', compact(
-            'restaurants', 'user', 'cart', 'fullName', 'addresses', 'itemTotal', 'discount', 'tax', 'toPay', 'razorpayOrder'
+            'restaurants', 'user','razorpayOrder', 'cart', 'fullName', 'addresses', 'itemTotal', 'deliveryFee', 'toPay'
         ));
     }
     

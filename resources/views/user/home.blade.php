@@ -52,7 +52,7 @@
                             class="w-full h-48 object-cover rounded-xl mb-4">
                         <h2 class="text-2xl font-semibold mb-2">{{ $item->name }}</h2>
                         <p class="text-gray-500 mb-6 text-sm">{{ $item->description }}</p>
-                        <p class="text-gray-800 font-bold">Price: ${{ $item->price }}</p>
+                        <p class="text-gray-800 font-bold">Price: {{ $item->price }}</p>
                         <button
                             class="w-full bg-orange-500 text-white py-3 px-6 rounded-lg hover:bg-orange-600 transition-colors">
                             Order Now

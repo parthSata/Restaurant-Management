@@ -37,7 +37,7 @@
                                 <!-- Item Details -->
                                 <div>
                                     <h3 class="font-semibold text-blue-600">{{ $item->name }}</h3>
-                                    <p class="text-gray-600">${{ number_format($item->price, 2) }}</p>
+                                    <p class="text-gray-600">{{ number_format($item->price, 2) }}</p>
                                 </div>
                             </div>
                             <!-- Add Button -->
@@ -70,7 +70,7 @@
                                 <!-- Added Item Details -->
                                 <div>
                                     <h3 class="font-semibold text-blue-600">{{ $addedItem->item->name }}</h3>
-                                    <p class="text-gray-600">${{ number_format($addedItem->item->price, 2) }}</p>
+                                    <p class="text-gray-600">{{ number_format($addedItem->item->price, 2) }}</p>
                                 </div>
                             </div>
                             <!-- Remove Button -->

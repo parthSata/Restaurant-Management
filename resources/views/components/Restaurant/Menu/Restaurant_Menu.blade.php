@@ -41,7 +41,7 @@
                                                 class="w-24 h-24 object-cover rounded-lg mr-4">
                                             <div class="flex-grow">
                                                 <h3 class="text-lg font-semibold">{{ $item->name }}</h3>
-                                                <p class="text-gray-600">${{ $item->price }}</p>
+                                                <p class="text-gray-600">{{ $item->price }}</p>
                                             </div>
                                             <button
                                                 onclick="addToCart({{ $item->id }}, '{{ $item->name }}', {{ $item->price }}, '{{ asset('storage/' . $item->image) }}')"

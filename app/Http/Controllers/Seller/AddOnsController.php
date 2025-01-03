@@ -136,38 +136,39 @@ class AddOnsController extends Controller
     //     return redirect()->route('addOns.showItems')->with('success', 'Add On Item created successfully');
     // }
 
+    
+    
+    
     public function storeItem(Request $request)
-{
-    $validated = $request->validate([
-        'name' => 'required|string|max:255',
-        'price' => 'required|numeric',
-        'description' => 'required|string',
-        'category' => 'required|exists:categories,id', // Ensure the category exists
-        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240',
-    ]);
-
-    $imagePath = null;
-
-    // Store the image if uploaded
-    if ($request->hasFile('image')) {
-        // Generate a unique filename with the original extension
-        $imageName = Str::slug($validated['name']) . '_' . time() . '.' . $request->file('image')->getClientOriginalExtension();
-        $imagePath = $request->file('image')->storeAs('addOnItems', $imageName, 'public');
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'price' => 'required|numeric',
+            'description' => 'required|string',
+            'category' => 'required|exists:categories,id', // Ensure the category exists
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240',
+        ]);
+    
+        $imagePath = null;
+    
+        // Store the image if uploaded
+        if ($request->hasFile('image')) {
+            // Generate a unique filename with the original extension
+            $imageName = Str::slug($validated['name']) . '_' . time() . '.' . $request->file('image')->getClientOriginalExtension();
+            $imagePath = $request->file('image')->storeAs('addOnItems', $imageName, 'public');
+        }
+    
+        // Create the add-on item
+        AddOnItem::create([
+            'name' => $validated['name'],
+            'price' => $validated['price'],
+            'description' => $validated['description'],
+            'category_id' => $validated['category'], // Use category_id instead of category
+            'image' => $imagePath,
+        ]);
+    
+        return redirect()->route('addOns.showItems')->with('success', 'Add On Item created successfully');
     }
-
-    // Create the add-on item
-    AddOnItem::create([
-        'name' => $validated['name'],
-        'price' => $validated['price'],
-        'description' => $validated['description'],
-        'category_id' => $validated['category'], // Use category_id instead of category
-        'image' => $imagePath,
-    ]);
-
-    return redirect()->route('addOns.showItems')->with('success', 'Add On Item created successfully');
-}
-
-
     public function showItems(Request $request)
     {
         $query = $request->get('search');

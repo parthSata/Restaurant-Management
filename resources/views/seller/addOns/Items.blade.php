@@ -53,7 +53,7 @@
                                 </div>
                             </td>
                             <td class="py-4">{{ $item->category->name }}</td>
-                            <td class="py-4">${{ $item->price }}</td>
+                            <td class="py-4">{{ $item->price }}</td>
                             <td class="py-4">
                                 <label class="flex items-center cursor-pointer">
                                     <div class="relative">

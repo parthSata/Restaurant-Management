@@ -94,7 +94,7 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4">
-                                <span class="font-medium">${{ number_format($order->subtotal, 2) }}</span>
+                                <span class="font-medium">{{ number_format($order->subtotal, 2) }}</span>
                                 <span
                                     class="inline-flex ml-2 px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">{{ $order->payment_status }}</span>
                             </td>

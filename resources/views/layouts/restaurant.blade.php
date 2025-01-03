@@ -22,7 +22,10 @@
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
 
 </head>
 

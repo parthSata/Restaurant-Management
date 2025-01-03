@@ -179,31 +179,18 @@ Route::prefix('seller')->middleware('auth:restaurant')->group(function () {
 });
 
 // // Customer
-// Route::prefix('customer')->middleware('auth')->group(function () {
-//     Route::get('/dashboard', [CustomerController::class, 'dashboard'])->name('customer.dashboard');
-//     Route::get('/orders/{id}', [CustomerController::class, 'orders'])->name('customer.orders');
-//     Route::post('/logout', [CustomerController::class, 'logout'])->name('customer.logout'); // Logout route
-
-//     Route::get('/checkout/{slug}', [MenuController::class, 'checkout'])->name('checkout');
-//     Route::post('/delivery/store/{slug}', [DeliveryController::class, 'store'])->name('delivery.store');
-//     Route::post('/checkout/process/{slug}', [DeliveryController::class, 'processCheckout'])->name('checkout.process');
-//     Route::post('/cart/sync', [MenuController::class, 'syncCart'])->name('syncCart');
-//     Route::post('/payment/handle/{slug}', [DeliveryController::class, 'handlePayment'])->name('payment.handle');
-//     Route::get('/order/confirmation/{slug}', [DeliveryController::class, 'confirmation'])->name('order.confirmation');
-//     Route::get('/restaurant/{slug}/menu', [MenuController::class, 'showMenu'])->name('restaurant');
-// });
-
 Route::prefix('customer')->middleware('auth')->group(function () {
     Route::get('/dashboard', [CustomerController::class, 'dashboard'])->name('customer.dashboard');
     Route::get('/orders/{id}', [CustomerController::class, 'orders'])->name('customer.orders');
     Route::post('/logout', [CustomerController::class, 'logout'])->name('customer.logout'); // Logout route
 
-Route::get('/checkout/{slug}', [MenuController::class, 'checkout'])->name('checkout');
-Route::post('/delivery/store/{slug}', action: [DeliveryController::class, 'store'])->name('delivery.store');
-Route::post('/checkout/process/{slug}', [DeliveryController::class, 'processCheckout'])->name('checkout.process');
+    Route::get('/checkout/{slug}', [MenuController::class, 'checkout'])->name('checkout');
+    Route::post('/delivery/store/{slug}', action: [DeliveryController::class, 'store'])->name('delivery.store');
+    Route::post('/checkout/process/{slug}', [DeliveryController::class, 'processCheckout'])->name('checkout.process');
     Route::post('/cart/sync', [MenuController::class, 'syncCart'])->name('syncCart');
+    
     Route::post('/payment/handle/', [DeliveryController::class, 'handlePayment'])->name('payment.handle');
     Route::get('/order/confirmation/{slug}', [DeliveryController::class, 'confirmation'])->name('order.confirmation');
-Route::get('/restaurant/{slug}/menu', [MenuController::class, 'showMenu'])->name('restaurant');
+    Route::get('/restaurant/{slug}/menu', [MenuController::class, 'showMenu'])->name('restaurant');
 
 });
