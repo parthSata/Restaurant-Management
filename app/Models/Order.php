@@ -25,6 +25,10 @@ class Order extends Model
         'delivery_address',
     ];
 
+    protected $casts = [
+        'order_date' => 'datetime',
+    ];
+
     public function customer()
     {
         return $this->belongsTo(Registration::class, 'customer_id', 'id');

@@ -31,9 +31,10 @@ Route::get('/restaurants', [adminRestaurantController::class, 'userIndex'])->nam
 Route::get('/restaurant/{slug?}', [adminRestaurantController::class, 'show'])->name('restaurant.show');
 Route::get('/restaurant-home', [adminRestaurantController::class, 'restaurantHome'])->name('restaurant.home');
 
-    // Booking Routes
-    Route::post('/check-availability', [ReservationController::class, 'checkAvailability'])->name('checkAvailability');
-    Route::post('/store-booking', [ReservationController::class, 'storeBooking'])->name('storeBooking');
+// Booking Routes
+Route::post('/check-availability', [ReservationController::class, 'checkAvailability'])->name('checkAvailability');
+Route::post('/store-booking', [ReservationController::class, 'storeBooking'])->name('storeBooking');
+
 
 // Static View Routes (For User)
 Route::view('/contact', 'user.contact')->name('contact');
@@ -70,9 +71,8 @@ Route::middleware(['auth:web'])->group(function () {
 Route::get('/contactUs/{id}', [adminRestaurantController::class, 'contactUs'])->name('contact');
 Route::get('/aboutUs/{id}', [adminRestaurantController::class, 'aboutUs'])->name('about');
 Route::get('/menu/{id}', [adminRestaurantController::class, 'menu'])->name('menu');
-Route::get('/reservation/{id}', [adminRestaurantController::class, 'reservation'])->name('reservation');
 // Route::get('/restaurant/{slug}/menu', [MenuController::class, 'showMenu'])->name('restaurant');
-
+Route::get('/reservation/{id}', [adminRestaurantController::class, 'reservation'])->name('reservation');
 
 
 
@@ -128,8 +128,14 @@ Route::prefix('seller')->middleware('auth:restaurant')->group(function () {
     Route::get('/orders', [OrdersController::class, 'index'])->name('orders.index');
 
     Route::get('/transaction', [SellerTransactionController::class, 'index'])->name('transaction.index');
+    // Booking
+    Route::get('/reservations/booking', [SellerReservationController::class, 'index'])->name('booking.index');
+    Route::delete('/reservations/booking/{id}', [SellerReservationController::class, 'destroyBooking'])->name('booking.destroy');
 
-    Route::get('/reservation', [SellerReservationController::class, 'index'])->name('reservation.index');
+
+
+
+    // Table
     Route::get('/reservation/tables', [SellerReservationController::class, 'showTables'])->name('reservation.showTables');
     Route::get('reservation/create', [SellerReservationController::class, 'create'])->name('reservation.create');
 
@@ -183,6 +189,8 @@ Route::prefix('customer')->middleware('auth')->group(function () {
     Route::get('/dashboard', [CustomerController::class, 'dashboard'])->name('customer.dashboard');
     Route::get('/orders/{id}', [CustomerController::class, 'orders'])->name('customer.orders');
     Route::post('/logout', [CustomerController::class, 'logout'])->name('customer.logout'); // Logout route
+
+   
 
     Route::get('/checkout/{slug}', [MenuController::class, 'checkout'])->name('checkout');
     Route::post('/delivery/store/{slug}', action: [DeliveryController::class, 'store'])->name('delivery.store');

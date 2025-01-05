@@ -98,11 +98,15 @@
                     <div class="space-y-4">
                         @foreach ($cart as $item)
                             <div class="flex justify-between items-center">
-                                <div class="">
-                                    <img src="{{ asset('storage/addOnItems/' . ($item['image'] ?? 'default.jpg')) }}"
-                                        class="w-16 h-16 rounded-full object-cover" />
-                                    <p class="text-gray-700 font-medium">{{ $item['name'] }}</p>
-                                    <p class="text-gray-500 text-sm">Qty: {{ $item['quantity'] }}</p>
+                                <div class="flex gap-2 items-center">
+                                    {{-- <div class="">
+                                        <img src="{{ $item['image'] ?? asset('storage/addOnItems/default.jpg') }}"
+                                            alt="{{ $item['name'] }}" class="w-16 h-16 rounded-full object-cover" />
+                                    </div> --}}
+                                    <div class="flex flex-col">
+                                        <p class="text-gray-700 font-medium">{{ $item['name'] }}</p>
+                                        <p class="text-gray-500 text-sm">Qty: {{ $item['quantity'] }}</p>
+                                    </div>
                                 </div>
                                 <p class="text-gray-600">{{ $item['price'] }}</p>
                             </div>

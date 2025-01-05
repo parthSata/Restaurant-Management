@@ -16,7 +16,7 @@
                                 <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
                             </div>
                             <ul class="flex gap-4 items-center">
-                                <a href="{{ route('reservation.index') }}" class="">
+                                <a href="{{ route('booking.index') }}" class="">
                                     <li class=" cursor-pointer hover:underline text-lg font-serif">Booking</li>
                                 </a>
                                 <a href="{{ route('reservation.showTables') }}" class="">

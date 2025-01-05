@@ -32,7 +32,7 @@
                 <a href="{{ route('customer.index') }}" class="hover:text-gray-400">Customers</a>
                 <a href="{{ route('orders.index') }}" class="hover:text-gray-400">Orders</a>
                 <a href="{{ route('transaction.index') }}" class="hover:text-gray-400">Transactions</a>
-                <a href="{{ route('reservation.index') }}" class="hover:text-gray-400">Reservation</a>
+                <a href="{{ route('booking.index') }}" class="hover:text-gray-400">Reservation</a>
                 <a href="{{ route('addOns.index') }}" class="hover:text-gray-400">Add Ons</a>
                 <a href="{{ route('menu.index') }}" class="hover:text-gray-400">Menu</a>
                 <a href="{{ route('couponcodes.index') }}" class="hover:text-gray-400">Coupon Codes</a>
@@ -69,7 +69,7 @@
                 class="flex items-center px-4 py-3 text-gray-700 hover:bg-yellow-100 hover:text-yellow-500 rounded-lg">Orders</a>
             <a href="{{ route('transaction.index') }}"
                 class="flex items-center px-4 py-3 text-gray-700 hover:bg-yellow-100 hover:text-yellow-500 rounded-lg">Transactions</a>
-            <a href="{{ route('reservation.index') }}"
+            <a href="{{ route('booking.index') }}"
                 class="flex items-center px-4 py-3 text-gray-700 hover:bg-yellow-100 hover:text-yellow-500 rounded-lg">Reservation</a>
             <a href="{{ route('addOns.index') }}"
                 class="flex items-center px-4 py-3 text-gray-700 hover:bg-yellow-100 hover:text-yellow-500 rounded-lg">Add

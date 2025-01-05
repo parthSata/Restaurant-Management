@@ -13,19 +13,51 @@ class ReservationController extends Controller
 {
     public function index(Request $request)
     {
+        // Get search input from the request
         $search = $request->input('search');
+
+        // Fetch restaurants for the authenticated user (if applicable)
         $restaurants = auth()->user()->restaurants;
-    
-        $bookings = Booking::query()
+
+        // Fetch bookings, applying search filters if provided
+        $bookings = Booking::with('reservation') // Assuming a relationship exists between Booking and Reservation
             ->when($search, function ($query, $search) {
-                $query->where('name', 'like', "%$search%")
+                $query->where('customer_name', 'like', "%$search%")
                     ->orWhere('phone', 'like', "%$search%")
-                    ->orWhere('table_type', 'like', "%$search%");
+                    ->orWhere('table_name', 'like', "%$search%");
             })
             ->get();
-    
-        return view('seller.reservation.booking', compact('restaurants', 'bookings', 'search'));
+
+        // Fetch reservation data
+        $reservations = Reservation::when($search, function ($query, $search) {
+            $query->where('name', 'like', "%$search%")
+                ->orWhere('phone', 'like', "%$search%");
+        })->get();
+
+        // Fetch tables data (if needed for additional processing)
+        $tables = DB::table('reservations')
+            ->when($search, function ($query, $search) {
+                $query->where('table_name', 'like', "%$search%")
+                    ->orWhere('status', 'like', "%$search%");
+            })
+            ->get();
+
+        // Return the view with data
+        return view('seller.reservation.booking', compact('restaurants', 'bookings', 'search', 'tables', 'reservations'));
     }
+    public function destroyBooking($id)
+    {
+            // Find the booking by ID
+            $booking = Booking::findOrFail($id);
+    dd($booking);
+            // Delete the booking
+            $booking->delete();
+    
+            // Redirect back with a success message
+            return redirect()->route('booking.index')->with('success', 'Booking deleted successfully.');
+      
+    }
+
 
     public function showTables(Request $request)
     {
@@ -81,28 +113,35 @@ class ReservationController extends Controller
             'expected_time' => 'required|date_format:H:i',
         ]);
     
-        // Fetch the reservation
-        $reservation = Reservation::findOrFail($validated['reservation_id']);
-        // Create a new booking
-        $booking = new Booking([
-            'reservation_id' => $reservation->id,
-            'table_name' => $reservation->title,
-            'customer_name' => $validated['customer_name'],
-            'phone' => $validated['phone'],
-            'expected_person' => $validated['expected_person'],
-            'expected_date' => $validated['expected_date'],
-            'expected_time' => $validated['expected_time'],
-        ]);
+        try {
+            // Fetch the reservation
+            $reservation = Reservation::findOrFail($validated['reservation_id']);
     
-        $booking->save();
-        $reservation->status = true;
-        $reservation->save();
-        
-        return response()->json([
-            'message' => 'Table booked successfully!',
-            'booking' => $booking
-        ]);
+            // Create a new booking
+            $booking = new Booking([
+                'reservation_id' => $reservation->id,
+                'table_name' => $reservation->title,
+                'customer_name' => $validated['customer_name'],
+                'phone' => $validated['phone'],
+                'expected_person' => $validated['expected_person'],
+                'expected_date' => $validated['expected_date'],
+                'expected_time' => $validated['expected_time'],
+            ]);
+    
+            $booking->save();
+    
+            // Update reservation status
+            $reservation->status = true;
+            $reservation->save();
+    
+            // Redirect back with a success message
+            return redirect()->route('reservation.index')->with('success', 'Table booked successfully!');
+        } catch (\Exception $e) {
+            // Redirect back with an error message
+            return redirect()->route('reservation.index')->with('error', 'Failed to book table. Please try again.');
+        }
     }
+    
     
     public function create()
     {

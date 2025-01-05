@@ -16,14 +16,16 @@ class MenuController extends Controller
     public function showMenu($slug)
     {
         $restaurants = Restaurant::where('restaurant_slug', $slug)->firstOrFail();
-        $categories = Category::with('addOnItems')->get();
-
+        $categories = Category::with('addOnItems')
+            ->whereHas('addOnItems') // Filter categories with at least one item
+            ->get();
+    
         return view('components.Restaurant.Menu.Restaurant_Menu', [
             'restaurants' => $restaurants,
             'categories' => $categories,
         ]);
     }
-
+    
     // Checkout page
     public function checkout($slug)
     {

@@ -57,12 +57,13 @@ class RestaurantController extends Controller
     public function index(Request $request)
     {
         // Get the search query from the request
-        $search = $request->input('search');
+        // Get the search query from the request
+    $search = $request->input('search');
 
-        // Fetch restaurants based on the search query
-        $restaurants = Restaurant::when($search, function ($query) use ($search) {
-            return $query->where('name', 'like', "%{$search}%");
-        })->get();
+    // Fetch restaurants based on the search query
+    $restaurants = Restaurant::when($search, function ($query) use ($search) {
+        return $query->where('restaurant_name', 'like', "%{$search}%"); // Adjust column name if needed
+    })->get();
 
         return view('admin.Restaurants.adminrestaurants', compact('restaurants', 'search'));
     }

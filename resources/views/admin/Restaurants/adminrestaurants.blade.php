@@ -7,12 +7,14 @@
     <div class="">
         <div class="container mx-auto p-4">
             <div class="flex justify-between mb-4">
-                <div class="relative">
-                    <input type="text" placeholder="Search" class="pl-10 pr-4 py-2 border rounded-lg w-64">
+                <form method="GET" action="{{ route('restaurants.index') }}" class="relative">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Search"
+                        class="pl-10 pr-4 py-2 border rounded-lg w-64" />
                     <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
-                </div>
+                </form>
                 <a href="{{ route('restaurants.create') }}" class="bg-blue-500 text-white px-4 py-2 rounded-lg">Add</a>
             </div>
+
             <div class="bg-white shadow-md rounded-lg overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
@@ -48,8 +50,8 @@
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center">
                                         <div class="i">
-                                            <img src="{{ asset('/storage/Uploaded_Images/' . $restaurant->logo) }}" alt="Restaurant Logo" />
-
+                                            <img src="{{ asset('/storage/Uploaded_Images/' . $restaurant->logo) }}"
+                                                class="h-10 w-10 rounded-full" alt="Restaurant Logo" />
                                         </div>
 
                                         <div class="ml-4">

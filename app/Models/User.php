@@ -19,10 +19,10 @@ class User extends Authenticatable
         'password',
     ];
 
-    public function restaurant()
-    {
-        return $this->hasOne(Restaurant::class);
-    }
+    public function restaurants()
+{
+    return $this->hasOne(Restaurant::class); // Assuming one restaurant per user
+}
 
     /**
      * The attributes that should be hidden for serialization.

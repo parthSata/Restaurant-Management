@@ -65,22 +65,22 @@ class ContactController extends Controller
     public function showEnquiries(Request $request)
     {
         $query = Contact::query(); // Start a query on the Contact model
-        
-        // Check if the search parameter is provided in the request
-        if ($search = $request->input('search')) {
-            // Add conditions to search for name, email, phone, or message
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%")
-                  ->orWhere('phone', 'like', "%{$search}%")
-                  ->orWhere('message', 'like', "%{$search}%");
-            });
-        }
-    
-        // Fetch all enquiries, you can add pagination if necessary
-        $enquiries = $query->orderBy('created_at', 'desc')->paginate(10);  // Paginate with 10 entries per page
-    
-        return view('admin.customers.enquiries', compact('enquiries'));
+
+    // Check if the search parameter is provided in the request
+    if ($search = $request->input('search')) {
+        // Add conditions to search for name, email, phone, or message
+        $query->where(function ($q) use ($search) {
+            $q->where('name', 'like', "%{$search}%")
+              ->orWhere('email', 'like', "%{$search}%")
+              ->orWhere('phone', 'like', "%{$search}%")
+              ->orWhere('message', 'like', "%{$search}%");
+        });
+    }
+
+    // Fetch enquiries with pagination
+    $enquiries = $query->orderBy('created_at', 'desc')->paginate(10); // 10 entries per page
+
+    return view('admin.customers.enquiries', compact('enquiries'));
     }
     // Delete a specific enquiry
     public function deleteEnquiry($id)

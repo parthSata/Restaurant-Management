@@ -10,11 +10,19 @@ use Illuminate\Support\Facades\DB;
 
 class CouponController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // Fetch all coupons from the database
-        $coupons = Coupon::all(); 
-        return view('admin.couponCodes.couponcodes', compact('coupons')); // Corrected compact variable 'coupons'
+        // Get the search query from the request
+        $search = $request->input('search');
+
+    // Fetch coupons based on the search query
+         $coupons = Coupon::when($search, function ($query) use ($search) {
+        $query->where('name', 'like', "%{$search}%")
+              ->orWhere('type', 'like', "%{$search}%")
+              ->orWhere('status', 'like', "%{$search}%");
+    })->orderBy('created_at', 'desc')->paginate(10); // Paginate results
+
+    return view('admin.couponCodes.couponcodes', compact('coupons', 'search'));
     }
 
     // Display a specific coupon by ID

@@ -19,46 +19,52 @@
                                     class="text-orange-500 font-semibold">All</a>
                             </li>
                             @foreach ($categories as $category)
-                                <li>
-                                    <a href="javascript:void(0);" onclick="filterCategory('{{ $category->name }}')"
-                                        class="text-gray-600 hover:text-orange-500">{{ $category->name }}</a>
-                                </li>
+                                @if ($category->addOnItems->count() > 0)
+                                    <li>
+                                        <a href="javascript:void(0);" onclick="filterCategory('{{ $category->name }}')"
+                                            class="text-gray-600 hover:text-orange-500">{{ $category->name }}</a>
+                                    </li>
+                                @endif
                             @endforeach
                         </ul>
+
                     </div>
                 </div>
 
                 <!-- Main Content -->
                 <div class="md:w-2/4">
                     @foreach ($categories as $category)
-                        <div class="category-section" data-category="{{ $category->name }}" style="display: none;">
-                            <div class="bg-white p-4 rounded-lg shadow-md mb-4">
-                                <h2 id="{{ $category->name }}" class="text-xl font-semibold mb-4">{{ $category->name }}</h2>
-                                <div class="space-y-6">
-                                    @foreach ($category->addOnItems as $item)
-                                        <div class="flex items-center">
-                                            <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->name }}"
-                                                class="w-24 h-24 object-cover rounded-lg mr-4">
-                                            <div class="flex-grow">
-                                                <h3 class="text-lg font-semibold">{{ $item->name }}</h3>
-                                                <p class="text-gray-600">{{ $item->price }}</p>
+                        @if ($category->addOnItems->count() > 0)
+                            <div class="category-section" data-category="{{ $category->name }}" style="display: none;">
+                                <div class="bg-white p-4 rounded-lg shadow-md mb-4">
+                                    <h2 id="{{ $category->name }}" class="text-xl font-semibold mb-4">{{ $category->name }}
+                                    </h2>
+                                    <div class="space-y-6">
+                                        @foreach ($category->addOnItems as $item)
+                                            <div class="flex items-center">
+                                                <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->name }}"
+                                                    class="w-24 h-24 object-cover rounded-lg mr-4">
+                                                <div class="flex-grow">
+                                                    <h3 class="text-lg font-semibold">{{ $item->name }}</h3>
+                                                    <p class="text-gray-600">{{ $item->price }}</p>
+                                                </div>
+                                                <button
+                                                    onclick="addToCart({{ $item->id }}, '{{ $item->name }}', {{ $item->price }}, '{{ asset('storage/' . $item->image) }}')"
+                                                    class="bg-white text-orange-500 border border-orange-500 px-4 py-2 rounded hover:bg-orange-500 hover:text-white transition">
+                                                    +ADD
+                                                </button>
                                             </div>
-                                            <button
-                                                onclick="addToCart({{ $item->id }}, '{{ $item->name }}', {{ $item->price }}, '{{ asset('storage/' . $item->image) }}')"
-                                                class="bg-white text-orange-500 border border-orange-500 px-4 py-2 rounded hover:bg-orange-500 hover:text-white transition">
-                                                +ADD
-                                            </button>
-                                        </div>
-                                    @endforeach
+                                        @endforeach
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        @endif
                     @endforeach
                 </div>
 
                 <!-- Cart -->
                 <div class="md:w-1/4">
-                    <div class="bg-white p-6 rounded-lg shadow-md w-80">
+                    <div class="bg-white w-full p-6 rounded-lg shadow-md ">
                         <h1 class="text-2xl font-bold mb-1">Cart</h1>
                         <p id="itemCount" class="text-gray-500 text-sm mb-4">0 ITEMS</p>
 
@@ -67,7 +73,7 @@
                         <div class="border-t pt-4">
                             <div class="flex justify-between mb-1">
                                 <span class="font-semibold">Sub Total</span>
-                                <span id="cartSubtotal" class="font-semibold">$ 0.00</span>
+                                <span id="cartSubtotal" class="font-semibold">0.00</span>
                             </div>
                             <p class="text-gray-500 text-xs mb-4">Extra charges may apply</p>
                         </div>
@@ -106,7 +112,7 @@
                         id,
                         name,
                         price,
-                        image,
+                        image: `/storage/addOnItems/${image}`, // Store the full image path
                         quantity: 1
                     });
                 }
@@ -137,13 +143,13 @@
                             <button onclick="changeQuantity(${item.id}, 1)" class="bg-gray-200 text-gray-600 w-8 h-8 rounded-full flex items-center justify-center">+</button>
                         </div>
                     </div>
-                    <span class="font-semibold">$ ${itemTotal.toFixed(2)}</span>
+                    <span class="font-semibold"> ${itemTotal.toFixed(2)}</span>
                 `;
                     cartItemsContainer.appendChild(cartItem);
                 });
 
                 // Update subtotal and item count
-                document.getElementById('cartSubtotal').innerText = `$ ${cartSubtotal.toFixed(2)}`;
+                document.getElementById('cartSubtotal').innerText = `${cartSubtotal.toFixed(2)}`;
                 document.getElementById('itemCount').innerText = `${cartItems.length} ITEM${cartItems.length !== 1 ? 'S' : ''}`;
 
                 saveCartToLocalStorage();

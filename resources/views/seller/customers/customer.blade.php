@@ -9,10 +9,14 @@
             <div class="p-6">
                 <div class="flex justify-between mb-4">
                     <div class="relative flex justify-center items-center gap-2">
-                        <div class="relative">
-                            <input type="text" placeholder="Search" class="w-full pl-10 py-2 border rounded-lg">
-                            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
-                        </div>
+                        <form method="GET" action="{{ route('customer.index') }}" class="relative">
+                            <input type="text" name="search" value="{{ request('search') }}" placeholder="Search"
+                                class="w-full pl-10 py-2 border rounded-lg" />
+                            <div class="absolute left-3 top-3 text-gray-400">
+                                <i class="fas fa-search"></i>
+                            </div>
+                        </form>
+
                         <ul class="flex gap-4 items-center">
                             <a href="{{ route('customer.index') }}" class="">
                                 <li class="cursor-pointer hover:underline text-lg font-serif">Customers</li>
